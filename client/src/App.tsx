@@ -4,32 +4,57 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+
+// Public pages
 import Home from "./pages/Home";
+import About from "./pages/About";
+import Pathways from "./pages/Pathways";
+import DoneForYou from "./pages/DoneForYou";
+import Pricing from "./pages/Pricing";
+import Outcomes from "./pages/Outcomes";
+import FAQ from "./pages/FAQ";
+
+// Provider portal
+import ProviderRegister from "./pages/ProviderRegister";
+import ProviderLogin from "./pages/ProviderLogin";
+import ProviderDashboard from "./pages/ProviderDashboard";
+
+// Staff portal
+import StaffLogin from "./pages/StaffLogin";
+import StaffDashboard from "./pages/StaffDashboard";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      {/* Public */}
+      <Route path="/" component={Home} />
+      <Route path="/about" component={About} />
+      <Route path="/pathways" component={Pathways} />
+      <Route path="/done-for-you" component={DoneForYou} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/outcomes" component={Outcomes} />
+      <Route path="/faq" component={FAQ} />
+
+      {/* Provider portal */}
+      <Route path="/provider/register" component={ProviderRegister} />
+      <Route path="/provider/login" component={ProviderLogin} />
+      <Route path="/provider/dashboard" component={ProviderDashboard} />
+
+      {/* Staff portal */}
+      <Route path="/staff/login" component={StaffLogin} />
+      <Route path="/staff/dashboard" component={StaffDashboard} />
+
+      {/* Fallback */}
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />
