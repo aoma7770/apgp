@@ -13,6 +13,7 @@ import DoneForYou from "./pages/DoneForYou";
 import Pricing from "./pages/Pricing";
 import Outcomes from "./pages/Outcomes";
 import FAQ from "./pages/FAQ";
+import Terms from "./pages/Terms";
 
 // Provider portal
 import ProviderRegister from "./pages/ProviderRegister";
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/pricing" component={Pricing} />
       <Route path="/outcomes" component={Outcomes} />
       <Route path="/faq" component={FAQ} />
+      <Route path="/terms" component={Terms} />
 
       {/* Provider portal */}
       <Route path="/provider/register" component={ProviderRegister} />

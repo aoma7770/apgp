@@ -5,19 +5,35 @@ import PublicLayout from "@/components/PublicLayout";
 import JotformModal from "@/components/JotformModal";
 import { motion } from "framer-motion";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0 },
-};
+const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663486953469/VXENecN32kGDVq7itT27ZC/apgp-hero-home-UrsEnEjTwniUeLFyWQ3XFG.webp";
+const ACCOMMODATION_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663486953469/VXENecN32kGDVq7itT27ZC/apgp-accommodation-drDCRERqX3KVFHXAG7Ad66.webp";
+const DFY_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663486953469/VXENecN32kGDVq7itT27ZC/apgp-hero-dfy-X3AUdhxXRzirRKHUoyhVjv.webp";
 
-function FadeUp({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) {
+// Directional animation variants
+const fromLeft = { hidden: { opacity: 0, x: -40 }, visible: { opacity: 1, x: 0 } };
+const fromRight = { hidden: { opacity: 0, x: 40 }, visible: { opacity: 1, x: 0 } };
+const fromBottom = { hidden: { opacity: 0, y: 36 }, visible: { opacity: 1, y: 0 } };
+const scaleIn = { hidden: { opacity: 0, scale: 0.92 }, visible: { opacity: 1, scale: 1 } };
+
+function Animate({
+  children,
+  variant = "bottom",
+  delay = 0,
+  className,
+}: {
+  children: React.ReactNode;
+  variant?: "left" | "right" | "bottom" | "scale";
+  delay?: number;
+  className?: string;
+}) {
+  const variants = { left: fromLeft, right: fromRight, bottom: fromBottom, scale: scaleIn };
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true }}
-      variants={fadeUp}
-      transition={{ delay, duration: 0.5 }}
+      viewport={{ once: true, margin: "-60px" }}
+      variants={variants[variant]}
+      transition={{ delay, duration: 0.55 }}
       className={className}
     >
       {children}
@@ -28,41 +44,49 @@ function FadeUp({ children, delay = 0, className }: { children: React.ReactNode;
 export default function Home() {
   return (
     <PublicLayout>
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden gradient-hero text-white">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-teal blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-64 h-64 rounded-full bg-white blur-3xl" />
+      {/* ── Hero with background image ── */}
+      <section className="relative overflow-hidden min-h-[85vh] flex items-center">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img
+            src={HERO_IMG}
+            alt="Modern disability-accessible accommodation with support worker and resident"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Gradient overlay — navy on left, fade to transparent on right */}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy/95 via-navy/80 to-navy/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
         </div>
-        <div className="container relative py-20 lg:py-32">
-          <div className="max-w-3xl">
-            <FadeUp delay={0}>
+
+        <div className="container relative z-10 py-20 lg:py-32">
+          <div className="max-w-2xl">
+            <Animate variant="bottom" delay={0}>
               <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-teal-300 mb-6">
                 <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
                 Accommodation Provider Growth Program
               </div>
-            </FadeUp>
-            <FadeUp delay={0.1}>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-heading mb-6">
+            </Animate>
+            <Animate variant="left" delay={0.1}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-heading mb-6 text-white">
                 Disability Accommodation{" "}
                 <span className="text-teal-300">Provider Growth</span>{" "}
                 Program
               </h1>
-            </FadeUp>
-            <FadeUp delay={0.2}>
-              <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-2xl leading-relaxed">
+            </Animate>
+            <Animate variant="left" delay={0.2}>
+              <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-xl leading-relaxed">
                 Partnership pathways that deliver{" "}
                 <strong className="text-white">real occupancy</strong>,{" "}
                 <strong className="text-white">real stability</strong>, and{" "}
                 <strong className="text-white">real growth</strong> — with zero financial risk to providers.
               </p>
-            </FadeUp>
-            <FadeUp delay={0.3}>
+            </Animate>
+            <Animate variant="bottom" delay={0.3}>
               <div className="flex flex-col sm:flex-row gap-4">
                 <JotformModal
                   label="Register Now — Free"
                   size="lg"
-                  buttonClassName="px-8 shadow-lg"
+                  buttonClassName="px-8 shadow-xl shadow-teal/30"
                 />
                 <Link href="/done-for-you">
                   <Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 bg-transparent">
@@ -70,34 +94,38 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-            </FadeUp>
+            </Animate>
           </div>
         </div>
-        <div className="h-16 bg-white" style={{ clipPath: "ellipse(55% 100% at 50% 100%)", marginTop: "-1px" }} />
+
+        {/* Wave divider */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-white" style={{ clipPath: "ellipse(55% 100% at 50% 100%)" }} />
       </section>
 
       {/* ── What is APGP ── */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="container">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="text-3xl lg:text-4xl font-bold text-navy font-heading mb-4">What is the APGP?</h2>
-            <p className="text-gray-600 text-lg">
-              A structured program by Ausnew Support Services that connects SDA and SIL accommodation providers with a consistent, pre-qualified stream of participants.
-            </p>
-          </div>
+          <Animate variant="bottom">
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <h2 className="text-3xl lg:text-4xl font-bold text-navy font-heading mb-4">What is the APGP?</h2>
+              <p className="text-gray-600 text-lg">
+                A structured program by Ausnew Support Services that connects SDA and SIL accommodation providers with a consistent, pre-qualified stream of participants.
+              </p>
+            </div>
+          </Animate>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: <Users className="w-7 h-7 text-teal" />, title: "Strategic Partnerships", desc: "Collaborations with leading disability accommodation providers across Australia.", delay: 0 },
-              { icon: <TrendingUp className="w-7 h-7 text-teal" />, title: "Occupancy Growth", desc: "Proven pathways to increased client occupancy rates through professional matching.", delay: 0.1 },
-              { icon: <Shield className="w-7 h-7 text-teal" />, title: "Sustainable Stability", desc: "Building long-term stability through quality occupancy outcomes and vacancy protection.", delay: 0.2 },
+              { icon: <Users className="w-7 h-7 text-teal" />, title: "Strategic Partnerships", desc: "Collaborations with leading disability accommodation providers across Australia.", delay: 0, variant: "left" as const },
+              { icon: <TrendingUp className="w-7 h-7 text-teal" />, title: "Occupancy Growth", desc: "Proven pathways to increased client occupancy rates through professional matching.", delay: 0.1, variant: "bottom" as const },
+              { icon: <Shield className="w-7 h-7 text-teal" />, title: "Sustainable Stability", desc: "Building long-term stability through quality occupancy outcomes and vacancy protection.", delay: 0.2, variant: "right" as const },
             ].map((item) => (
-              <FadeUp key={item.title} delay={item.delay}>
+              <Animate key={item.title} variant={item.variant} delay={item.delay}>
                 <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition-shadow text-center h-full">
                   <div className="w-14 h-14 rounded-2xl bg-teal-light flex items-center justify-center mx-auto mb-5">{item.icon}</div>
                   <h3 className="text-lg font-bold text-navy font-heading mb-3">{item.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
                 </div>
-              </FadeUp>
+              </Animate>
             ))}
           </div>
         </div>
@@ -112,11 +140,13 @@ export default function Home() {
               { value: "2", label: "Partnership pathways" },
               { value: "100%", label: "Results-based fees" },
               { value: "End-to-end", label: "Intake management" },
-            ].map((stat) => (
-              <div key={stat.label}>
-                <div className="text-3xl lg:text-4xl font-extrabold text-navy font-heading">{stat.value}</div>
-                <div className="text-sm text-gray-600 mt-1">{stat.label}</div>
-              </div>
+            ].map((stat, i) => (
+              <Animate key={stat.label} variant="bottom" delay={i * 0.07}>
+                <div>
+                  <div className="text-3xl lg:text-4xl font-extrabold text-navy font-heading">{stat.value}</div>
+                  <div className="text-sm text-gray-600 mt-1">{stat.label}</div>
+                </div>
+              </Animate>
             ))}
           </div>
         </div>
@@ -124,12 +154,13 @@ export default function Home() {
 
       {/* ── Done For You teaser ── */}
       <section className="py-16 lg:py-24 bg-navy text-white overflow-hidden relative">
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-teal blur-3xl" />
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <img src={DFY_IMG} alt="" className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-navy/80" />
         </div>
         <div className="container relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <FadeUp delay={0}>
+            <Animate variant="left" delay={0}>
               <div>
                 <div className="inline-flex items-center gap-2 bg-teal/20 border border-teal/30 rounded-full px-4 py-1.5 text-sm text-teal-300 mb-6">
                   <Zap className="w-3.5 h-3.5" />
@@ -169,30 +200,27 @@ export default function Home() {
                       See the Full Breakdown <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>
-                  <JotformModal
-                    label="Register Free"
-                    size="lg"
-                    buttonClassName="bg-white/10 hover:bg-white/20 border border-white/20"
-                  />
+                  <JotformModal label="Register Free" size="lg" buttonClassName="bg-white/10 hover:bg-white/20 border border-white/20" />
                 </div>
               </div>
-            </FadeUp>
+            </Animate>
 
-            {/* Cost card */}
-            <FadeUp delay={0.15}>
+            <Animate variant="right" delay={0.15}>
               <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
                 <h3 className="font-bold font-heading text-lg mb-6 text-white">What Providers Typically Spend</h3>
                 <div className="space-y-4">
                   {[
-                    { label: "Google / Meta Ads", cost: "$2,000–$8,000/mo", icon: <DollarSign className="w-4 h-4" /> },
-                    { label: "Marketing agency retainer", cost: "$3,000–$10,000/mo", icon: <DollarSign className="w-4 h-4" /> },
-                    { label: "Intake coordinator salary", cost: "$65,000–$85,000/yr", icon: <DollarSign className="w-4 h-4" /> },
-                    { label: "Referral agency fees", cost: "$1,500–$5,000/placement", icon: <DollarSign className="w-4 h-4" /> },
-                    { label: "Listing platform subscriptions", cost: "$500–$2,400/yr", icon: <DollarSign className="w-4 h-4" /> },
+                    { label: "Google / Meta Ads", cost: "$2,000–$8,000/mo" },
+                    { label: "Marketing agency retainer", cost: "$3,000–$10,000/mo" },
+                    { label: "Intake coordinator salary", cost: "$65,000–$85,000/yr" },
+                    { label: "Referral agency fees", cost: "$1,500–$5,000/placement" },
+                    { label: "Listing platform subscriptions", cost: "$500–$2,400/yr" },
                   ].map((item) => (
                     <div key={item.label} className="flex items-center justify-between gap-4 py-3 border-b border-white/10 last:border-0">
                       <div className="flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 shrink-0">{item.icon}</div>
+                        <div className="w-7 h-7 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 shrink-0">
+                          <DollarSign className="w-4 h-4" />
+                        </div>
                         <span className="text-sm text-gray-300">{item.label}</span>
                       </div>
                       <span className="text-sm font-bold text-red-400 shrink-0">{item.cost}</span>
@@ -205,24 +233,26 @@ export default function Home() {
                   <p className="text-xs text-gray-400 mt-1">One fixed fee per successful placement. That's it.</p>
                 </div>
               </div>
-            </FadeUp>
+            </Animate>
           </div>
         </div>
       </section>
 
-      {/* ── Partnership Pathways preview ── */}
+      {/* ── Partnership Pathways ── */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="container">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="text-3xl lg:text-4xl font-bold text-navy font-heading mb-4">
-              Two Partnership Pathways — One Reliable Outcome
-            </h2>
-            <p className="text-gray-600 text-lg">
-              A predictable stream of participants professionally screened, intake-ready, and matched to your properties.
-            </p>
-          </div>
+          <Animate variant="bottom">
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <h2 className="text-3xl lg:text-4xl font-bold text-navy font-heading mb-4">
+                Two Partnership Pathways — One Reliable Outcome
+              </h2>
+              <p className="text-gray-600 text-lg">
+                A predictable stream of participants professionally screened, intake-ready, and matched to your properties.
+              </p>
+            </div>
+          </Animate>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <FadeUp delay={0}>
+            <Animate variant="left" delay={0}>
               <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
                 <div className="bg-navy p-8 text-white">
                   <div className="text-xs font-semibold text-teal-300 uppercase tracking-widest mb-2">Pathway 1</div>
@@ -244,8 +274,8 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-            </FadeUp>
-            <FadeUp delay={0.1}>
+            </Animate>
+            <Animate variant="right" delay={0.1}>
               <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
                 <div className="bg-teal p-8 text-white">
                   <div className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-2">Pathway 2</div>
@@ -267,22 +297,22 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-            </FadeUp>
+            </Animate>
           </div>
         </div>
       </section>
 
-      {/* ── Program outcomes ── */}
+      {/* ── Accommodation image section ── */}
       <section className="py-16 lg:py-24 bg-gray-50">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <FadeUp delay={0}>
+            <Animate variant="left" delay={0}>
               <div>
                 <h2 className="text-3xl lg:text-4xl font-bold text-navy font-heading mb-6">What APGP Enables for Providers</h2>
                 <p className="text-gray-600 mb-8 leading-relaxed">
                   Across the country, providers face a clear challenge: high-quality SDA and SIL homes sitting vacant, unpredictable referral flow, and the ongoing cost of maintaining empty rooms. APGP changes that.
                 </p>
-                <ul className="space-y-4">
+                <ul className="space-y-4 mb-8">
                   {[
                     { icon: <Building2 className="w-5 h-5" />, text: "Maintain stable occupancy" },
                     { icon: <TrendingUp className="w-5 h-5" />, text: "Reduce vacancy downtime" },
@@ -296,49 +326,48 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
+                <JotformModal label="Register Now — Free" size="lg" buttonClassName="px-8" />
               </div>
-            </FadeUp>
-            <FadeUp delay={0.15}>
-              <div className="bg-navy rounded-3xl p-10 text-white">
-                <div className="text-teal-300 text-sm font-semibold uppercase tracking-widest mb-4">Expression of Interest</div>
-                <h3 className="text-2xl font-bold font-heading mb-4">Join APGP Today — It's Free</h3>
-                <p className="text-gray-300 mb-6 text-sm leading-relaxed">
-                  Submit your Expression of Interest and our team will contact you to discuss your partnership options and begin matching participants to your properties.
-                </p>
-                <ul className="space-y-3 mb-8">
-                  {[
-                    "Free to register — no commitment required",
-                    "Tell us about your vacancies and regions",
-                    "Our team will reach out within 2 business days",
-                    "Zero cost until a participant moves in",
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm text-gray-200">
-                      <CheckCircle2 className="w-4 h-4 text-teal-300 shrink-0" />{item}
-                    </li>
-                  ))}
-                </ul>
-                <JotformModal label="Register Now — Free" size="lg" buttonClassName="w-full" />
+            </Animate>
+            <Animate variant="right" delay={0.15}>
+              <div className="relative">
+                <img
+                  src={ACCOMMODATION_IMG}
+                  alt="Modern SDA disability accommodation homes in Australian suburb"
+                  className="w-full h-80 lg:h-[460px] object-cover rounded-3xl shadow-2xl"
+                />
+                {/* Floating stat card */}
+                <div className="absolute -bottom-6 -left-6 bg-navy text-white rounded-2xl p-5 shadow-xl">
+                  <p className="text-3xl font-extrabold text-teal-300 font-heading">$0</p>
+                  <p className="text-xs text-gray-300 mt-1">until move-in</p>
+                </div>
+                <div className="absolute -top-6 -right-6 bg-teal text-white rounded-2xl p-5 shadow-xl">
+                  <p className="text-3xl font-extrabold font-heading">100%</p>
+                  <p className="text-xs text-white/80 mt-1">results-based</p>
+                </div>
               </div>
-            </FadeUp>
+            </Animate>
           </div>
         </div>
       </section>
 
-      {/* ── CTA banner ── */}
+      {/* ── EOI CTA ── */}
       <section className="gradient-teal py-16 text-white text-center">
         <div className="container max-w-2xl">
-          <h2 className="text-3xl font-bold font-heading mb-4">Your Next Participant Is Waiting.</h2>
-          <p className="text-white/90 mb-8 text-lg">
-            Join APGP and replace ad spend with a results-based partnership. You list the vacancy. We do the rest.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <JotformModal label="Register Free" size="lg" buttonClassName="bg-navy hover:bg-navy-dark px-10" />
-            <Link href="/done-for-you">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 bg-transparent">
-                How It Works
-              </Button>
-            </Link>
-          </div>
+          <Animate variant="bottom">
+            <h2 className="text-3xl font-bold font-heading mb-4">Your Next Participant Is Waiting.</h2>
+            <p className="text-white/90 mb-8 text-lg">
+              Join APGP and replace ad spend with a results-based partnership. You list the vacancy. We do the rest.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <JotformModal label="Register Free" size="lg" buttonClassName="bg-navy hover:bg-navy-dark px-10" />
+              <Link href="/done-for-you">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 bg-transparent">
+                  How It Works
+                </Button>
+              </Link>
+            </div>
+          </Animate>
         </div>
       </section>
     </PublicLayout>

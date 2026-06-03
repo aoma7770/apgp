@@ -97,9 +97,9 @@ export default function FAQ() {
           <p className="text-gray-300 mb-8">Register your organisation and our team will reach out to answer any specific questions about your situation.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <JotformModal label="Register Now — Free" size="lg" buttonClassName="px-10" />
-            <a href="mailto:info@ausnewhomecare.com">
-              <button className="inline-flex items-center justify-center px-8 py-3 rounded-lg border border-white/30 text-white hover:bg-white/10 transition-colors text-sm font-medium">
-                Contact Us
+            <a href="tel:+61296699302">
+              <button className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-lg border border-white/30 text-white hover:bg-white/10 transition-colors text-sm font-medium">
+                Call (02) 9669 9302
               </button>
             </a>
           </div>

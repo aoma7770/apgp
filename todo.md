@@ -35,6 +35,16 @@
 - [ ] Role-based access control (staff/admin cannot see provider portal and vice versa)
 - [ ] Admin user management (promote users to staff role)
 
+## Updates from Abdi Feedback (Jun 3)
+- [x] Generate AI hero images for home page and key sections
+- [x] Add floating "Register Free" button visible on all public pages while scrolling
+- [x] Update contact email to provider@APGPaccommodation.com.au site-wide
+- [x] Add phone number (02) 9669 9302 to footer and contact areas
+- [x] Update footer copyright to "Accommodation Provider Growth Program" (not Ausnew Support Services)
+- [x] Add Terms of Service page at /terms with full APGP MOU content
+- [x] Add Terms of Service link to footer
+- [x] Enhance scroll animations — elements animate in from left/right/bottom as user scrolls
+
 ## Done For You / Turnkey Marketing
 - [x] Build dedicated DoneForYou.tsx page at /done-for-you with full turnkey pitch, process steps, and pay-per-result framing
 - [x] Add "Done For You" nav link to PublicLayout

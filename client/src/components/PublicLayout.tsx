@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import JotformModal from "@/components/JotformModal";
+import FloatingRegisterButton from "@/components/FloatingRegisterButton";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -22,6 +23,10 @@ const navLinks = [
   { label: "FAQ", href: "/faq" },
 ];
 
+const CONTACT_EMAIL = "provider@APGPaccommodation.com.au";
+const CONTACT_PHONE = "(02) 9669 9302";
+const CONTACT_PHONE_HREF = "tel:+61296699302";
+
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -29,6 +34,22 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      {/* ── Top contact bar ── */}
+      <div className="bg-navy-dark border-b border-white/10 hidden md:block">
+        <div className="container">
+          <div className="flex items-center justify-end gap-6 py-2 text-xs text-gray-400">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-1.5 hover:text-teal-300 transition-colors">
+              <Mail className="w-3 h-3" />
+              {CONTACT_EMAIL}
+            </a>
+            <a href={CONTACT_PHONE_HREF} className="flex items-center gap-1.5 hover:text-teal-300 transition-colors">
+              <Phone className="w-3 h-3" />
+              {CONTACT_PHONE}
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* ── Navigation ── */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
         <div className="container">
@@ -165,6 +186,15 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     </Button>
                   )}
                 />
+                {/* Mobile contact */}
+                <div className="pt-2 flex flex-col gap-1.5">
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-2 text-xs text-gray-500 px-1">
+                    <Mail className="w-3.5 h-3.5 text-teal" />{CONTACT_EMAIL}
+                  </a>
+                  <a href={CONTACT_PHONE_HREF} className="flex items-center gap-2 text-xs text-gray-500 px-1">
+                    <Phone className="w-3.5 h-3.5 text-teal" />{CONTACT_PHONE}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -173,6 +203,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
       {/* ── Page content ── */}
       <main className="flex-1">{children}</main>
+
+      {/* ── Floating register button ── */}
+      <FloatingRegisterButton />
 
       {/* ── Footer ── */}
       <footer className="bg-navy text-white">
@@ -198,6 +231,17 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   Ausnew Support Services
                 </a>
               </p>
+              {/* Contact */}
+              <div className="mt-5 space-y-2">
+                <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-2 text-xs text-gray-400 hover:text-teal-300 transition-colors">
+                  <Mail className="w-3.5 h-3.5 text-teal shrink-0" />
+                  {CONTACT_EMAIL}
+                </a>
+                <a href={CONTACT_PHONE_HREF} className="flex items-center gap-2 text-xs text-gray-400 hover:text-teal-300 transition-colors">
+                  <Phone className="w-3.5 h-3.5 text-teal shrink-0" />
+                  {CONTACT_PHONE}
+                </a>
+              </div>
             </div>
 
             {/* Program */}
@@ -206,9 +250,11 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               <ul className="space-y-2 text-sm text-gray-300">
                 <li><Link href="/about" className="hover:text-teal transition-colors">About APGP</Link></li>
                 <li><Link href="/pathways" className="hover:text-teal transition-colors">Partnership Pathways</Link></li>
+                <li><Link href="/done-for-you" className="hover:text-teal transition-colors">Done For You</Link></li>
                 <li><Link href="/pricing" className="hover:text-teal transition-colors">Pricing Structure</Link></li>
                 <li><Link href="/outcomes" className="hover:text-teal transition-colors">Program Outcomes</Link></li>
                 <li><Link href="/faq" className="hover:text-teal transition-colors">FAQ</Link></li>
+                <li><Link href="/terms" className="hover:text-teal transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
 
@@ -230,24 +276,18 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 <li><Link href="/provider/login" className="hover:text-teal transition-colors">Provider Login</Link></li>
                 <li><Link href="/provider/dashboard" className="hover:text-teal transition-colors">My Dashboard</Link></li>
               </ul>
-              <div className="mt-6">
-                <h4 className="font-semibold text-white mb-3 font-heading">Contact</h4>
-                <p className="text-sm text-gray-300">
-                  <a href="mailto:info@ausnewhomecare.com" className="hover:text-teal transition-colors">
-                    info@ausnewhomecare.com
-                  </a>
-                </p>
-              </div>
             </div>
           </div>
 
           <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-xs text-gray-400">
-              © {new Date().getFullYear()} Ausnew Support Services. All rights reserved.
+              © {new Date().getFullYear()} Accommodation Provider Growth Program. All rights reserved.
             </p>
-            <p className="text-xs text-gray-400">
-              All partnership arrangements are business-to-business and separate from NDIS funding processes.
-            </p>
+            <div className="flex items-center gap-4 text-xs text-gray-400">
+              <Link href="/terms" className="hover:text-teal-300 transition-colors">Terms of Service</Link>
+              <span>·</span>
+              <p>All partnership arrangements are business-to-business and separate from NDIS funding processes.</p>
+            </div>
           </div>
         </div>
       </footer>

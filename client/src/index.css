@@ -157,7 +157,7 @@
 
   /* APGP brand gradient helpers */
   .bg-navy { background-color: oklch(0.22 0.07 245); }
-  .bg-navy-dark { background-color: oklch(0.18 0.06 245); }
+  .bg-navy-dark { background-color: oklch(0.15 0.05 245); }
   .bg-teal { background-color: oklch(0.62 0.13 195); }
   .bg-teal-light { background-color: oklch(0.93 0.05 195); }
   .text-navy { color: oklch(0.22 0.07 245); }
