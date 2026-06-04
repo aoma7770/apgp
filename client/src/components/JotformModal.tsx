@@ -67,22 +67,31 @@ export default function JotformModal({
         </Button>
       )}
 
-      {/* Modal overlay */}
+      {/* Modal overlay — fixed, full viewport, flex-centred */}
       {open && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-[200] flex items-center justify-center"
+          style={{ padding: '1rem' }}
           role="dialog"
           aria-modal="true"
           aria-label="Expression of Interest Form"
         >
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/65 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
 
-          {/* Modal panel */}
-          <div className="relative z-10 w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          {/* Modal panel — centred card */}
+          <div
+            className="relative z-10 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            style={{
+              width: '100%',
+              maxWidth: '680px',
+              maxHeight: '90vh',
+              margin: 'auto',
+            }}
+          >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-navy text-white shrink-0">
               <div>

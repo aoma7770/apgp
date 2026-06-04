@@ -124,7 +124,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   Provider Login
                 </Button>
               </Link>
-              <JotformModal label="Register Free" size="sm" showArrow={false} />
+              <JotformModal label="Register Free" size="sm" showArrow={false} buttonClassName="hover:bg-teal-600" />
             </div>
 
             {/* Mobile hamburger */}

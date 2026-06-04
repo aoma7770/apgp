@@ -59,8 +59,8 @@ export default function Home() {
         </div>
 
         <div className="container relative z-10 py-20 lg:py-32">
-          {/* Text panel with solid white background — guarantees legibility over any image */}
-          <div className="max-w-2xl bg-white/95 backdrop-blur-sm rounded-3xl p-8 lg:p-12 border border-gray-100 shadow-2xl">
+          {/* Text panel with semi-transparent background — legible but shows image behind */}
+          <div className="max-w-2xl bg-white/80 backdrop-blur-md rounded-3xl p-8 lg:p-12 border border-white/60 shadow-2xl">
             <div className="inline-flex items-center gap-2 bg-teal-light border border-teal/30 rounded-full px-4 py-1.5 text-sm text-teal font-semibold mb-6">
               <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
               Accommodation Provider Growth Program
@@ -83,7 +83,7 @@ export default function Home() {
                 buttonClassName="px-8 shadow-xl shadow-teal/30"
               />
               <Link href="/done-for-you">
-                <Button size="lg" variant="outline" className="border-navy text-navy hover:bg-navy hover:text-white transition-colors">
+                <Button size="lg" variant="outline" className="border-navy text-navy hover:bg-teal-light hover:text-navy hover:border-teal transition-colors bg-transparent">
                   How It Works <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
               </Link>
