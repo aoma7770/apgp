@@ -53,48 +53,41 @@ export default function Home() {
             alt="Modern disability-accessible accommodation with support worker and resident"
             className="w-full h-full object-cover object-center"
           />
-          {/* Gradient overlay — navy on left, fade to transparent on right */}
-          <div className="absolute inset-0 bg-gradient-to-r from-navy/95 via-navy/80 to-navy/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
+          {/* Strong overlay — ensures all text is legible at all screen sizes */}
+          <div className="absolute inset-0 bg-navy/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-navy/60 via-transparent to-transparent" />
         </div>
 
         <div className="container relative z-10 py-20 lg:py-32">
           <div className="max-w-2xl">
-            <Animate variant="bottom" delay={0}>
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-teal-300 mb-6">
-                <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-                Accommodation Provider Growth Program
-              </div>
-            </Animate>
-            <Animate variant="left" delay={0.1}>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-heading mb-6 text-white">
-                Disability Accommodation{" "}
-                <span className="text-teal-300">Provider Growth</span>{" "}
-                Program
-              </h1>
-            </Animate>
-            <Animate variant="left" delay={0.2}>
-              <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-xl leading-relaxed">
-                Partnership pathways that deliver{" "}
-                <strong className="text-white">real occupancy</strong>,{" "}
-                <strong className="text-white">real stability</strong>, and{" "}
-                <strong className="text-white">real growth</strong> — with zero financial risk to providers.
-              </p>
-            </Animate>
-            <Animate variant="bottom" delay={0.3}>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <JotformModal
-                  label="Register Now — Free"
-                  size="lg"
-                  buttonClassName="px-8 shadow-xl shadow-teal/30"
-                />
-                <Link href="/done-for-you">
-                  <Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 bg-transparent">
-                    How It Works <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-              </div>
-            </Animate>
+            {/* Hero text: no entrance animation — immediately visible above the fold */}
+            <div className="inline-flex items-center gap-2 bg-navy/70 backdrop-blur-sm border border-teal/40 rounded-full px-4 py-1.5 text-sm text-teal-300 mb-6 shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+              Accommodation Provider Growth Program
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-heading mb-6 text-white drop-shadow-lg">
+              Disability Accommodation{" "}
+              <span className="text-teal-300">Provider Growth</span>{" "}
+              Program
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-100 mb-8 max-w-xl leading-relaxed drop-shadow">
+              Partnership pathways that deliver{" "}
+              <strong className="text-white">real occupancy</strong>,{" "}
+              <strong className="text-white">real stability</strong>, and{" "}
+              <strong className="text-white">real growth</strong> — with zero financial risk to providers.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <JotformModal
+                label="Register Now — Free"
+                size="lg"
+                buttonClassName="px-8 shadow-xl shadow-teal/30"
+              />
+              <Link href="/done-for-you">
+                <Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 bg-transparent">
+                  How It Works <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
