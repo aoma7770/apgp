@@ -58,22 +58,22 @@ export default function Home() {
         </div>
 
         <div className="container relative z-10 py-20 lg:py-32">
-          {/* Text panel — left half only, image fully visible on the right */}
-          <div className="max-w-xl bg-white/75 backdrop-blur-md rounded-3xl p-7 lg:p-10 border border-white/50 shadow-2xl">
-            <div className="inline-flex items-center gap-2 bg-teal-light border border-teal/30 rounded-full px-4 py-1.5 text-sm text-teal font-semibold mb-6">
+          {/* Text panel — highly transparent, left half only */}
+          <div className="max-w-xl bg-black/30 backdrop-blur-sm rounded-3xl p-7 lg:p-10 border border-white/15 shadow-2xl">
+            <div className="inline-flex items-center gap-2 bg-teal/20 border border-teal/40 rounded-full px-4 py-1.5 text-sm text-teal-300 font-semibold mb-6">
               <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
               Accommodation Provider Growth Program
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-heading mb-6 text-navy">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-heading mb-6 text-white drop-shadow-md">
               Disability Accommodation{" "}
-              <span className="text-teal">Provider Growth</span>{" "}
+              <span className="text-teal-300">Provider Growth</span>{" "}
               Program
             </h1>
-            <p className="text-lg sm:text-xl text-gray-700 mb-8 max-w-xl leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-100 mb-8 max-w-xl leading-relaxed drop-shadow">
               Partnership pathways that deliver{" "}
-              <strong className="text-navy">real occupancy</strong>,{" "}
-              <strong className="text-navy">real stability</strong>, and{" "}
-              <strong className="text-navy">real growth</strong> — with zero financial risk to providers.
+              <strong className="text-white">real occupancy</strong>,{" "}
+              <strong className="text-white">real stability</strong>, and{" "}
+              <strong className="text-white">real growth</strong> — with zero financial risk to providers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <JotformModal
@@ -82,7 +82,7 @@ export default function Home() {
                 buttonClassName="px-8 shadow-xl shadow-teal/30"
               />
               <Link href="/done-for-you">
-                <Button size="lg" variant="outline" className="border-navy text-navy hover:bg-teal-light hover:text-navy hover:border-teal transition-colors bg-transparent">
+                <Button size="lg" variant="outline" className="border-white/60 text-white hover:bg-white/15 hover:border-white bg-transparent transition-colors">
                   How It Works <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
               </Link>
