@@ -90,7 +90,26 @@ export const accommodations = mysqlTable("accommodations", {
 export type Accommodation = typeof accommodations.$inferSelect;
 export type InsertAccommodation = typeof accommodations.$inferInsert;
 
-// ─── Provider sessions (JWT-based, separate from Manus OAuth) ────────────────
+// ─── Blog posts ─────────────────────────────────────────────────────────────────────────────────
+export const blogPosts = mysqlTable("blogPosts", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  excerpt: text("excerpt"),
+  content: text("content").notNull(),
+  coverImage: varchar("coverImage", { length: 500 }),
+  category: varchar("category", { length: 100 }),
+  author: varchar("author", { length: 255 }).default("Ausnew APGP Team"),
+  published: boolean("published").default(false).notNull(),
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = typeof blogPosts.$inferInsert;
+
+// ─── Provider sessions (JWT-based, separate from Manus OAuth) ──────────────────
 export const providerSessions = mysqlTable("providerSessions", {
   id: int("id").autoincrement().primaryKey(),
   providerId: int("providerId").notNull(),

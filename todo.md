@@ -35,6 +35,17 @@
 - [ ] Role-based access control (staff/admin cannot see provider portal and vice versa)
 - [ ] Admin user management (promote users to staff role)
 
+## Blog Section
+- [ ] Add blog_posts table to schema (title, slug, excerpt, content, cover_image, category, published, author, created_at)
+- [ ] Apply migration
+- [ ] Add blog tRPC procedures: list (public), getBySlug (public), create/update/delete (admin only)
+- [ ] Build /blog listing page with post cards
+- [ ] Build /blog/:slug individual post page
+- [ ] Build admin blog management page at /staff/blog (create, edit, delete posts)
+- [ ] Add Blog nav link to PublicLayout
+- [ ] Seed 3 starter blog posts
+- [ ] Add Blog preview section to Home page
+
 ## Updates from Abdi Feedback (Jun 3)
 - [x] Generate AI hero images for home page and key sections
 - [x] Add floating "Register Free" button visible on all public pages while scrolling

@@ -18,6 +18,7 @@ const navLinks = [
     ],
   },
   { label: "Done For You", href: "/done-for-you" },
+  { label: "Blog", href: "/blog" },
   { label: "Pricing", href: "/pricing" },
   { label: "Outcomes", href: "/outcomes" },
   { label: "FAQ", href: "/faq" },
@@ -254,6 +255,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 <li><Link href="/pricing" className="hover:text-teal transition-colors">Pricing Structure</Link></li>
                 <li><Link href="/outcomes" className="hover:text-teal transition-colors">Program Outcomes</Link></li>
                 <li><Link href="/faq" className="hover:text-teal transition-colors">FAQ</Link></li>
+                <li><Link href="/blog" className="hover:text-teal transition-colors">Blog</Link></li>
                 <li><Link href="/terms" className="hover:text-teal transition-colors">Terms of Service</Link></li>
               </ul>
             </div>

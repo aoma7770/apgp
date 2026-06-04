@@ -19,6 +19,7 @@ import {
   updateProvider,
 } from "./db";
 import { createMondayProviderItem, updateMondayProviderItem } from "./monday";
+import { blogRouter } from "./routers/blog";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
@@ -291,9 +292,13 @@ export const appRouter = router({
         return searchAccommodations(input);
       }),
   }),
+
+  // ─── Blog ────────────────────────────────────────────────────────────────────────────────
+  blog: blogRouter,
 });
 
 export type AppRouter = typeof appRouter;
+
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function sanitizeProvider(p: import("../drizzle/schema").Provider) {

@@ -14,6 +14,8 @@ import Pricing from "./pages/Pricing";
 import Outcomes from "./pages/Outcomes";
 import FAQ from "./pages/FAQ";
 import Terms from "./pages/Terms";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 // Provider portal
 import ProviderRegister from "./pages/ProviderRegister";
@@ -23,6 +25,7 @@ import ProviderDashboard from "./pages/ProviderDashboard";
 // Staff portal
 import StaffLogin from "./pages/StaffLogin";
 import StaffDashboard from "./pages/StaffDashboard";
+import StaffBlog from "./pages/StaffBlog";
 
 function Router() {
   return (
@@ -36,6 +39,8 @@ function Router() {
       <Route path="/outcomes" component={Outcomes} />
       <Route path="/faq" component={FAQ} />
       <Route path="/terms" component={Terms} />
+      <Route path="/blog" component={Blog} />
+      <Route path="/blog/:slug" component={BlogPost} />
 
       {/* Provider portal */}
       <Route path="/provider/register" component={ProviderRegister} />
@@ -45,6 +50,7 @@ function Router() {
       {/* Staff portal */}
       <Route path="/staff/login" component={StaffLogin} />
       <Route path="/staff/dashboard" component={StaffDashboard} />
+      <Route path="/staff/blog" component={StaffBlog} />
 
       {/* Fallback */}
       <Route path="/404" component={NotFound} />
