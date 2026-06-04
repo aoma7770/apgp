@@ -53,14 +53,13 @@ export default function Home() {
             alt="Modern disability-accessible accommodation with support worker and resident"
             className="w-full h-full object-cover object-center"
           />
-          {/* Strong overlay — ensures all text is legible at all screen sizes */}
-          <div className="absolute inset-0 bg-navy/80" />
-          <div className="absolute inset-0 bg-gradient-to-r from-navy/60 via-transparent to-transparent" />
+          {/* Gradient overlay: stronger on left for text contrast, fades to transparent on right so photo is vivid */}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy/50 via-navy/20 to-transparent" />
         </div>
 
         <div className="container relative z-10 py-20 lg:py-32">
-          {/* Text panel with semi-transparent background — legible but shows image behind */}
-          <div className="max-w-2xl bg-white/80 backdrop-blur-md rounded-3xl p-8 lg:p-12 border border-white/60 shadow-2xl">
+          {/* Text panel — left half only, image fully visible on the right */}
+          <div className="max-w-xl bg-white/75 backdrop-blur-md rounded-3xl p-7 lg:p-10 border border-white/50 shadow-2xl">
             <div className="inline-flex items-center gap-2 bg-teal-light border border-teal/30 rounded-full px-4 py-1.5 text-sm text-teal font-semibold mb-6">
               <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
               Accommodation Provider Growth Program
