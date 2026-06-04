@@ -59,18 +59,18 @@ export default function Home() {
         </div>
 
         <div className="container relative z-10 py-20 lg:py-32">
-          <div className="max-w-2xl">
-            {/* Hero text: no entrance animation — immediately visible above the fold */}
-            <div className="inline-flex items-center gap-2 bg-navy/70 backdrop-blur-sm border border-teal/40 rounded-full px-4 py-1.5 text-sm text-teal-300 mb-6 shadow-lg">
+          {/* Solid dark backing panel — guarantees text legibility over any image */}
+          <div className="max-w-2xl bg-navy/75 backdrop-blur-sm rounded-3xl p-8 lg:p-12 border border-white/10 shadow-2xl">
+            <div className="inline-flex items-center gap-2 bg-teal/20 border border-teal/50 rounded-full px-4 py-1.5 text-sm text-teal-300 mb-6">
               <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
               Accommodation Provider Growth Program
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-heading mb-6 text-white drop-shadow-lg">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-heading mb-6 text-white">
               Disability Accommodation{" "}
               <span className="text-teal-300">Provider Growth</span>{" "}
               Program
             </h1>
-            <p className="text-lg sm:text-xl text-gray-100 mb-8 max-w-xl leading-relaxed drop-shadow">
+            <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-xl leading-relaxed">
               Partnership pathways that deliver{" "}
               <strong className="text-white">real occupancy</strong>,{" "}
               <strong className="text-white">real stability</strong>, and{" "}
