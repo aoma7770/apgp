@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { TOKEN_KEY } from "@/contexts/ProviderAuthContext";
 
 export default function ProviderLogin() {
   const [, setLocation] = useLocation();
@@ -13,7 +14,11 @@ export default function ProviderLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
 
   const login = trpc.provider.login.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Store token in localStorage so it's sent as Bearer header on subsequent requests
+      if (data.token) {
+        try { localStorage.setItem(TOKEN_KEY, data.token); } catch { /* ignore */ }
+      }
       toast.success("Welcome back!");
       setLocation("/provider/dashboard");
     },

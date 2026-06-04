@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { TOKEN_KEY } from "@/contexts/ProviderAuthContext";
 
 export default function ProviderRegister() {
   const [, setLocation] = useLocation();
@@ -13,7 +14,11 @@ export default function ProviderRegister() {
   const [form, setForm] = useState({ email: "", password: "", organisationName: "" });
 
   const register = trpc.provider.register.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Store token in localStorage so it's sent as Bearer header on subsequent requests
+      if (data.token) {
+        try { localStorage.setItem(TOKEN_KEY, data.token); } catch { /* ignore */ }
+      }
       toast.success("Account created! Welcome to APGP.");
       setLocation("/provider/dashboard");
     },
@@ -66,7 +71,6 @@ export default function ProviderRegister() {
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
           <Link href="/" className="flex items-center gap-3 mb-8 lg:hidden">
             <div className="w-9 h-9 rounded-lg bg-navy flex items-center justify-center text-white font-bold font-heading">A</div>
             <div className="font-bold text-navy font-heading text-sm">APGP by Ausnew</div>

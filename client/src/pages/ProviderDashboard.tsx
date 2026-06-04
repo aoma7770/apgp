@@ -46,6 +46,7 @@ export default function ProviderDashboard() {
 
   const logout = trpc.provider.logout.useMutation({
     onSuccess: () => {
+      try { localStorage.removeItem("apgp_provider_token"); } catch { /* ignore */ }
       toast.success("Signed out");
       setLocation("/provider/login");
     },

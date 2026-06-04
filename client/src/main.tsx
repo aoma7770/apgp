@@ -6,6 +6,7 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
+import { ProviderAuthProvider, TOKEN_KEY } from "./contexts/ProviderAuthContext";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -13,11 +14,8 @@ const queryClient = new QueryClient();
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
-
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
-
   if (!isUnauthorized) return;
-
   window.location.href = getLoginUrl();
 };
 
@@ -42,6 +40,16 @@ const trpcClient = trpc.createClient({
     httpBatchLink({
       url: "/api/trpc",
       transformer: superjson,
+      headers() {
+        // Send provider session token as Bearer header (fallback when cookies are blocked)
+        try {
+          const token = localStorage.getItem(TOKEN_KEY);
+          if (token) return { Authorization: `Bearer ${token}` };
+        } catch {
+          // localStorage unavailable
+        }
+        return {};
+      },
       fetch(input, init) {
         return globalThis.fetch(input, {
           ...(init ?? {}),
@@ -55,7 +63,9 @@ const trpcClient = trpc.createClient({
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <ProviderAuthProvider>
+        <App />
+      </ProviderAuthProvider>
     </QueryClientProvider>
   </trpc.Provider>
 );

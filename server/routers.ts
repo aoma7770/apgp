@@ -27,8 +27,13 @@ import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 const PROVIDER_COOKIE = "apgp_provider_session";
 
 // ─── Middleware: require provider session ─────────────────────────────────────
+// Reads token from cookie first, then falls back to Authorization: Bearer header
+// (the Bearer fallback supports environments where cookies are blocked, e.g. preview iframes)
 const providerProcedure = publicProcedure.use(async ({ ctx, next }) => {
-  const token = ctx.req.cookies?.[PROVIDER_COOKIE];
+  const cookieToken = ctx.req.cookies?.[PROVIDER_COOKIE];
+  const authHeader = ctx.req.headers?.authorization;
+  const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  const token = cookieToken || bearerToken;
   if (!token) throw new TRPCError({ code: "UNAUTHORIZED", message: "Provider login required" });
   const provider = await getProviderBySessionToken(token);
   if (!provider) throw new TRPCError({ code: "UNAUTHORIZED", message: "Session expired" });
@@ -115,7 +120,9 @@ export const appRouter = router({
         });
 
         const provider = await getProviderById(providerId);
-        return { success: true, provider: sanitizeProvider(provider!) };
+        // Also return token in body so client can store in localStorage
+        // (fallback for environments where cookies are blocked)
+        return { success: true, token, provider: sanitizeProvider(provider!) };
       }),
 
     login: publicProcedure
@@ -139,7 +146,7 @@ export const appRouter = router({
           maxAge: 30 * 24 * 60 * 60,
         });
 
-        return { success: true, provider: sanitizeProvider(provider) };
+        return { success: true, token, provider: sanitizeProvider(provider) };
       }),
 
     logout: providerProcedure.mutation(async ({ ctx }) => {
