@@ -142,6 +142,8 @@ export const participantLeads = mysqlTable("participantLeads", {
   preferredState: mysqlEnum("preferredState", ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT", "Any"]),
   // Additional support needs (free text, anonymous)
   supportNeeds: text("supportNeeds"),
+  // Monday.com lead ID (e.g. M12-123456) — set by Zapier on ingest
+  mondayLeadId: varchar("mondayLeadId", { length: 30 }),
   // Active flag
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

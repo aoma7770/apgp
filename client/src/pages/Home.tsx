@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ArrowRight, Building2, TrendingUp, Shield, CheckCircle2, Users, Star, Zap, DollarSign, XCircle } from "lucide-react";
+import { ArrowRight, Building2, TrendingUp, Shield, CheckCircle2, Users, Star, Zap, DollarSign, XCircle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PublicLayout from "@/components/PublicLayout";
 import JotformModal from "@/components/JotformModal";
@@ -339,6 +339,70 @@ export default function Home() {
                 </div>
               </div>
             </Animate>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Live Enquiries teaser ── */}
+      <section className="py-16 lg:py-20 bg-white border-t border-gray-100">
+        <div className="container">
+          <Animate variant="bottom">
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                Live Feed — Updated in Real Time
+              </div>
+              <h2 className="text-3xl lg:text-4xl font-bold text-navy font-heading mb-4">
+                Participant Enquiries Are Coming In Now
+              </h2>
+              <p className="text-gray-600 text-lg">
+                Registered APGP providers get exclusive access to a live feed of NDIS accommodation enquiries from Ausnew's participant pipeline. Create a free account to view and action real leads.
+              </p>
+            </div>
+          </Animate>
+
+          {/* Blurred sample lead cards with lock overlay */}
+          <div className="relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pointer-events-none select-none">
+              {[
+                { type: "SDA", dwelling: "House", timeline: "Immediately", state: "NSW", requester: "Support coordinator" },
+                { type: "SIL", dwelling: "Apartment", timeline: "Within 30 days", state: "VIC", requester: "Family member / carer" },
+                { type: "SDA", dwelling: "Group home", timeline: "Within 60 days", state: "QLD", requester: "Support coordinator" },
+              ].map((sample, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm" style={{ filter: 'blur(3px)', opacity: 0.75 }}>
+                  <div className="flex items-center gap-2 mb-3 flex-wrap">
+                    <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal text-white">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" /> NEW
+                    </span>
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-navy text-white">{sample.type}</span>
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-green-100 text-green-700">NDIS Registered</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    {[['Dwelling', sample.dwelling], ['Timeline', sample.timeline], ['State', sample.state], ['Submitted by', sample.requester]].map(([label, val]) => (
+                      <div key={label} className="bg-gray-50 rounded-xl p-2.5">
+                        <p className="text-xs text-gray-400 mb-0.5">{label}</p>
+                        <p className="text-sm font-semibold text-navy">{val}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="h-9 bg-teal rounded-xl" />
+                </div>
+              ))}
+            </div>
+
+            {/* Lock overlay */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-white/95 backdrop-blur-sm rounded-3xl px-8 py-8 text-center shadow-2xl border border-gray-100 max-w-sm mx-4">
+                <div className="w-14 h-14 rounded-2xl bg-teal-light flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-7 h-7 text-teal" />
+                </div>
+                <h3 className="font-bold text-navy font-heading text-lg mb-2">Register to View Live Enquiries</h3>
+                <p className="text-gray-600 text-sm mb-5 leading-relaxed">
+                  Create a free provider account to access the full live feed of NDIS participant accommodation enquiries.
+                </p>
+                <JotformModal label="Register Free — Unlock Access" buttonClassName="w-full" />
+              </div>
+            </div>
           </div>
         </div>
       </section>

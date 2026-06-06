@@ -172,7 +172,7 @@ export default function ProviderDashboard() {
     { id: "overview", label: "Overview", icon: <Home className="w-4 h-4" /> },
     { id: "profile", label: "Company Profile", icon: <User className="w-4 h-4" /> },
     { id: "listings", label: "My Listings", icon: <Building2 className="w-4 h-4" /> },
-    { id: "leads", label: "Participant Leads", icon: <Users className="w-4 h-4" /> },
+    { id: "leads", label: "Live Enquiries", icon: <Users className="w-4 h-4" /> },
   ];
 
   return (
@@ -494,19 +494,30 @@ export default function ProviderDashboard() {
           {/* Participant Leads Feed */}
           {tab === "leads" && (
             <div>
-              <div className="flex items-center justify-between mb-2">
+              {/* Header with live indicator */}
+              <div className="flex items-start justify-between gap-4 mb-6">
                 <div>
-                  <h1 className="text-2xl font-bold text-navy font-heading">Participant Leads</h1>
-                  <p className="text-gray-500 text-sm mt-1">Anonymous accommodation requests from NDIS participants. Express interest to connect via the Ausnew team.</p>
+                  <div className="flex items-center gap-3 mb-1">
+                    <h1 className="text-2xl font-bold text-navy font-heading">Live Participant Enquiries</h1>
+                    <span className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      Live Feed
+                    </span>
+                  </div>
+                  <p className="text-gray-500 text-sm">Real-time NDIS accommodation enquiries from Ausnew's participant pipeline. These leads come directly from our CRM — no personal information is shown.</p>
+                </div>
+                <div className="shrink-0 text-right hidden sm:block">
+                  <p className="text-2xl font-extrabold text-navy font-heading">{leads.length}</p>
+                  <p className="text-xs text-gray-400">active {leads.length === 1 ? 'enquiry' : 'enquiries'}</p>
                 </div>
               </div>
 
-              {/* Info banner */}
-              <div className="bg-teal-light border border-teal/20 rounded-xl p-4 mb-6 flex items-start gap-3">
-                <Handshake className="w-5 h-5 text-teal shrink-0 mt-0.5" />
+              {/* How it works banner */}
+              <div className="bg-navy rounded-2xl p-5 mb-6 flex items-start gap-3">
+                <Handshake className="w-5 h-5 text-teal-300 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-navy">How this works</p>
-                  <p className="text-xs text-gray-600 mt-1">These are anonymous participant requests — no personal information is shown. If you can assist a participant, click <strong>I'm Interested</strong> to sign a Referral Agreement and Consent Form. The Ausnew team will then contact both parties to progress the placement.</p>
+                  <p className="text-sm font-semibold text-white">How to action a lead</p>
+                  <p className="text-xs text-gray-300 mt-1 leading-relaxed">Browse the enquiries below. If you have a suitable property, click <strong className="text-teal-300">I'm Interested</strong>. You'll sign a Referral Agreement and Consent Form, then the Ausnew team will contact both parties to progress the placement. You only pay if the participant moves in.</p>
                 </div>
               </div>
 
@@ -520,12 +531,18 @@ export default function ProviderDashboard() {
                 <div className="space-y-4">
                   {leads.map((lead) => {
                     const summary = `${lead.accommodationType} · ${lead.dwellingType} · ${lead.moveInTimeline} · ${lead.preferredState ?? 'Any state'}`;
+                    const isNew = (Date.now() - new Date(lead.createdAt).getTime()) < 48 * 60 * 60 * 1000; // within 48h
                     return (
-                      <div key={lead.id} className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow p-6 ${lead.alreadyInterested ? 'border-green-200 bg-green-50/30' : 'border-gray-100'}`}>
+                      <div key={lead.id} className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-all duration-200 p-6 ${lead.alreadyInterested ? 'border-green-200 bg-green-50/30' : isNew ? 'border-teal/40 ring-1 ring-teal/20' : 'border-gray-100'}`}>
                         <div className="flex items-start justify-between gap-4 flex-wrap">
                           <div className="flex-1 min-w-0">
                             {/* Header row */}
                             <div className="flex items-center gap-2 mb-3 flex-wrap">
+                              {isNew && !lead.alreadyInterested && (
+                                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-teal text-white animate-pulse">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-white" /> NEW
+                                </span>
+                              )}
                               <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-navy text-white">
                                 <Tag className="w-3 h-3" /> {lead.accommodationType}
                               </span>
@@ -581,9 +598,16 @@ export default function ProviderDashboard() {
                               </div>
                             )}
 
-                            <p className="text-xs text-gray-400 mt-3">
-                              Submitted {new Date(lead.createdAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </p>
+                            <div className="flex items-center gap-4 mt-3">
+                              <p className="text-xs text-gray-400">
+                                Submitted {new Date(lead.createdAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                              {lead.mondayLeadId && (
+                                <p className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+                                  ID: {lead.mondayLeadId}
+                                </p>
+                              )}
+                            </div>
                           </div>
 
                           {/* Action */}

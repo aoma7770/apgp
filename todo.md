@@ -35,17 +35,15 @@
 - [ ] Role-based access control (staff/admin cannot see provider portal and vice versa)
 - [ ] Admin user management (promote users to staff role)
 
-## Participant Leads Feed
-- [ ] Add participantLeads table (care_for, ndis_registered, requester_type, accommodation_type, dwelling_type, move_in_timeline, support_needs, state, is_active)
-- [ ] Add providerInterests table (lead_id, provider_id, referral_agreement_signed, consent_signed, submitted_at)
-- [ ] Apply migrations
-- [ ] tRPC: leads.submit (public), leads.list (provider only), leads.expressInterest (provider only, creates interest + stores signed forms)
-- [ ] Public participant intake form at /request-accommodation
-- [ ] Add "For Participants" nav link or CTA on home page
-- [ ] Provider dashboard: Leads Feed tab with anonymous lead cards
-- [ ] Referral Agreement + Consent popup modal when provider clicks Interested
-- [ ] Notify Ausnew team (notifyOwner) when provider submits interest
-- [ ] Show "Already Expressed Interest" state on leads the provider has already actioned
+## Participant Leads Feed (Corrected Architecture)
+- [ ] Remove public /request-accommodation page and route
+- [ ] Add mondayLeadId field to participantLeads table (e.g. M12-123456)
+- [ ] Add Zapier webhook endpoint POST /api/leads/ingest (API-key protected) so Zapier can push Monday.com leads into the DB
+- [ ] Rename feed tab to "Live Participant Enquiries" in provider dashboard
+- [ ] Make feed look like a live real-time stream with new badge and timestamps
+- [ ] Add teaser/preview section on public home page showing blurred/locked lead cards to entice providers to register
+- [ ] Keep referral agreement + consent popup as-is
+- [ ] Keep notifyOwner on provider interest submission
 
 ## Blog Section
 - [ ] Add blog_posts table to schema (title, slug, excerpt, content, cover_image, category, published, author, created_at)

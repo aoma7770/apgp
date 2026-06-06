@@ -16,7 +16,7 @@ import FAQ from "./pages/FAQ";
 import Terms from "./pages/Terms";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
-import RequestAccommodation from "./pages/RequestAccommodation";
+
 
 // Provider portal
 import ProviderRegister from "./pages/ProviderRegister";
@@ -42,7 +42,7 @@ function Router() {
       <Route path="/terms" component={Terms} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/request-accommodation" component={RequestAccommodation} />
+
 
       {/* Provider portal */}
       <Route path="/provider/register" component={ProviderRegister} />
