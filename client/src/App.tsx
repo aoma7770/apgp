@@ -16,6 +16,7 @@ import FAQ from "./pages/FAQ";
 import Terms from "./pages/Terms";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import ParticipantEnquiries from "./pages/ParticipantEnquiries";
 
 
 // Provider portal
@@ -42,6 +43,7 @@ function Router() {
       <Route path="/terms" component={Terms} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
+      <Route path="/participant-enquiries" component={ParticipantEnquiries} />
 
 
       {/* Provider portal */}
