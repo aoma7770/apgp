@@ -277,6 +277,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 </li>
                 <li><Link href="/provider/login" className="hover:text-teal transition-colors">Provider Login</Link></li>
                 <li><Link href="/provider/dashboard" className="hover:text-teal transition-colors">My Dashboard</Link></li>
+                <li><Link href="/request-accommodation" className="hover:text-teal transition-colors">Request Accommodation</Link></li>
               </ul>
             </div>
           </div>

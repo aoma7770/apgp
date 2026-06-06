@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Building2, User, LogOut, Plus, Edit2, Trash2, CheckCircle2, AlertCircle,
-  Home, MapPin, ChevronRight, Settings, Menu, X
+  Home, MapPin, ChevronRight, Settings, Menu, X, Users, Clock, Tag, Handshake
 } from "lucide-react";
+import ReferralAgreementModal from "@/components/ReferralAgreementModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
-type Tab = "overview" | "profile" | "listings" | "add-listing";
+type Tab = "overview" | "profile" | "listings" | "add-listing" | "leads";
 
 const STATES = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 const SUPPORT_TYPES = ["SDA", "SIL", "Both"];
@@ -43,6 +44,9 @@ export default function ProviderDashboard() {
   }
 
   const { data: listings = [] } = trpc.accommodation.listMine.useQuery(undefined, { enabled: !!provider });
+  const { data: leads = [], refetch: refetchLeads } = trpc.leads.list.useQuery(undefined, { enabled: !!provider });
+  const [interestLeadId, setInterestLeadId] = useState<number | null>(null);
+  const [interestLeadSummary, setInterestLeadSummary] = useState("");
 
   const logout = trpc.provider.logout.useMutation({
     onSuccess: () => {
@@ -168,6 +172,7 @@ export default function ProviderDashboard() {
     { id: "overview", label: "Overview", icon: <Home className="w-4 h-4" /> },
     { id: "profile", label: "Company Profile", icon: <User className="w-4 h-4" /> },
     { id: "listings", label: "My Listings", icon: <Building2 className="w-4 h-4" /> },
+    { id: "leads", label: "Participant Leads", icon: <Users className="w-4 h-4" /> },
   ];
 
   return (
@@ -486,6 +491,127 @@ export default function ProviderDashboard() {
             </div>
           )}
 
+          {/* Participant Leads Feed */}
+          {tab === "leads" && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h1 className="text-2xl font-bold text-navy font-heading">Participant Leads</h1>
+                  <p className="text-gray-500 text-sm mt-1">Anonymous accommodation requests from NDIS participants. Express interest to connect via the Ausnew team.</p>
+                </div>
+              </div>
+
+              {/* Info banner */}
+              <div className="bg-teal-light border border-teal/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+                <Handshake className="w-5 h-5 text-teal shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-navy">How this works</p>
+                  <p className="text-xs text-gray-600 mt-1">These are anonymous participant requests — no personal information is shown. If you can assist a participant, click <strong>I'm Interested</strong> to sign a Referral Agreement and Consent Form. The Ausnew team will then contact both parties to progress the placement.</p>
+                </div>
+              </div>
+
+              {leads.length === 0 ? (
+                <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+                  <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <h3 className="font-semibold text-navy mb-2">No active leads at this time</h3>
+                  <p className="text-gray-500 text-sm">New participant requests will appear here as they come in. Check back soon.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {leads.map((lead) => {
+                    const summary = `${lead.accommodationType} · ${lead.dwellingType} · ${lead.moveInTimeline} · ${lead.preferredState ?? 'Any state'}`;
+                    return (
+                      <div key={lead.id} className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow p-6 ${lead.alreadyInterested ? 'border-green-200 bg-green-50/30' : 'border-gray-100'}`}>
+                        <div className="flex items-start justify-between gap-4 flex-wrap">
+                          <div className="flex-1 min-w-0">
+                            {/* Header row */}
+                            <div className="flex items-center gap-2 mb-3 flex-wrap">
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-navy text-white">
+                                <Tag className="w-3 h-3" /> {lead.accommodationType}
+                              </span>
+                              {lead.ndisRegistered === 'Yes' && (
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-green-100 text-green-700">
+                                  <CheckCircle2 className="w-3 h-3" /> NDIS Registered
+                                </span>
+                              )}
+                              {lead.ndisRegistered === 'In progress' && (
+                                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-yellow-100 text-yellow-700">NDIS In Progress</span>
+                              )}
+                              {lead.alreadyInterested && (
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-green-100 text-green-700">
+                                  <CheckCircle2 className="w-3 h-3" /> Interest Submitted
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Details grid */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+                              <div className="bg-gray-50 rounded-xl p-3">
+                                <p className="text-xs text-gray-400 mb-1">Request for</p>
+                                <p className="text-sm font-semibold text-navy">{lead.careFor}</p>
+                              </div>
+                              <div className="bg-gray-50 rounded-xl p-3">
+                                <p className="text-xs text-gray-400 mb-1">Submitted by</p>
+                                <p className="text-sm font-semibold text-navy">{lead.requesterType}</p>
+                              </div>
+                              <div className="bg-gray-50 rounded-xl p-3">
+                                <p className="text-xs text-gray-400 mb-1">Dwelling type</p>
+                                <p className="text-sm font-semibold text-navy">{lead.dwellingType}</p>
+                              </div>
+                              {lead.sdaCategory && lead.sdaCategory !== 'N/A' && (
+                                <div className="bg-gray-50 rounded-xl p-3">
+                                  <p className="text-xs text-gray-400 mb-1">SDA category</p>
+                                  <p className="text-sm font-semibold text-navy">{lead.sdaCategory}</p>
+                                </div>
+                              )}
+                              <div className="bg-gray-50 rounded-xl p-3">
+                                <p className="text-xs text-gray-400 mb-1">Move-in timeline</p>
+                                <p className="text-sm font-semibold text-navy flex items-center gap-1"><Clock className="w-3 h-3 text-teal" />{lead.moveInTimeline}</p>
+                              </div>
+                              <div className="bg-gray-50 rounded-xl p-3">
+                                <p className="text-xs text-gray-400 mb-1">Preferred state</p>
+                                <p className="text-sm font-semibold text-navy flex items-center gap-1"><MapPin className="w-3 h-3 text-teal" />{lead.preferredState ?? 'Any'}</p>
+                              </div>
+                            </div>
+
+                            {lead.supportNeeds && (
+                              <div className="bg-teal-light rounded-xl p-3">
+                                <p className="text-xs text-gray-500 mb-1">Support needs noted</p>
+                                <p className="text-sm text-gray-700">{lead.supportNeeds}</p>
+                              </div>
+                            )}
+
+                            <p className="text-xs text-gray-400 mt-3">
+                              Submitted {new Date(lead.createdAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </p>
+                          </div>
+
+                          {/* Action */}
+                          <div className="shrink-0">
+                            {lead.alreadyInterested ? (
+                              <div className="flex items-center gap-2 text-green-600 text-sm font-semibold">
+                                <CheckCircle2 className="w-5 h-5" />
+                                <span>Interest Submitted</span>
+                              </div>
+                            ) : (
+                              <Button
+                                onClick={() => { setInterestLeadId(lead.id); setInterestLeadSummary(summary); }}
+                                className="bg-teal hover:bg-teal-600 text-white"
+                              >
+                                <Handshake className="w-4 h-4 mr-2" />
+                                I'm Interested
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Add/Edit listing */}
           {tab === "add-listing" && (
             <div>
@@ -592,6 +718,17 @@ export default function ProviderDashboard() {
           )}
         </main>
       </div>
+
+      {/* Referral Agreement Modal */}
+      {interestLeadId !== null && provider && (
+        <ReferralAgreementModal
+          leadId={interestLeadId}
+          leadSummary={interestLeadSummary}
+          providerName={provider.organisationName ?? provider.email}
+          onClose={() => { setInterestLeadId(null); setInterestLeadSummary(""); }}
+          onSuccess={() => { setInterestLeadId(null); setInterestLeadSummary(""); refetchLeads(); }}
+        />
+      )}
     </div>
   );
 }

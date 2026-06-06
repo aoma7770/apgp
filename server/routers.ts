@@ -20,6 +20,7 @@ import {
 } from "./db";
 import { createMondayProviderItem, updateMondayProviderItem } from "./monday";
 import { blogRouter } from "./routers/blog";
+import { leadsRouter } from "./routers/leads";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
@@ -295,6 +296,9 @@ export const appRouter = router({
 
   // ─── Blog ────────────────────────────────────────────────────────────────────────────────
   blog: blogRouter,
+
+  // ─── Participant leads ─────────────────────────────────────────────────────────────
+  leads: leadsRouter,
 });
 
 export type AppRouter = typeof appRouter;

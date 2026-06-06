@@ -35,6 +35,18 @@
 - [ ] Role-based access control (staff/admin cannot see provider portal and vice versa)
 - [ ] Admin user management (promote users to staff role)
 
+## Participant Leads Feed
+- [ ] Add participantLeads table (care_for, ndis_registered, requester_type, accommodation_type, dwelling_type, move_in_timeline, support_needs, state, is_active)
+- [ ] Add providerInterests table (lead_id, provider_id, referral_agreement_signed, consent_signed, submitted_at)
+- [ ] Apply migrations
+- [ ] tRPC: leads.submit (public), leads.list (provider only), leads.expressInterest (provider only, creates interest + stores signed forms)
+- [ ] Public participant intake form at /request-accommodation
+- [ ] Add "For Participants" nav link or CTA on home page
+- [ ] Provider dashboard: Leads Feed tab with anonymous lead cards
+- [ ] Referral Agreement + Consent popup modal when provider clicks Interested
+- [ ] Notify Ausnew team (notifyOwner) when provider submits interest
+- [ ] Show "Already Expressed Interest" state on leads the provider has already actioned
+
 ## Blog Section
 - [ ] Add blog_posts table to schema (title, slug, excerpt, content, cover_image, category, published, author, created_at)
 - [ ] Apply migration

@@ -90,6 +90,85 @@ export const accommodations = mysqlTable("accommodations", {
 export type Accommodation = typeof accommodations.$inferSelect;
 export type InsertAccommodation = typeof accommodations.$inferInsert;
 
+// ─── Participant accommodation leads ───────────────────────────────────────────────
+export const participantLeads = mysqlTable("participantLeads", {
+  id: int("id").autoincrement().primaryKey(),
+  // Who is this request for?
+  careFor: mysqlEnum("careFor", ["Myself", "A loved one", "A client"]).notNull(),
+  // Requester type
+  requesterType: mysqlEnum("requesterType", [
+    "Self",
+    "Family member / carer",
+    "Support coordinator",
+    "Plan manager",
+    "Other",
+  ]).notNull(),
+  // NDIS status
+  ndisRegistered: mysqlEnum("ndisRegistered", ["Yes", "No", "In progress"]).notNull(),
+  // Accommodation type requested
+  accommodationType: mysqlEnum("accommodationType", [
+    "SDA (Specialist Disability Accommodation)",
+    "SIL (Supported Independent Living)",
+    "STA (Short-Term Accommodation / Respite)",
+    "MTA (Medium-Term Accommodation)",
+    "Not sure",
+  ]).notNull(),
+  // Dwelling type
+  dwellingType: mysqlEnum("dwellingType", [
+    "Apartment",
+    "House",
+    "Group home",
+    "Villa / unit",
+    "Any suitable",
+  ]).notNull(),
+  // SDA category if applicable
+  sdaCategory: mysqlEnum("sdaCategory", [
+    "Improved Liveability",
+    "Fully Accessible",
+    "Robust",
+    "High Physical Support",
+    "Not sure",
+    "N/A",
+  ]),
+  // Move-in timeline
+  moveInTimeline: mysqlEnum("moveInTimeline", [
+    "Immediately",
+    "Within 30 days",
+    "Within 60 days",
+    "Within 90 days",
+    "Unsure",
+  ]).notNull(),
+  // Preferred state
+  preferredState: mysqlEnum("preferredState", ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT", "Any"]),
+  // Additional support needs (free text, anonymous)
+  supportNeeds: text("supportNeeds"),
+  // Active flag
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ParticipantLead = typeof participantLeads.$inferSelect;
+export type InsertParticipantLead = typeof participantLeads.$inferInsert;
+
+// ─── Provider interest / referral agreement ─────────────────────────────────────────────
+export const providerInterests = mysqlTable("providerInterests", {
+  id: int("id").autoincrement().primaryKey(),
+  leadId: int("leadId").notNull(),
+  providerId: int("providerId").notNull(),
+  // Signed agreement text (stored as confirmation)
+  referralAgreementSigned: boolean("referralAgreementSigned").default(false).notNull(),
+  consentSigned: boolean("consentSigned").default(false).notNull(),
+  // Provider's name and organisation at time of signing
+  signatoryName: varchar("signatoryName", { length: 255 }),
+  signatoryOrg: varchar("signatoryOrg", { length: 255 }),
+  // Notes from provider
+  providerNotes: text("providerNotes"),
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+});
+
+export type ProviderInterest = typeof providerInterests.$inferSelect;
+export type InsertProviderInterest = typeof providerInterests.$inferInsert;
+
 // ─── Blog posts ─────────────────────────────────────────────────────────────────────────────────
 export const blogPosts = mysqlTable("blogPosts", {
   id: int("id").autoincrement().primaryKey(),
