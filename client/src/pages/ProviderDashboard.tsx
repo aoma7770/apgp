@@ -892,7 +892,7 @@ export default function ProviderDashboard() {
         <ReferralAgreementModal
           leadId={interestLeadId}
           leadSummary={interestLeadSummary}
-          providerName={provider.organisationName ?? provider.email}
+          provider={provider}
           onClose={() => { setInterestLeadId(null); setInterestLeadSummary(""); }}
           onSuccess={() => { setInterestLeadId(null); setInterestLeadSummary(""); refetchLeads(); }}
         />

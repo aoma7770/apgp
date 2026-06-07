@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { X, CheckCircle2, FileText, Shield, AlertCircle } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { X, CheckCircle2, AlertCircle, Pen, RotateCcw, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,224 +8,491 @@ import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
+interface Provider {
+  id: number;
+  email: string;
+  organisationName?: string | null;
+  abn?: string | null;
+  contactName?: string | null;
+  contactTitle?: string | null;
+  phone?: string | null;
+  companyType?: string | null;
+}
+
 interface ReferralAgreementModalProps {
   leadId: number;
   leadSummary: string;
-  providerName: string;
+  provider: Provider;
   onClose: () => void;
   onSuccess: () => void;
+}
+
+type Step = "details" | "agreement" | "sign";
+
+// Simple canvas signature pad
+function SignaturePad({ onSave }: { onSave: (dataUrl: string) => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const drawing = useRef(false);
+  const [hasSignature, setHasSignature] = useState(false);
+
+  const getPos = (e: MouseEvent | TouchEvent, canvas: HTMLCanvasElement) => {
+    const rect = canvas.getBoundingClientRect();
+    if ("touches" in e) {
+      return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    }
+    return { x: (e as MouseEvent).clientX - rect.left, y: (e as MouseEvent).clientY - rect.top };
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.strokeStyle = "#0d2b4e";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    const start = (e: MouseEvent | TouchEvent) => {
+      e.preventDefault();
+      drawing.current = true;
+      const pos = getPos(e, canvas);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    };
+    const draw = (e: MouseEvent | TouchEvent) => {
+      if (!drawing.current) return;
+      e.preventDefault();
+      const pos = getPos(e, canvas);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      setHasSignature(true);
+    };
+    const stop = () => {
+      if (drawing.current) {
+        drawing.current = false;
+        onSave(canvas.toDataURL());
+      }
+    };
+
+    canvas.addEventListener("mousedown", start);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mouseup", stop);
+    canvas.addEventListener("mouseleave", stop);
+    canvas.addEventListener("touchstart", start, { passive: false });
+    canvas.addEventListener("touchmove", draw, { passive: false });
+    canvas.addEventListener("touchend", stop);
+
+    return () => {
+      canvas.removeEventListener("mousedown", start);
+      canvas.removeEventListener("mousemove", draw);
+      canvas.removeEventListener("mouseup", stop);
+      canvas.removeEventListener("mouseleave", stop);
+      canvas.removeEventListener("touchstart", start);
+      canvas.removeEventListener("touchmove", draw);
+      canvas.removeEventListener("touchend", stop);
+    };
+  }, [onSave]);
+
+  const clear = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setHasSignature(false);
+    onSave("");
+  };
+
+  return (
+    <div>
+      <div className="border-2 border-dashed border-gray-300 rounded-xl overflow-hidden bg-gray-50 relative">
+        <canvas
+          ref={canvasRef}
+          width={580}
+          height={120}
+          className="w-full touch-none cursor-crosshair"
+          style={{ display: "block" }}
+        />
+        {!hasSignature && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span className="text-gray-400 text-sm flex items-center gap-2">
+              <Pen className="w-4 h-4" /> Sign here
+            </span>
+          </div>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={clear}
+        className="mt-2 flex items-center gap-1.5 text-xs text-gray-500 hover:text-red-500 transition-colors"
+      >
+        <RotateCcw className="w-3 h-3" /> Clear signature
+      </button>
+    </div>
+  );
+}
+
+function AgreementSection({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden mb-3">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+      >
+        <span className="font-semibold text-navy text-sm">{title}</span>
+        {open ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+      </button>
+      {open && <div className="px-4 py-4 text-sm text-gray-700 leading-relaxed space-y-2">{children}</div>}
+    </div>
+  );
 }
 
 export default function ReferralAgreementModal({
   leadId,
   leadSummary,
-  providerName,
+  provider,
   onClose,
   onSuccess,
 }: ReferralAgreementModalProps) {
-  const [tab, setTab] = useState<"referral" | "consent">("referral");
-  const [referralRead, setReferralRead] = useState(false);
-  const [consentRead, setConsentRead] = useState(false);
+  const [step, setStep] = useState<Step>("details");
+  const [signatureDataUrl, setSignatureDataUrl] = useState("");
   const [form, setForm] = useState({
-    signatoryName: "",
-    signatoryOrg: providerName,
-    providerNotes: "",
+    organisationName: provider.organisationName ?? "",
+    abn: provider.abn ?? "",
+    contactName: provider.contactName ?? "",
+    contactTitle: provider.contactTitle ?? "",
+    phone: provider.phone ?? "",
+    email: provider.email,
+    partnershipModel: "" as "Referral Partnership" | "Joint Venture Partnership" | "",
+    authorisedCheckbox: false,
+    termsCheckbox: false,
   });
+  const today = new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
 
   const expressInterest = trpc.leads.expressInterest.useMutation({
     onSuccess: () => {
-      toast.success("Interest submitted. The Ausnew team will be in touch.");
+      toast.success("Agreement signed and submitted. Our team will be in touch shortly.");
       onSuccess();
     },
     onError: (err) => toast.error(err.message),
   });
 
-  const canSubmit = referralRead && consentRead && form.signatoryName.trim().length >= 2 && form.signatoryOrg.trim().length >= 2;
+  const canProceedFromDetails = form.organisationName.trim().length >= 2 &&
+    form.abn.trim().length >= 9 &&
+    form.contactName.trim().length >= 2 &&
+    form.partnershipModel !== "";
+
+  const canSubmit = canProceedFromDetails &&
+    form.authorisedCheckbox &&
+    form.termsCheckbox &&
+    signatureDataUrl.length > 0;
 
   const handleSubmit = () => {
     if (!canSubmit) return;
     expressInterest.mutate({
       leadId,
-      signatoryName: form.signatoryName,
-      signatoryOrg: form.signatoryOrg,
-      providerNotes: form.providerNotes || undefined,
+      signatoryName: form.contactName,
+      signatoryOrg: form.organisationName,
+      providerNotes: `Partnership Model: ${form.partnershipModel}. ABN: ${form.abn}. Phone: ${form.phone}. Email: ${form.email}.`,
       referralAgreementSigned: true,
       consentSigned: true,
     });
   };
 
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ padding: "1rem" }}>
-      <div className="absolute inset-0 bg-black/65 backdrop-blur-sm" onClick={onClose} />
+  // Lock body scroll
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  return createPortal(
+    <>
+      <div className="fixed inset-0 bg-black/65 backdrop-blur-sm" style={{ zIndex: 99998 }} onClick={onClose} />
       <div
-        className="relative z-10 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-        style={{ width: "100%", maxWidth: "680px", maxHeight: "90vh", margin: "auto" }}
+        role="dialog"
+        aria-modal="true"
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 99999,
+          width: "calc(100vw - 2rem)",
+          maxWidth: "720px",
+          maxHeight: "92vh",
+          display: "flex",
+          flexDirection: "column",
+          background: "white",
+          borderRadius: "1rem",
+          boxShadow: "0 25px 60px rgba(0,0,0,0.35)",
+          overflow: "hidden",
+        }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-navy text-white shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 bg-navy text-white shrink-0">
           <div>
-            <h2 className="font-bold font-heading text-lg">Express Interest in This Lead</h2>
-            <p className="text-xs text-teal-300 mt-0.5">Please read and sign both documents to proceed</p>
+            <h2 className="font-bold font-heading text-lg">APGP — Referral &amp; Joint Venture Agreement</h2>
+            <p className="text-xs text-teal-300 mt-0.5">
+              {step === "details" ? "Step 1 of 3 — Your Details" : step === "agreement" ? "Step 2 of 3 — Read the Agreement" : "Step 3 of 3 — Sign &amp; Submit"}
+            </p>
           </div>
           <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/10 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Lead summary */}
-        <div className="px-6 py-3 bg-teal-light border-b border-teal/20 shrink-0">
-          <p className="text-xs text-gray-600"><span className="font-semibold text-navy">Lead:</span> {leadSummary}</p>
+        {/* Lead summary bar */}
+        <div className="px-6 py-2.5 bg-teal-light border-b border-teal/20 shrink-0">
+          <p className="text-xs text-gray-600"><span className="font-semibold text-navy">Enquiry:</span> {leadSummary}</p>
         </div>
 
-        {/* Tab navigation */}
+        {/* Step progress */}
         <div className="flex border-b border-gray-100 shrink-0">
-          {[
-            { id: "referral" as const, label: "1. Referral Agreement", icon: <FileText className="w-4 h-4" />, done: referralRead },
-            { id: "consent" as const, label: "2. Consent Form", icon: <Shield className="w-4 h-4" />, done: consentRead },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                tab === t.id ? "border-teal text-teal" : "border-transparent text-gray-500 hover:text-navy"
-              }`}
-            >
-              {t.done ? <CheckCircle2 className="w-4 h-4 text-green-600" /> : t.icon}
-              {t.label}
-            </button>
+          {(["details", "agreement", "sign"] as Step[]).map((s, i) => (
+            <div key={s} className={`flex-1 py-2.5 text-center text-xs font-semibold border-b-2 transition-colors ${step === s ? "border-teal text-teal" : step > s ? "border-green-500 text-green-600" : "border-transparent text-gray-400"}`}>
+              {step > s ? <CheckCircle2 className="w-3.5 h-3.5 inline mr-1" /> : null}
+              {i + 1}. {s === "details" ? "Your Details" : s === "agreement" ? "Agreement" : "Sign"}
+            </div>
           ))}
         </div>
 
-        {/* Document content */}
+        {/* Content */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          {tab === "referral" && (
-            <div>
-              <div className="prose prose-sm max-w-none text-gray-700 mb-6">
-                <h3 className="text-navy font-heading">APGP Referral Agreement</h3>
-                <p>This Referral Agreement ("Agreement") is entered into between <strong>Ausnew Support Services Pty Ltd</strong> ("Ausnew") and the accommodation provider identified below ("Provider").</p>
 
-                <h4>1. Purpose</h4>
-                <p>By expressing interest in a participant lead through the APGP Provider Portal, the Provider agrees to the terms of this Referral Agreement. This Agreement governs the referral of NDIS participants to the Provider's accommodation properties.</p>
+          {/* ── Step 1: Provider Details ── */}
+          {step === "details" && (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Please confirm your organisation details. These will be included in the signed agreement. <strong className="text-navy">ABN is required</strong> to execute this agreement.
+              </p>
 
-                <h4>2. Nature of the Referral</h4>
-                <p>Ausnew will facilitate an introduction between the Provider and the participant (or their representative) for the purpose of assessing suitability for accommodation. The referral does not guarantee placement and is subject to participant consent and suitability assessment.</p>
-
-                <h4>3. Provider Obligations</h4>
-                <ul>
-                  <li>The Provider will respond to referrals in a timely and professional manner.</li>
-                  <li>The Provider will not contact the participant directly without Ausnew's facilitation.</li>
-                  <li>The Provider will maintain the confidentiality of all participant information.</li>
-                  <li>The Provider will comply with the NDIS Code of Conduct and all applicable legislation.</li>
-                </ul>
-
-                <h4>4. Fees</h4>
-                <p>Fees applicable to this referral are governed by the Provider's existing partnership agreement with Ausnew. No fee is payable until a participant successfully completes intake and moves into the Provider's accommodation.</p>
-
-                <h4>5. Confidentiality</h4>
-                <p>All participant information shared by Ausnew is confidential and must be handled in accordance with the Privacy Act 1988 (Cth) and the Australian Privacy Principles. The Provider must not disclose participant information to any third party without Ausnew's written consent.</p>
-
-                <h4>6. NDIS Compliance</h4>
-                <p>All activities under this Agreement must comply with the NDIS Act 2013, the NDIS Practice Standards, and the NDIS Code of Conduct. No fee under this Agreement is charged to or recovered from any NDIS participant.</p>
-
-                <h4>7. Governing Law</h4>
-                <p>This Agreement is governed by the laws of New South Wales, Australia.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <Label className="text-navy font-semibold text-sm">Organisation / Provider Name *</Label>
+                  <Input value={form.organisationName} onChange={(e) => setForm({ ...form, organisationName: e.target.value })} placeholder="Legal entity name" className="mt-1.5" required />
+                </div>
+                <div>
+                  <Label className="text-navy font-semibold text-sm">ABN * <span className="text-red-500">(required to sign)</span></Label>
+                  <Input value={form.abn} onChange={(e) => setForm({ ...form, abn: e.target.value })} placeholder="e.g. 12 345 678 901" className="mt-1.5" required />
+                </div>
+                <div>
+                  <Label className="text-navy font-semibold text-sm">Contact Name *</Label>
+                  <Input value={form.contactName} onChange={(e) => setForm({ ...form, contactName: e.target.value })} placeholder="Authorised signatory name" className="mt-1.5" required />
+                </div>
+                <div>
+                  <Label className="text-navy font-semibold text-sm">Title / Role</Label>
+                  <Input value={form.contactTitle} onChange={(e) => setForm({ ...form, contactTitle: e.target.value })} placeholder="e.g. Director, CEO" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label className="text-navy font-semibold text-sm">Phone</Label>
+                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Contact phone number" className="mt-1.5" />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label className="text-navy font-semibold text-sm">Email</Label>
+                  <Input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} type="email" className="mt-1.5" />
+                </div>
               </div>
-              {!referralRead && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 mb-4">
+
+              <div>
+                <Label className="text-navy font-semibold text-sm mb-2 block">Partnership Model * <span className="text-gray-400 font-normal">(select one)</span></Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {(["Referral Partnership", "Joint Venture Partnership"] as const).map((model) => (
+                    <button
+                      key={model}
+                      type="button"
+                      onClick={() => setForm({ ...form, partnershipModel: model })}
+                      className={`p-4 rounded-xl border text-left transition-all ${form.partnershipModel === model ? "bg-teal text-white border-teal" : "bg-white border-gray-200 hover:border-teal"}`}
+                    >
+                      {form.partnershipModel === model && <CheckCircle2 className="w-4 h-4 inline mr-2" />}
+                      <span className="font-semibold text-sm">{model}</span>
+                      <p className={`text-xs mt-1 ${form.partnershipModel === model ? "text-white/80" : "text-gray-500"}`}>
+                        {model === "Referral Partnership" ? "Success-based placement fee — pay only when participant moves in" : "Shared supports model — no placement fee when Ausnew delivers community access"}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {!canProceedFromDetails && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-700">Please read the full agreement above before confirming.</p>
+                  <p className="text-xs text-amber-700">Please complete all required fields including ABN and select a partnership model before continuing.</p>
                 </div>
               )}
-              <Button
-                onClick={() => { setReferralRead(true); setTab("consent"); }}
-                className={`w-full ${referralRead ? "bg-green-600 hover:bg-green-700" : "bg-teal hover:bg-teal-600"} text-white`}
-              >
-                {referralRead ? <><CheckCircle2 className="w-4 h-4 mr-2" /> Referral Agreement Accepted</> : "I Have Read and Accept the Referral Agreement"}
-              </Button>
             </div>
           )}
 
-          {tab === "consent" && (
+          {/* ── Step 2: Agreement Text ── */}
+          {step === "agreement" && (
             <div>
-              <div className="prose prose-sm max-w-none text-gray-700 mb-6">
-                <h3 className="text-navy font-heading">APGP Provider Consent Form</h3>
-                <p>By completing this form, the Provider consents to the following terms in relation to the participant lead they are expressing interest in.</p>
-
-                <h4>1. Consent to Receive Referral</h4>
-                <p>The Provider consents to receiving a referral from Ausnew Support Services for the purpose of assessing a participant's suitability for accommodation at one of the Provider's properties.</p>
-
-                <h4>2. Consent to Data Handling</h4>
-                <p>The Provider acknowledges that participant information will be shared by Ausnew for the sole purpose of facilitating this referral. The Provider consents to handling this information in accordance with the Privacy Act 1988 (Cth) and agrees not to use it for any purpose other than assessing accommodation suitability.</p>
-
-                <h4>3. Consent to Contact</h4>
-                <p>The Provider consents to being contacted by the Ausnew team to progress this referral. The Provider acknowledges that direct contact with the participant will only occur after Ausnew has facilitated the introduction.</p>
-
-                <h4>4. Acknowledgement</h4>
-                <p>The Provider acknowledges that:</p>
-                <ul>
-                  <li>Expressing interest does not guarantee a placement.</li>
-                  <li>All placement fees are success-based and governed by the Provider's partnership agreement.</li>
-                  <li>This consent is specific to the lead identified in this submission.</li>
-                </ul>
+              <div className="bg-navy/5 rounded-xl p-4 mb-5 text-sm">
+                <p className="font-bold text-navy font-heading mb-1">APGP — Referral &amp; Joint Venture Agreement</p>
+                <p className="text-gray-500 text-xs">MOU - APGP · Version No: 01 · Version Date: 06/01/2026</p>
               </div>
-              {!consentRead && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 mb-4">
-                  <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-700">Please read the full consent form above before confirming.</p>
-                </div>
-              )}
-              <Button
-                onClick={() => setConsentRead(true)}
-                className={`w-full mb-4 ${consentRead ? "bg-green-600 hover:bg-green-700" : "bg-teal hover:bg-teal-600"} text-white`}
-              >
-                {consentRead ? <><CheckCircle2 className="w-4 h-4 mr-2" /> Consent Form Accepted</> : "I Have Read and Accept the Consent Form"}
-              </Button>
 
-              {/* Signatory details */}
-              {consentRead && (
-                <div className="space-y-4 border-t border-gray-100 pt-4">
-                  <h4 className="font-bold text-navy font-heading">Signatory Details</h4>
-                  <div>
-                    <Label className="text-navy font-medium text-sm">Your Full Name *</Label>
-                    <Input value={form.signatoryName} onChange={(e) => setForm({ ...form, signatoryName: e.target.value })} placeholder="Full legal name" className="mt-1.5" />
-                  </div>
-                  <div>
-                    <Label className="text-navy font-medium text-sm">Organisation Name *</Label>
-                    <Input value={form.signatoryOrg} onChange={(e) => setForm({ ...form, signatoryOrg: e.target.value })} placeholder="Your organisation" className="mt-1.5" />
-                  </div>
-                  <div>
-                    <Label className="text-navy font-medium text-sm">Notes for Ausnew Team <span className="text-gray-400 font-normal">(optional)</span></Label>
-                    <Textarea value={form.providerNotes} onChange={(e) => setForm({ ...form, providerNotes: e.target.value })} placeholder="e.g. We have a suitable 2-bedroom property in Parramatta available immediately..." rows={3} className="mt-1.5" maxLength={500} />
-                  </div>
+              <AgreementSection title="1. Parties" defaultOpen={true}>
+                <p>This Agreement is entered into between:</p>
+                <p><strong>Ausnew Support Services Pty Ltd</strong> ("Ausnew"), and</p>
+                <p><strong>{form.organisationName}</strong> (ABN: {form.abn}) ("Provider")</p>
+                <p>Contact: {form.contactName}{form.contactTitle ? `, ${form.contactTitle}` : ""} · {form.email} · {form.phone}</p>
+                <p className="mt-2 text-gray-600">The Provider wishes to participate in the Accommodation Provider Growth Program (APGP), under which Ausnew may introduce Participants to the Provider and, where applicable, collaborate under a referral and/or joint venture arrangement. This Agreement is intended to be legally binding.</p>
+              </AgreementSection>
+
+              <AgreementSection title="2. Partnership Model Election">
+                <p>The Provider has elected to participate under:</p>
+                <p className="font-bold text-navy">☑ {form.partnershipModel}</p>
+                <p className="text-gray-600 mt-1">The rights and obligations applicable to each partnership model are governed by the APGP Terms of Service (MOU).</p>
+              </AgreementSection>
+
+              <AgreementSection title="3. Fees and Quote">
+                <p><strong>3.1 Quote:</strong> Prior to execution of this Agreement, Ausnew will issue the Provider with a written quote setting out the applicable commercial fees for participation in the APGP ("Quote").</p>
+                <p><strong>3.2 Fees:</strong> The Provider agrees to pay Ausnew the fees set out in the Quote issued by Ausnew. The Quote forms part of the commercial understanding between the parties and sets out the applicable fees, including (where applicable): Placement Fee; Vacancy Protection Plan (if elected); and any other agreed fees.</p>
+                <p><strong>3.3 Binding Effect of Quote:</strong> By executing this Agreement, the Provider acknowledges that the Quote accurately reflects the agreed commercial terms and the Provider is bound to pay the fees set out in the Quote.</p>
+                <p><strong>3.4 Provider-Only Fees:</strong> All fees payable under this Agreement and any Quote are <strong>payable by the Accommodation Provider only</strong> and are <strong>not charged to Participants, their families, or their NDIS plans</strong>.</p>
+              </AgreementSection>
+
+              <AgreementSection title="4. Incorporation of APGP Terms of Service (MOU)">
+                <p>This Agreement incorporates by reference the <strong>Accommodation Provider Growth Program – Terms of Service (MOU)</strong>, available at:</p>
+                <a href="https://ausnewdisability.com/apgp-terms-of-service" target="_blank" rel="noopener noreferrer" className="text-teal hover:underline text-xs">https://ausnewdisability.com/apgp-terms-of-service</a>
+                <p className="mt-2">The Provider acknowledges that: it has read and understands the APGP Terms of Service (MOU); the APGP Terms of Service (MOU) forms part of this Agreement; and it agrees to be bound by the APGP Terms of Service (MOU), as amended from time to time.</p>
+                <p>In the event of any inconsistency, <strong>this Agreement prevails</strong> to the extent of the inconsistency.</p>
+              </AgreementSection>
+
+              <AgreementSection title="5. Term and Termination">
+                <p>This Agreement commences on the date of execution and continues until terminated by either party on <strong>thirty (30) days' written notice</strong>, subject to accrued rights and obligations.</p>
+                <p>Termination does not affect: fees already incurred or payable; or obligations that survive termination under the APGP Terms of Service (MOU).</p>
+              </AgreementSection>
+
+              <AgreementSection title="6. Compliance and Participant Safeguards">
+                <p>The Provider acknowledges that: all Participants retain full choice and control; no fees are charged to Participants; and the APGP is a business-to-business commercial arrangement.</p>
+                <p>Each party must comply with all applicable laws, including the <strong>NDIS Act</strong>, <strong>NDIS Code of Conduct</strong>, and <strong>Australian Consumer Law</strong>.</p>
+              </AgreementSection>
+
+              <AgreementSection title="7. Governing Law">
+                <p>This Agreement is governed by the laws of <strong>New South Wales</strong>, and the parties submit to the non-exclusive jurisdiction of the courts of that State.</p>
+              </AgreementSection>
+
+              <AgreementSection title="8. Execution">
+                <p>This Agreement may be executed electronically and in counterparts, each of which constitutes an original.</p>
+                <div className="mt-3 bg-gray-50 rounded-xl p-4 text-xs space-y-1">
+                  <p className="font-bold text-navy">For Ausnew Support Services Pty Ltd</p>
+                  <p>Signature: <span className="italic text-gray-400">(to be executed by Ausnew)</span></p>
+                </div>
+                <div className="mt-3 bg-teal-light rounded-xl p-4 text-xs space-y-1">
+                  <p className="font-bold text-navy">For {form.organisationName}</p>
+                  <p>Name: {form.contactName}</p>
+                  <p>Title: {form.contactTitle || "—"}</p>
+                  <p>Date: {today}</p>
+                  <p className="italic text-gray-500">(Signature to be provided on next step)</p>
+                </div>
+              </AgreementSection>
+            </div>
+          )}
+
+          {/* ── Step 3: Sign ── */}
+          {step === "sign" && (
+            <div className="space-y-5">
+              <div className="bg-navy/5 rounded-xl p-4">
+                <p className="text-sm font-semibold text-navy mb-1">Executing as: {form.organisationName}</p>
+                <p className="text-xs text-gray-500">ABN: {form.abn} · {form.contactName}{form.contactTitle ? `, ${form.contactTitle}` : ""}</p>
+                <p className="text-xs text-gray-500">Partnership Model: <strong className="text-navy">{form.partnershipModel}</strong></p>
+                <p className="text-xs text-gray-500">Date: {today}</p>
+              </div>
+
+              <div>
+                <Label className="text-navy font-semibold text-sm mb-2 block">
+                  <Pen className="w-3.5 h-3.5 inline mr-1.5" />
+                  Your Signature *
+                </Label>
+                <SignaturePad onSave={setSignatureDataUrl} />
+              </div>
+
+              <div className="space-y-3">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.authorisedCheckbox}
+                    onChange={(e) => setForm({ ...form, authorisedCheckbox: e.target.checked })}
+                    className="mt-0.5 w-4 h-4 accent-teal shrink-0"
+                  />
+                  <span className="text-sm text-gray-700">
+                    <strong className="text-navy">I am duly authorised</strong> by {form.organisationName} to sign this Referral &amp; Joint Venture Agreement on behalf of the organisation.
+                  </span>
+                </label>
+
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.termsCheckbox}
+                    onChange={(e) => setForm({ ...form, termsCheckbox: e.target.checked })}
+                    className="mt-0.5 w-4 h-4 accent-teal shrink-0"
+                  />
+                  <span className="text-sm text-gray-700">
+                    I have read and agree to the{" "}
+                    <a href="/terms" target="_blank" className="text-teal hover:underline font-medium">APGP Terms of Service (MOU)</a>{" "}
+                    and the terms of this Agreement, and I understand that this constitutes a legally binding commitment.
+                  </span>
+                </label>
+              </div>
+
+              {!canSubmit && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-700">
+                    {!signatureDataUrl ? "Please draw your signature above. " : ""}
+                    {!form.authorisedCheckbox || !form.termsCheckbox ? "Please tick both checkboxes to confirm." : ""}
+                  </p>
                 </div>
               )}
             </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 shrink-0">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex gap-3 text-xs text-gray-500">
-              <span className={`flex items-center gap-1 ${referralRead ? "text-green-600" : ""}`}>
-                {referralRead ? <CheckCircle2 className="w-3.5 h-3.5" /> : <div className="w-3.5 h-3.5 rounded-full border border-gray-300" />}
-                Referral Agreement
-              </span>
-              <span className={`flex items-center gap-1 ${consentRead ? "text-green-600" : ""}`}>
-                {consentRead ? <CheckCircle2 className="w-3.5 h-3.5" /> : <div className="w-3.5 h-3.5 rounded-full border border-gray-300" />}
-                Consent Form
-              </span>
-            </div>
-            <Button
-              onClick={handleSubmit}
-              disabled={!canSubmit || expressInterest.isPending}
-              className="bg-teal hover:bg-teal-600 text-white disabled:opacity-50"
-            >
-              {expressInterest.isPending ? "Submitting..." : "Submit to Ausnew Team"}
-            </Button>
+        {/* Footer navigation */}
+        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between shrink-0">
+          <div>
+            {step !== "details" && (
+              <button
+                type="button"
+                onClick={() => setStep(step === "sign" ? "agreement" : "details")}
+                className="text-sm text-gray-500 hover:text-navy transition-colors"
+              >
+                ← Back
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={onClose} className="text-sm text-gray-500 hover:text-navy transition-colors">Cancel</button>
+            {step === "details" && (
+              <Button
+                onClick={() => setStep("agreement")}
+                disabled={!canProceedFromDetails}
+                className="bg-teal hover:bg-teal-600 text-white disabled:opacity-50"
+              >
+                Continue to Agreement →
+              </Button>
+            )}
+            {step === "agreement" && (
+              <Button onClick={() => setStep("sign")} className="bg-teal hover:bg-teal-600 text-white">
+                I Have Read the Agreement — Sign →
+              </Button>
+            )}
+            {step === "sign" && (
+              <Button
+                onClick={handleSubmit}
+                disabled={!canSubmit || expressInterest.isPending}
+                className="bg-teal hover:bg-teal-600 text-white disabled:opacity-50"
+              >
+                {expressInterest.isPending ? "Submitting..." : "Sign &amp; Submit to Ausnew Team"}
+              </Button>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </>,
+    document.body
   );
 }
