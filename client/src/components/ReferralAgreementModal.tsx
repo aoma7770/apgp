@@ -356,7 +356,7 @@ export default function ReferralAgreementModal({
 
               <AgreementSection title="4. Incorporation of APGP Terms of Service (MOU)">
                 <p>This Agreement incorporates by reference the <strong>Accommodation Provider Growth Program – Terms of Service (MOU)</strong>, available at:</p>
-                <a href="https://ausnewdisability.com/apgp-terms-of-service" target="_blank" rel="noopener noreferrer" className="text-teal hover:underline text-xs">https://ausnewdisability.com/apgp-terms-of-service</a>
+                <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-teal hover:underline text-xs font-medium">View APGP Terms of Service (MOU) →</a>
                 <p className="mt-2">The Provider acknowledges that: it has read and understands the APGP Terms of Service (MOU); the APGP Terms of Service (MOU) forms part of this Agreement; and it agrees to be bound by the APGP Terms of Service (MOU), as amended from time to time.</p>
                 <p>In the event of any inconsistency, <strong>this Agreement prevails</strong> to the extent of the inconsistency.</p>
               </AgreementSection>
@@ -432,7 +432,7 @@ export default function ReferralAgreementModal({
                   />
                   <span className="text-sm text-gray-700">
                     I have read and agree to the{" "}
-                    <a href="/terms" target="_blank" className="text-teal hover:underline font-medium">APGP Terms of Service (MOU)</a>{" "}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-teal hover:underline font-medium">APGP Terms of Service (MOU)</a>{" "}
                     and the terms of this Agreement, and I understand that this constitutes a legally binding commitment.
                   </span>
                 </label>
