@@ -4,6 +4,7 @@ import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import JotformModal from "@/components/JotformModal";
 import FloatingRegisterButton from "@/components/FloatingRegisterButton";
+import LeadNotificationToast from "@/components/LeadNotificationToast";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -208,6 +209,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
       {/* ── Floating register button ── */}
       <FloatingRegisterButton />
+      <LeadNotificationToast isPublic={true} />
 
       {/* ── Footer ── */}
       <footer className="bg-navy text-white">

@@ -6,6 +6,7 @@ import {
   FileText, CreditCard, Upload, Download, Trash
 } from "lucide-react";
 import ReferralAgreementModal from "@/components/ReferralAgreementModal";
+import LeadNotificationToast from "@/components/LeadNotificationToast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -882,6 +883,9 @@ export default function ProviderDashboard() {
           )}
         </main>
       </div>
+
+      {/* Live lead notifications for logged-in providers */}
+      <LeadNotificationToast isPublic={false} />
 
       {/* Referral Agreement Modal */}
       {interestLeadId !== null && provider && (

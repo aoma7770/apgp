@@ -57,6 +57,19 @@ export const leadsRouter = router({
       return { success: true, id };
     }),
 
+  // Public: get recent leads for notification display (last 5, anonymised, no auth required)
+  recentForNotifications: publicProcedure.query(async () => {
+    const leads = await listActiveLeads();
+    return leads.slice(0, 5).map((lead) => ({
+      id: lead.id,
+      accommodationType: lead.accommodationType,
+      preferredState: lead.preferredState ?? "Australia",
+      moveInTimeline: lead.moveInTimeline,
+      ndisRegistered: lead.ndisRegistered,
+      createdAt: lead.createdAt,
+    }));
+  }),
+
   // Provider: list all active leads with interest status
   list: providerProcedure.query(async ({ ctx }) => {
     const leads = await listActiveLeads();
