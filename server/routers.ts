@@ -21,6 +21,8 @@ import {
 import { createMondayProviderItem, updateMondayProviderItem } from "./monday";
 import { blogRouter } from "./routers/blog";
 import { leadsRouter } from "./routers/leads";
+import { documentsRouter } from "./routers/documents";
+import { notifyOwner } from "./_core/notification";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
@@ -101,6 +103,12 @@ export const appRouter = router({
         const token = nanoid(64);
         const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
         await createProviderSession(providerId, token, expiresAt);
+
+        // Notify Ausnew team of new provider registration (non-blocking)
+        notifyOwner({
+          title: `New Provider Registration: ${input.organisationName ?? input.email}`,
+          content: `A new provider has registered on the APGP platform.\n\nEmail: ${input.email}\nOrganisation: ${input.organisationName ?? 'Not provided'}\nRegistered: ${new Date().toLocaleString('en-AU')}`,
+        }).catch(console.error);
 
         // Sync to Monday.com (non-blocking)
         createMondayProviderItem({
@@ -296,6 +304,9 @@ export const appRouter = router({
 
   // ─── Blog ────────────────────────────────────────────────────────────────────────────────
   blog: blogRouter,
+
+  // ─── Provider documents
+  documents: documentsRouter,
 
   // ─── Participant leads ─────────────────────────────────────────────────────────────
   leads: leadsRouter,

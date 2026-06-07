@@ -171,6 +171,22 @@ export const providerInterests = mysqlTable("providerInterests", {
 export type ProviderInterest = typeof providerInterests.$inferSelect;
 export type InsertProviderInterest = typeof providerInterests.$inferInsert;
 
+// ─── Provider documents ─────────────────────────────────────────────────────────────────────────────────
+export const providerDocuments = mysqlTable("providerDocuments", {
+  id: int("id").autoincrement().primaryKey(),
+  providerId: int("providerId").notNull(),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  fileKey: varchar("fileKey", { length: 500 }).notNull(),
+  fileUrl: varchar("fileUrl", { length: 500 }).notNull(),
+  fileType: varchar("fileType", { length: 100 }),
+  fileSize: int("fileSize"),
+  category: mysqlEnum("category", ["Referral Agreement", "Consent Form", "NDIS Registration", "Insurance", "Other"]).default("Other"),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+});
+
+export type ProviderDocument = typeof providerDocuments.$inferSelect;
+export type InsertProviderDocument = typeof providerDocuments.$inferInsert;
+
 // ─── Blog posts ─────────────────────────────────────────────────────────────────────────────────
 export const blogPosts = mysqlTable("blogPosts", {
   id: int("id").autoincrement().primaryKey(),

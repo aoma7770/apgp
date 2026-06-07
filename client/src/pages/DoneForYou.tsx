@@ -27,16 +27,16 @@ const processSteps = [
   {
     number: "01",
     icon: <Home className="w-6 h-6" />,
-    title: "You Tell Us Your Vacancies",
-    desc: "That's it. Just share your property details — address, room configuration, SDA category, and any specific support requirements. Takes less than 5 minutes.",
-    highlight: "You do this once. We do the rest.",
+    title: "Register Free and Access the Platform",
+    desc: "Create your free APGP provider account in minutes. Once logged in, you immediately gain access to the live participant enquiries feed and your provider dashboard.",
+    highlight: "No commitment. No upfront cost. Just register.",
   },
   {
     number: "02",
     icon: <Search className="w-6 h-6" />,
-    title: "We Find the Right Participant",
-    desc: "Our team actively searches our pipeline of pre-qualified NDIS participants, matching their support needs, funding category, and location preferences to your specific property.",
-    highlight: "No job ads. No cold calls. No agency fees upfront.",
+    title: "Two Ways to Find Your Next Participant",
+    desc: "Option A: Tell us your vacancies and our team actively matches participants from our pipeline to your specific properties. Option B: Browse the live participant enquiries feed and choose which enquiries you want to assist — first come, first served.",
+    highlight: "You choose how involved you want to be.",
   },
   {
     number: "03",

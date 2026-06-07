@@ -35,6 +35,16 @@
 - [ ] Role-based access control (staff/admin cannot see provider portal and vice versa)
 - [ ] Admin user management (promote users to staff role)
 
+## Abdi Feedback Round 3
+- [ ] Fix Jotform modal: ensure ALL register buttons use identical centred popup (same as floating button)
+- [ ] Update Jotform URL to new form with ABN field and vacancies question (once Abdi provides new URL)
+- [ ] Add registration confirmation/welcome email to provider on sign-up
+- [ ] Add Documents tab to provider dashboard (upload/view signed agreements)
+- [ ] Add Billing tab to provider dashboard (placeholder for future billing)
+- [ ] Update Done For You page: add participant enquiries as an alternative pathway in How It Works
+- [ ] Update copywriting: replace 'Ausnew CRM' with 'our CRM' / 'our pipeline' across all pages
+- [ ] Update Home page How It Works steps to mention participant enquiries feed as option 2
+
 ## Participant Leads Feed (Corrected Architecture)
 - [ ] Remove public /request-accommodation page and route
 - [ ] Add mondayLeadId field to participantLeads table (e.g. M12-123456)

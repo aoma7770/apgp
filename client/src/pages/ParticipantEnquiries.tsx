@@ -46,7 +46,7 @@ const howItWorks = [
     step: "01",
     icon: <Bell className="w-6 h-6" />,
     title: "Leads Come In Through Our CRM",
-    desc: "Every time a new NDIS participant enquiry is received through Ausnew's marketing channels, it is automatically fed into the APGP platform in real time — no manual entry, no delays.",
+    desc: "Every time a new NDIS participant enquiry is received through our marketing channels, it is automatically fed into the APGP platform in real time — no manual entry, no delays.",
   },
   {
     step: "02",
@@ -63,8 +63,8 @@ const howItWorks = [
   {
     step: "04",
     icon: <Users className="w-6 h-6" />,
-    title: "Ausnew Facilitates the Connection",
-    desc: "Once a provider submits their interest, the Ausnew team reviews the match and contacts both the participant and the provider to progress the placement — managing the full intake process.",
+    title: "Our Team Facilitates the Connection",
+    desc: "Once a provider submits their interest, our team reviews the match and contacts both the participant and the provider to progress the placement — managing the full intake process.",
   },
   {
     step: "05",
@@ -115,7 +115,7 @@ export default function ParticipantEnquiries() {
           </Animate>
           <Animate variant="bottom" delay={0.2}>
             <p className="text-gray-300 text-lg leading-relaxed mb-8">
-              APGP-registered providers get exclusive access to a real-time feed of NDIS accommodation requests sourced directly from Ausnew's participant pipeline. Every enquiry is anonymous, pre-qualified, and ready to action.
+              APGP-registered providers get exclusive access to a real-time feed of NDIS accommodation requests sourced directly from our participant pipeline. Every enquiry is anonymous, pre-qualified, and ready to action.
             </p>
           </Animate>
           <Animate variant="bottom" delay={0.3}>
@@ -146,13 +146,13 @@ export default function ParticipantEnquiries() {
                   Real Enquiries. Real Participants. Real Time.
                 </h2>
                 <p className="text-gray-600 mb-6 leading-relaxed">
-                  Every day, Ausnew Support Services receives accommodation enquiries from NDIS participants, their families, and support coordinators through our marketing channels and CRM. These enquiries are automatically fed into the APGP platform as they arrive.
+                  Every day, we receive accommodation enquiries from NDIS participants, their families, and support coordinators through our marketing channels and CRM. These enquiries are automatically fed into the APGP platform as they arrive.
                 </p>
                 <p className="text-gray-600 mb-6 leading-relaxed">
                   As a registered APGP provider, you see these enquiries in real time — anonymised to protect participant privacy, but containing all the information you need to assess whether you have a suitable property.
                 </p>
                 <p className="text-gray-600 leading-relaxed">
-                  When you find a match, you express interest directly in the platform. Ausnew then facilitates the introduction and manages the full intake process through to move-in.
+                  When you find a match, you express interest directly in the platform. Our team then facilitates the introduction and manages the full intake process through to move-in.
                 </p>
               </div>
             </Animate>
@@ -272,7 +272,7 @@ export default function ParticipantEnquiries() {
                   ))}
                 </ul>
                 <p className="text-xs text-gray-400 mt-5 leading-relaxed">
-                  Personal information is only shared after the provider submits a signed Referral Agreement and Consent Form, and Ausnew has reviewed the match.
+                  Personal information is only shared after the provider submits a signed Referral Agreement and Consent Form, and our team has reviewed the match.
                 </p>
               </div>
             </Animate>
@@ -337,7 +337,7 @@ export default function ParticipantEnquiries() {
               {
                 icon: <Shield className="w-7 h-7 text-teal" />,
                 title: "Pre-Qualified Leads",
-                desc: "Every enquiry in the feed comes from Ausnew's participant pipeline — meaning they've already been through our initial qualification process.",
+                desc: "Every enquiry in the feed comes from our participant pipeline — meaning they've already been through our initial qualification process.",
                 variant: "bottom" as const,
               },
               {
@@ -375,11 +375,11 @@ export default function ParticipantEnquiries() {
               },
               {
                 q: "How often are new enquiries added?",
-                a: "Enquiries are added in real time as they arrive through Ausnew's participant pipeline. New leads are marked with a 'NEW' badge for the first 48 hours.",
+                a: "Enquiries are added in real time as they arrive through our participant pipeline. New leads are marked with a 'NEW' badge for the first 48 hours.",
               },
               {
                 q: "What happens after I express interest?",
-                a: "You sign a Referral Agreement and Consent Form directly in the platform. The Ausnew team then reviews your interest and contacts both you and the participant to progress the placement.",
+                a: "You sign a Referral Agreement and Consent Form directly in the platform. Our team then reviews your interest and contacts both you and the participant to progress the placement.",
               },
               {
                 q: "Is there a cost to access the feed?",

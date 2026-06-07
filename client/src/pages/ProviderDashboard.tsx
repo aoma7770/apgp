@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Building2, User, LogOut, Plus, Edit2, Trash2, CheckCircle2, AlertCircle,
-  Home, MapPin, ChevronRight, Settings, Menu, X, Users, Clock, Tag, Handshake
+  Home, MapPin, ChevronRight, Settings, Menu, X, Users, Clock, Tag, Handshake,
+  FileText, CreditCard, Upload, Download, Trash
 } from "lucide-react";
 import ReferralAgreementModal from "@/components/ReferralAgreementModal";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
-type Tab = "overview" | "profile" | "listings" | "add-listing" | "leads";
+type Tab = "overview" | "profile" | "listings" | "add-listing" | "leads" | "documents" | "billing";
 
 const STATES = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 const SUPPORT_TYPES = ["SDA", "SIL", "Both"];
@@ -47,6 +48,43 @@ export default function ProviderDashboard() {
   const { data: leads = [], refetch: refetchLeads } = trpc.leads.list.useQuery(undefined, { enabled: !!provider });
   const [interestLeadId, setInterestLeadId] = useState<number | null>(null);
   const [interestLeadSummary, setInterestLeadSummary] = useState("");
+
+  // Documents
+  const { data: documents = [], refetch: refetchDocs } = trpc.documents.list.useQuery(undefined, { enabled: !!provider });
+  const [uploadCategory, setUploadCategory] = useState<"Referral Agreement" | "Consent Form" | "NDIS Registration" | "Insurance" | "Other">("Other");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadDoc = trpc.documents.upload.useMutation({
+    onSuccess: () => { toast.success("Document uploaded."); refetchDocs(); },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const deleteDoc = trpc.documents.delete.useMutation({
+    onSuccess: () => { toast.success("Document removed."); refetchDocs(); },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) { toast.error("File must be under 10MB"); return; }
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(",")[1];
+      uploadDoc.mutate({
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileBase64: base64,
+        category: uploadCategory,
+      });
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
 
   const logout = trpc.provider.logout.useMutation({
     onSuccess: () => {
@@ -173,6 +211,8 @@ export default function ProviderDashboard() {
     { id: "profile", label: "Company Profile", icon: <User className="w-4 h-4" /> },
     { id: "listings", label: "My Listings", icon: <Building2 className="w-4 h-4" /> },
     { id: "leads", label: "Live Enquiries", icon: <Users className="w-4 h-4" /> },
+    { id: "documents", label: "Documents", icon: <FileText className="w-4 h-4" /> },
+    { id: "billing", label: "Billing", icon: <CreditCard className="w-4 h-4" /> },
   ];
 
   return (
@@ -633,6 +673,106 @@ export default function ProviderDashboard() {
                   })}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Documents */}
+          {tab === "documents" && (
+            <div>
+              <h1 className="text-2xl font-bold text-navy font-heading mb-2">Documents</h1>
+              <p className="text-gray-500 text-sm mb-6">Upload and manage your signed agreements, NDIS registration, insurance certificates, and other important documents.</p>
+
+              {/* Upload area */}
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6">
+                <h3 className="font-bold text-navy font-heading mb-4">Upload a Document</h3>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1">
+                    <Label className="text-navy font-medium text-sm mb-1.5 block">Document Category</Label>
+                    <Select value={uploadCategory} onValueChange={(v) => setUploadCategory(v as typeof uploadCategory)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {["Referral Agreement", "Consent Form", "NDIS Registration", "Insurance", "Other"].map((c) => (
+                          <SelectItem key={c} value={c}>{c}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-end">
+                    <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileUpload} accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading || uploadDoc.isPending}
+                      className="bg-teal hover:bg-teal-600 text-white"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      {uploading || uploadDoc.isPending ? "Uploading..." : "Choose File"}
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 mt-3">Accepted formats: PDF, Word, PNG, JPG. Maximum file size: 10MB.</p>
+              </div>
+
+              {/* Document list */}
+              {documents.length === 0 ? (
+                <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <h3 className="font-semibold text-navy mb-2">No documents yet</h3>
+                  <p className="text-gray-500 text-sm">Upload your signed agreements, NDIS registration, and other documents to keep them organised in one place.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {documents.map((doc) => (
+                    <div key={doc.id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-teal-light flex items-center justify-center shrink-0">
+                          <FileText className="w-5 h-5 text-teal" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-navy text-sm truncate">{doc.fileName}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <Badge variant="outline" className="text-xs border-teal text-teal">{doc.category}</Badge>
+                            {doc.fileSize && <span className="text-xs text-gray-400">{(doc.fileSize / 1024).toFixed(0)} KB</span>}
+                            <span className="text-xs text-gray-400">{new Date(doc.uploadedAt).toLocaleDateString('en-AU')}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer">
+                          <button className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal-light transition-colors">
+                            <Download className="w-4 h-4" />
+                          </button>
+                        </a>
+                        <button
+                          onClick={() => { if (confirm("Remove this document?")) deleteDoc.mutate({ id: doc.id }); }}
+                          className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                          <Trash className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Billing */}
+          {tab === "billing" && (
+            <div>
+              <h1 className="text-2xl font-bold text-navy font-heading mb-2">Billing</h1>
+              <p className="text-gray-500 text-sm mb-6">View your billing history, invoices, and payment details.</p>
+              <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+                <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="font-semibold text-navy mb-2">Billing Coming Soon</h3>
+                <p className="text-gray-500 text-sm max-w-sm mx-auto leading-relaxed">
+                  Your billing history and invoices will appear here once your first placement is confirmed. Remember — you only pay when a participant moves in.
+                </p>
+                <div className="mt-6 bg-teal-light rounded-xl p-4 max-w-sm mx-auto">
+                  <p className="text-sm font-semibold text-navy">Current Balance</p>
+                  <p className="text-3xl font-extrabold text-teal font-heading mt-1">$0.00</p>
+                  <p className="text-xs text-gray-500 mt-1">No outstanding invoices</p>
+                </div>
+              </div>
             </div>
           )}
 
