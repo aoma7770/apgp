@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Building2, User, LogOut, Plus, Edit2, Trash2, CheckCircle2, AlertCircle,
@@ -112,7 +112,8 @@ export default function ProviderDashboard() {
     onError: (err) => toast.error(err.message),
   });
 
-  // Profile form
+  // Profile form — initialised from provider data (auto-populated from registration)
+  const [profileFormInit, setProfileFormInit] = useState(false);
   const [profileForm, setProfileForm] = useState({
     organisationName: "",
     abn: "",
@@ -124,6 +125,24 @@ export default function ProviderDashboard() {
     supportTypes: "",
     companyType: "" as "SDA" | "SIL" | "Both" | "",
   });
+
+  // Auto-populate profile form from registration data when provider loads
+  useEffect(() => {
+    if (provider && !profileFormInit) {
+      setProfileForm({
+        organisationName: provider.organisationName ?? "",
+        abn: provider.abn ?? "",
+        contactName: provider.contactName ?? "",
+        contactTitle: provider.contactTitle ?? "",
+        phone: provider.phone ?? "",
+        website: provider.website ?? "",
+        regionsServiced: provider.regionsServiced ?? "",
+        supportTypes: provider.supportTypes ?? "",
+        companyType: (provider.companyType as "SDA" | "SIL" | "Both" | "") ?? "",
+      });
+      setProfileFormInit(true);
+    }
+  }, [provider, profileFormInit]);
 
   const initProfileForm = () => {
     if (!provider) return;
@@ -367,7 +386,28 @@ export default function ProviderDashboard() {
           {tab === "profile" && (
             <div>
               <h1 className="text-2xl font-bold text-navy font-heading mb-2">Company Profile</h1>
-              <p className="text-gray-500 text-sm mb-8">This information is shared with the Ausnew team and synced to our CRM.</p>
+              <p className="text-gray-500 text-sm mb-6">Your profile details are pre-filled from your registration. Update any information below and click Save Profile to keep it current.</p>
+
+              {/* Registration data summary card */}
+              {(provider.organisationName || provider.contactName || provider.phone) && (
+                <div className="bg-teal-light border border-teal/20 rounded-2xl p-5 mb-6 flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-teal flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-navy font-heading text-sm mb-1">Registration details loaded</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1 text-xs text-gray-600">
+                      {provider.organisationName && <span><strong>Org:</strong> {provider.organisationName}</span>}
+                      {provider.abn && <span><strong>ABN:</strong> {provider.abn}</span>}
+                      {provider.contactName && <span><strong>Contact:</strong> {provider.contactName}</span>}
+                      {provider.phone && <span><strong>Phone:</strong> {provider.phone}</span>}
+                      {provider.companyType && <span><strong>Type:</strong> {provider.companyType}</span>}
+                      {provider.regionsServiced && <span><strong>States:</strong> {provider.regionsServiced}</span>}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm max-w-2xl">
                 <form
                   onSubmit={(e) => {
@@ -571,7 +611,7 @@ export default function ProviderDashboard() {
               ) : (
                 <div className="space-y-4">
                   {leads.map((lead) => {
-                    const summary = `${lead.accommodationType} · ${lead.dwellingType} · ${lead.moveInTimeline} · ${lead.preferredState ?? 'Any state'}`;
+                    const summary = `${lead.accommodationType} · ${lead.dwellingType} · ${lead.moveInTimeline} · ${lead.postcode ? `Postcode ${lead.postcode}` : (lead.preferredState ?? 'Any state')}`;
                     const isNew = (Date.now() - new Date(lead.createdAt).getTime()) < 48 * 60 * 60 * 1000; // within 48h
                     return (
                       <div key={lead.id} className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-all duration-200 p-6 ${lead.alreadyInterested ? 'border-green-200 bg-green-50/30' : isNew ? 'border-teal/40 ring-1 ring-teal/20' : 'border-gray-100'}`}>
@@ -627,8 +667,11 @@ export default function ProviderDashboard() {
                                 <p className="text-sm font-semibold text-navy flex items-center gap-1"><Clock className="w-3 h-3 text-teal" />{lead.moveInTimeline}</p>
                               </div>
                               <div className="bg-gray-50 rounded-xl p-3">
-                                <p className="text-xs text-gray-400 mb-1">Preferred state</p>
-                                <p className="text-sm font-semibold text-navy flex items-center gap-1"><MapPin className="w-3 h-3 text-teal" />{lead.preferredState ?? 'Any'}</p>
+                                <p className="text-xs text-gray-400 mb-1">Postcode</p>
+                                <p className="text-sm font-semibold text-navy flex items-center gap-1">
+                                  <MapPin className="w-3 h-3 text-teal" />
+                                  {lead.postcode ? lead.postcode : (lead.preferredState ?? 'Not specified')}
+                                </p>
                               </div>
                             </div>
 

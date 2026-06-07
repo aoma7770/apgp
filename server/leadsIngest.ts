@@ -113,6 +113,7 @@ export function registerLeadsIngestRoute(app: Express) {
         moveInTimeline: mapField(body.move_in_timeline, TIMELINE_MAP, "Unsure") as "Immediately" | "Within 30 days" | "Within 60 days" | "Within 90 days" | "Unsure",
         preferredState: mapField(body.preferred_state, STATE_MAP, "Any") as "NSW" | "VIC" | "QLD" | "SA" | "WA" | "TAS" | "ACT" | "NT" | "Any",
         supportNeeds: body.support_needs || undefined,
+        postcode: body.postcode || body.post_code || undefined,
         mondayLeadId,
       };
 

@@ -140,6 +140,8 @@ export const participantLeads = mysqlTable("participantLeads", {
   ]).notNull(),
   // Preferred state
   preferredState: mysqlEnum("preferredState", ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT", "Any"]),
+  // Postcode
+  postcode: varchar("postcode", { length: 10 }),
   // Additional support needs (free text, anonymous)
   supportNeeds: text("supportNeeds"),
   // Monday.com lead ID (e.g. M12-123456) — set by Zapier on ingest

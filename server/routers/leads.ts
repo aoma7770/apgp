@@ -64,6 +64,7 @@ export const leadsRouter = router({
       id: lead.id,
       accommodationType: lead.accommodationType,
       preferredState: lead.preferredState ?? "Australia",
+      postcode: lead.postcode ?? null,
       moveInTimeline: lead.moveInTimeline,
       ndisRegistered: lead.ndisRegistered,
       createdAt: lead.createdAt,

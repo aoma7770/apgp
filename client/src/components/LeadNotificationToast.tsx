@@ -18,6 +18,7 @@ interface Notification {
   id: number;
   accommodationType: string;
   preferredState: string;
+  postcode: string | null;
   moveInTimeline: string;
   ndisRegistered: string;
   createdAt: Date;
@@ -124,7 +125,9 @@ function ToastCard({
         {/* Main message */}
         <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "oklch(0.22 0.07 245)", margin: "0 0 0.5rem 0", lineHeight: 1.4 }}>
           A participant from{" "}
-          <span style={{ color: "oklch(0.65 0.15 195)" }}>{notification.preferredState}</span>{" "}
+          <span style={{ color: "oklch(0.65 0.15 195)" }}>
+            {notification.postcode ? `Postcode ${notification.postcode}` : notification.preferredState}
+          </span>{" "}
           just requested{" "}
           <span style={{ color: "oklch(0.22 0.07 245)" }}>{shortAccomType(notification.accommodationType)}</span>
         </p>
@@ -133,7 +136,7 @@ function ToastCard({
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", marginBottom: "0.625rem" }}>
           <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontSize: "0.72rem", color: "#6b7280" }}>
             <MapPin size={11} />
-            {notification.preferredState}
+            {notification.postcode ? `Postcode ${notification.postcode}` : notification.preferredState}
           </span>
           <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontSize: "0.72rem", color: "#6b7280" }}>
             <Clock size={11} />
