@@ -35,7 +35,7 @@ const processSteps = [
     number: "02",
     icon: <Search className="w-6 h-6" />,
     title: "Two Ways to Find Your Next Participant",
-    desc: "Option A: Tell us your vacancies and our team actively matches participants from our pipeline to your specific properties. Option B: Browse the live participant enquiries feed and choose which enquiries you want to assist — first come, first served.",
+    desc: "Option A: Tell us your vacancies and our team actively matches participants from our pipeline to your specific properties. Option B: Browse the live participant enquiries feed and select the enquiries that match your available properties — participants choose the provider that best meets their needs.",
     highlight: "You choose how involved you want to be.",
   },
   {
