@@ -1,6 +1,8 @@
 import { Building2, TrendingUp, Users, Shield, Star, Clock } from "lucide-react";
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
+import { Link } from "wouter";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import Animate from "@/components/Animate";
 
 export default function Outcomes() {
@@ -64,7 +66,11 @@ export default function Outcomes() {
           <Animate variant="bottom">
             <h2 className="text-3xl font-bold font-heading mb-4">Ready to Achieve These Outcomes?</h2>
             <p className="text-gray-300 mb-8">Register your organisation for free and start your APGP partnership journey today.</p>
-            <JotformModal label="Register Now — Free" size="lg" buttonClassName="px-10" />
+            <Link href="/provider/register">
+  <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+    Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+  </Button>
+</Link>
           </Animate>
         </div>
       </section>

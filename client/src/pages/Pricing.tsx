@@ -1,5 +1,7 @@
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
+import { Link } from "wouter";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Pricing() {
   return (
@@ -90,7 +92,11 @@ export default function Pricing() {
         <div className="container max-w-xl">
           <h2 className="text-3xl font-bold font-heading mb-4">Get a Tailored Proposal</h2>
           <p className="text-gray-300 mb-8">Register your organisation and our team will contact you to discuss pricing specific to your region and portfolio.</p>
-          <JotformModal label="Register Now — Free" size="lg" buttonClassName="px-10" />
+          <Link href="/provider/register">
+  <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+    Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+  </Button>
+</Link>
         </div>
       </section>
     </PublicLayout>

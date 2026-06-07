@@ -35,6 +35,13 @@
 - [ ] Role-based access control (staff/admin cannot see provider portal and vice versa)
 - [ ] Admin user management (promote users to staff role)
 
+## Provider Registration Overhaul
+- [ ] Expand /provider/register to multi-step form with all fields: org name, ABN (optional), contact name, role/position, phone, email, password, state, company type, current vacancies yes/no
+- [ ] Update provider tRPC register mutation to accept and store all new fields
+- [ ] Replace all JotformModal Register Free buttons site-wide with Link to /provider/register
+- [ ] Keep JotformModal component available for general enquiry use (not registration)
+- [ ] Send welcome notification to Ausnew team with full provider details on registration
+
 ## Abdi Feedback Round 3
 - [ ] Fix Jotform modal: ensure ALL register buttons use identical centred popup (same as floating button)
 - [ ] Update Jotform URL to new form with ABN field and vacancies question (once Abdi provides new URL)

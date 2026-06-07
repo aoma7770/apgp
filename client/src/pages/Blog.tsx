@@ -1,9 +1,10 @@
 import { Link } from "wouter";
 import { Calendar, Tag, ArrowRight, BookOpen } from "lucide-react";
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
+
 import Animate from "@/components/Animate";
 import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const categoryColours: Record<string, string> = {
@@ -124,7 +125,11 @@ export default function Blog() {
           <Animate variant="bottom">
             <h2 className="text-3xl font-bold font-heading mb-4">Ready to Partner with APGP?</h2>
             <p className="text-gray-300 mb-8">Register your organisation for free and our team will be in touch to discuss your partnership options.</p>
-            <JotformModal label="Register Now — Free" size="lg" buttonClassName="px-10" />
+            <Link href="/provider/register">
+              <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+                Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
           </Animate>
         </div>
       </section>

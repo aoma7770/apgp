@@ -2,7 +2,6 @@ import { Link, useParams } from "wouter";
 import { Calendar, Tag, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
 import { trpc } from "@/lib/trpc";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -101,7 +100,11 @@ export default function BlogPost() {
           <div className="mt-12 bg-teal-light rounded-2xl p-8 text-center border border-teal/20">
             <h3 className="text-xl font-bold text-navy font-heading mb-3">Ready to Partner with APGP?</h3>
             <p className="text-gray-600 text-sm mb-5">Register your organisation for free and our team will be in touch within 2 business days.</p>
-            <JotformModal label="Register Now — Free" buttonClassName="px-8" />
+            <Link href="/provider/register">
+  <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+    Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+  </Button>
+</Link>
           </div>
         </div>
       </section>

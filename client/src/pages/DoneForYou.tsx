@@ -1,6 +1,7 @@
 import { CheckCircle2, XCircle, ArrowRight, DollarSign, Clock, Users, Megaphone, Search, FileCheck, Home, Handshake, TrendingDown, TrendingUp, AlertTriangle, Zap } from "lucide-react";
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 const fadeUp = {
@@ -152,11 +153,11 @@ export default function DoneForYou() {
             </FadeUp>
             <FadeUp delay={0.3}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <JotformModal
-                  label="Get Started — It's Free"
-                  size="lg"
-                  buttonClassName="px-10 shadow-xl shadow-teal/20"
-                />
+                <Link href="/provider/register">
+                  <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+                    Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
                 <a href="#how-it-works">
                   <button className="inline-flex items-center gap-2 px-8 py-3 rounded-lg border border-white/30 text-white hover:bg-white/10 transition-colors text-sm font-medium">
                     See How It Works <ArrowRight className="w-4 h-4" />
@@ -326,11 +327,11 @@ export default function DoneForYou() {
           {/* Final CTA after process */}
           <FadeUp delay={0.2}>
             <div className="mt-10 text-center">
-              <JotformModal
-                label="Register Your Vacancy — Free"
-                size="lg"
-                buttonClassName="px-12 shadow-lg"
-              />
+              <Link href="/provider/register">
+                <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-12">
+                  Register Your Vacancy — Free <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
               <p className="text-xs text-gray-400 mt-3">No commitment. No upfront cost. Our team will be in touch within 2 business days.</p>
             </div>
           </FadeUp>
@@ -518,11 +519,11 @@ export default function DoneForYou() {
               Join SDA and SIL providers across Australia who have replaced ad spend with a results-based partnership.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <JotformModal
-                label="Register Your Vacancy — Free"
-                size="lg"
-                buttonClassName="px-12 shadow-2xl shadow-teal/30"
-              />
+              <Link href="/provider/register">
+                <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-12">
+                  Register Your Vacancy — Free <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
             </div>
             <p className="text-xs text-gray-400 mt-6">
               All partnership arrangements are business-to-business and entirely separate from NDIS funding processes.

@@ -1,7 +1,8 @@
 import { Building2, Heart, Globe, CheckCircle2, ArrowRight } from "lucide-react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
+
 import Animate from "@/components/Animate";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663486953469/VXENecN32kGDVq7itT27ZC/apgp-hero-home-UrsEnEjTwniUeLFyWQ3XFG.webp";
@@ -119,7 +120,11 @@ export default function About() {
           <Animate variant="bottom">
             <h2 className="text-3xl font-bold font-heading mb-4">Ready to Partner with APGP?</h2>
             <p className="text-gray-300 mb-8">Register your organisation for free and our team will be in touch to discuss your partnership options.</p>
-            <JotformModal label="Register Now — Free" size="lg" buttonClassName="px-10" />
+            <Link href="/provider/register">
+              <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+                Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
           </Animate>
         </div>
       </section>

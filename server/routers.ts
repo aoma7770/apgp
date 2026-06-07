@@ -86,6 +86,13 @@ export const appRouter = router({
           email: z.string().email(),
           password: z.string().min(8, "Password must be at least 8 characters"),
           organisationName: z.string().min(2).optional(),
+          abn: z.string().optional(),
+          contactName: z.string().min(2).optional(),
+          contactTitle: z.string().optional(),
+          phone: z.string().optional(),
+          companyType: z.enum(["SDA", "SIL", "Both"]).optional(),
+          regionsServiced: z.string().optional(), // comma-separated state codes
+          hasVacancies: z.boolean().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -97,6 +104,13 @@ export const appRouter = router({
           email: input.email,
           passwordHash,
           organisationName: input.organisationName ?? null,
+          abn: input.abn ?? null,
+          contactName: input.contactName ?? null,
+          contactTitle: input.contactTitle ?? null,
+          phone: input.phone ?? null,
+          companyType: input.companyType ?? null,
+          regionsServiced: input.regionsServiced ?? null,
+          profileComplete: !!(input.organisationName && input.contactName && input.phone),
         });
 
         // Create session
@@ -107,7 +121,7 @@ export const appRouter = router({
         // Notify Ausnew team of new provider registration (non-blocking)
         notifyOwner({
           title: `New Provider Registration: ${input.organisationName ?? input.email}`,
-          content: `A new provider has registered on the APGP platform.\n\nEmail: ${input.email}\nOrganisation: ${input.organisationName ?? 'Not provided'}\nRegistered: ${new Date().toLocaleString('en-AU')}`,
+          content: `A new provider has registered on the APGP platform.\n\nOrganisation: ${input.organisationName ?? 'Not provided'}\nABN: ${input.abn ?? 'Not provided'}\nContact: ${input.contactName ?? 'Not provided'} (${input.contactTitle ?? 'No title'})\nPhone: ${input.phone ?? 'Not provided'}\nEmail: ${input.email}\nCompany Type: ${input.companyType ?? 'Not specified'}\nStates: ${input.regionsServiced ?? 'Not specified'}\nHas Vacancies: ${input.hasVacancies ? 'Yes' : 'No'}\nRegistered: ${new Date().toLocaleString('en-AU')}`,
         }).catch(console.error);
 
         // Sync to Monday.com (non-blocking)

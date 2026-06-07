@@ -5,7 +5,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
 import Animate from "@/components/Animate";
 
 const sampleLeads = [
@@ -120,11 +119,11 @@ export default function ParticipantEnquiries() {
           </Animate>
           <Animate variant="bottom" delay={0.3}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <JotformModal
-                label="Register Free — Access the Feed"
-                size="lg"
-                buttonClassName="px-8 shadow-xl shadow-teal/30"
-              />
+              <Link href="/provider/register">
+                <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+                  Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
               <Link href="/provider/login">
                 <Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 bg-transparent">
                   Provider Login <ArrowRight className="w-4 h-4 ml-1" />
@@ -420,11 +419,11 @@ export default function ParticipantEnquiries() {
               Create your free APGP provider account and get immediate access to the live participant enquiries feed. Every enquiry is a potential placement — and you only pay when they move in.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <JotformModal
-                label="Register Free — Access Live Feed"
-                size="lg"
-                buttonClassName="px-10 shadow-2xl shadow-teal/30"
-              />
+              <Link href="/provider/register">
+                <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+                  Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
               <Link href="/provider/login">
                 <Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 bg-transparent">
                   Already registered? Sign in

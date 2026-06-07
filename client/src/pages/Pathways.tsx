@@ -1,6 +1,8 @@
 import { CheckCircle2 } from "lucide-react";
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
+import { Link } from "wouter";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Pathways() {
   return (
@@ -37,7 +39,11 @@ export default function Pathways() {
                   </li>
                 ))}
               </ul>
-              <JotformModal label="Register Now — Free" />
+              <Link href="/provider/register">
+  <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+    Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+  </Button>
+</Link>
             </div>
             <div className="bg-gray-50 rounded-3xl p-8 lg:p-10">
               <h3 className="font-bold text-navy font-heading text-lg mb-6">Roles and Responsibilities</h3>
@@ -104,7 +110,11 @@ export default function Pathways() {
               <p className="text-gray-600 text-sm leading-relaxed mb-6">
                 Once the participant is onboarded, a small weekly subscription begins, supporting priority search and replacement if the participant exits, ongoing visibility of your vacancies, continuous intake activity and matching, and CRM maintenance of your property portfolio.
               </p>
-              <JotformModal label="Register Now — Free" />
+              <Link href="/provider/register">
+  <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+    Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+  </Button>
+</Link>
             </div>
           </div>
         </div>
@@ -115,7 +125,11 @@ export default function Pathways() {
         <div className="container max-w-xl">
           <h2 className="text-3xl font-bold font-heading mb-4">Choose Your Partnership Pathway</h2>
           <p className="text-gray-300 mb-8">Register for free and our team will discuss which pathway best fits your organisation's structure and goals.</p>
-          <JotformModal label="Register Now — Free" size="lg" buttonClassName="px-10" />
+          <Link href="/provider/register">
+  <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+    Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+  </Button>
+</Link>
         </div>
       </section>
     </PublicLayout>

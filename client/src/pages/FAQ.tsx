@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ArrowRight } from "lucide-react";
 import PublicLayout from "@/components/PublicLayout";
-import JotformModal from "@/components/JotformModal";
 import { cn } from "@/lib/utils";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 
 const faqs = [
   {
@@ -96,7 +97,11 @@ export default function FAQ() {
           <h2 className="text-3xl font-bold font-heading mb-4">Still Have Questions?</h2>
           <p className="text-gray-300 mb-8">Register your organisation and our team will reach out to answer any specific questions about your situation.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <JotformModal label="Register Now — Free" size="lg" buttonClassName="px-10" />
+            <Link href="/provider/register">
+              <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
+                Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
             <a href="tel:+61296699302">
               <button className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-lg border border-white/30 text-white hover:bg-white/10 transition-colors text-sm font-medium">
                 Call (02) 9669 9302
