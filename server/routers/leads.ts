@@ -82,6 +82,77 @@ export const leadsRouter = router({
     }));
   }),
 
+  // Admin: list all leads (including hidden)
+  adminList: publicProcedure.use(async ({ ctx, next }) => {
+    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+    }
+    return next({ ctx });
+  }).query(async () => {
+    const db = await import('../db').then(m => m.getDb());
+    if (!db) return [];
+    const { participantLeads } = await import('../../drizzle/schema');
+    const { desc } = await import('drizzle-orm');
+    return db.select().from(participantLeads).orderBy(desc(participantLeads.createdAt));
+  }),
+
+  // Admin: toggle isActive (hide/unhide)
+  toggleActive: publicProcedure.use(async ({ ctx, next }) => {
+    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+    }
+    return next({ ctx });
+  }).input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+    const db = await import('../db').then(m => m.getDb());
+    if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+    const { participantLeads } = await import('../../drizzle/schema');
+    const { eq } = await import('drizzle-orm');
+    const existing = await db.select().from(participantLeads).where(eq(participantLeads.id, input.id)).limit(1);
+    if (!existing[0]) throw new TRPCError({ code: 'NOT_FOUND' });
+    await db.update(participantLeads).set({ isActive: !existing[0].isActive }).where(eq(participantLeads.id, input.id));
+    return { success: true, isActive: !existing[0].isActive };
+  }),
+
+  // Admin: update lead details
+  adminUpdate: publicProcedure.use(async ({ ctx, next }) => {
+    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+    }
+    return next({ ctx });
+  }).input(z.object({
+    id: z.number(),
+    accommodationType: z.string().optional(),
+    dwellingType: z.string().optional(),
+    moveInTimeline: z.string().optional(),
+    preferredState: z.string().optional(),
+    postcode: z.string().optional(),
+    supportNeeds: z.string().optional(),
+    mondayLeadId: z.string().optional(),
+  })).mutation(async ({ input }) => {
+    const db = await import('../db').then(m => m.getDb());
+    if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+    const { participantLeads } = await import('../../drizzle/schema');
+    const { eq } = await import('drizzle-orm');
+    const { id, ...updates } = input;
+    await db.update(participantLeads).set(updates as Record<string, unknown>).where(eq(participantLeads.id, id));
+    return { success: true };
+  }),
+
+  // Admin: delete lead
+  adminDelete: publicProcedure.use(async ({ ctx, next }) => {
+    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+    }
+    return next({ ctx });
+  }).input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+    const db = await import('../db').then(m => m.getDb());
+    if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+    const { participantLeads } = await import('../../drizzle/schema');
+    const { eq } = await import('drizzle-orm');
+    await db.delete(participantLeads).where(eq(participantLeads.id, input.id));
+    return { success: true };
+  }),
+
   // Provider: express interest + submit referral agreement & consent
   expressInterest: providerProcedure
     .input(
@@ -107,6 +178,26 @@ export const leadsRouter = router({
         signatoryOrg: input.signatoryOrg,
         providerNotes: input.providerNotes,
       });
+
+      // Save a record of the signed agreement to provider's documents
+      try {
+        const db = await import('../db').then(m => m.getDb());
+        if (db) {
+          const { providerDocuments } = await import('../../drizzle/schema');
+          const today = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          await db.insert(providerDocuments).values({
+            providerId: ctx.provider.id,
+            fileName: `APGP_Referral_Agreement_Lead${input.leadId}_${today.replace(/\//g, '-')}.txt`,
+            fileKey: `agreements/${ctx.provider.id}/lead-${input.leadId}-${Date.now()}.txt`,
+            fileUrl: '/terms',
+            fileType: 'text/plain',
+            fileSize: 0,
+            category: 'Referral Agreement',
+          });
+        }
+      } catch (e) {
+        console.error('[expressInterest] Failed to save agreement document:', e);
+      }
 
       // Notify Ausnew team
       notifyOwner({

@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Shield, ArrowRight, Lock } from "lucide-react";
+import { Shield, ArrowRight, Lock, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 
-export default function StaffLogin() {
+export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { user, loading } = useAuth();
 
@@ -38,17 +38,31 @@ export default function StaffLogin() {
         </Link>
         <div>
           <div className="w-16 h-16 rounded-2xl bg-teal/20 flex items-center justify-center mb-6">
-            <Shield className="w-8 h-8 text-teal-300" />
+            <Settings className="w-8 h-8 text-teal-300" />
           </div>
-          <h2 className="text-3xl font-bold font-heading text-white mb-4">Staff Portal</h2>
+          <h2 className="text-3xl font-bold font-heading text-white mb-4">Admin Portal</h2>
           <p className="text-gray-300 text-sm leading-relaxed mb-6">
-            Restricted access for internal Ausnew Support Services staff. This portal provides access to all provider accommodation listings and property search tools.
+            Restricted access for the Ausnew admin team. Manage participant leads, provider listings, property search, blog content, and all backend operations.
           </p>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+          <div className="space-y-3">
+            {[
+              "Manage and moderate participant leads",
+              "Hide, edit, or remove leads as needed",
+              "Search and browse all provider properties",
+              "Manage blog content and posts",
+              "Full backend access",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-2 text-xs text-gray-300">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal-400 shrink-0" />
+                {item}
+              </div>
+            ))}
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 mt-6">
             <div className="flex items-start gap-3">
               <Lock className="w-4 h-4 text-teal-300 mt-0.5 shrink-0" />
               <p className="text-xs text-gray-400 leading-relaxed">
-                Access to this portal is restricted to authorised Ausnew staff only. Providers should use the{" "}
+                Access to this portal is restricted to authorised Ausnew admin team members only. Providers should use the{" "}
                 <Link href="/provider/login" className="text-teal-300 hover:text-teal transition-colors">Provider Portal</Link>{" "}
                 instead.
               </p>
@@ -66,16 +80,16 @@ export default function StaffLogin() {
           {/* Mobile logo */}
           <Link href="/" className="flex items-center gap-3 mb-8 lg:hidden">
             <div className="w-9 h-9 rounded-lg bg-teal flex items-center justify-center text-white font-bold font-heading">A</div>
-            <div className="font-bold text-white font-heading text-sm">APGP Staff Portal</div>
+            <div className="font-bold text-white font-heading text-sm">APGP Admin Portal</div>
           </Link>
 
           <div className="text-center mb-8">
             <div className="w-16 h-16 rounded-2xl bg-teal/20 flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-teal-300" />
+              <Settings className="w-8 h-8 text-teal-300" />
             </div>
-            <h1 className="text-2xl font-bold text-white font-heading mb-2">Staff Sign In</h1>
+            <h1 className="text-2xl font-bold text-white font-heading mb-2">Admin Sign In</h1>
             <p className="text-gray-400 text-sm">
-              Authorised Ausnew staff only. Sign in with your Ausnew account.
+              Authorised Ausnew admin team only. Sign in with your Ausnew account.
             </p>
           </div>
 
@@ -88,7 +102,7 @@ export default function StaffLogin() {
 
           <div className="mt-6 bg-white/5 border border-white/10 rounded-xl p-4">
             <p className="text-xs text-gray-400 text-center leading-relaxed">
-              This login is for internal Ausnew staff only. If you are an accommodation provider,{" "}
+              This login is for the Ausnew admin team only. If you are an accommodation provider,{" "}
               <Link href="/provider/login" className="text-teal-300 hover:text-teal transition-colors">
                 use the Provider Portal
               </Link>{" "}

@@ -122,7 +122,7 @@ export default function ProviderLogin() {
             <p className="text-sm text-gray-500">
               Internal Ausnew staff?{" "}
               <Link href="/staff/login" className="text-navy hover:underline font-medium">
-                Staff login
+                Admin login
               </Link>
             </p>
           </div>

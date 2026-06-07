@@ -587,10 +587,7 @@ export default function ProviderDashboard() {
                   </div>
                   <p className="text-gray-500 text-sm">Real-time NDIS accommodation enquiries from Ausnew's participant pipeline. These leads come directly from our CRM — no personal information is shown.</p>
                 </div>
-                <div className="shrink-0 text-right hidden sm:block">
-                  <p className="text-2xl font-extrabold text-navy font-heading">{leads.length}</p>
-                  <p className="text-xs text-gray-400">active {leads.length === 1 ? 'enquiry' : 'enquiries'}</p>
-                </div>
+
               </div>
 
               {/* How it works banner */}

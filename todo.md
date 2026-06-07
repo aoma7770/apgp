@@ -35,6 +35,13 @@
 - [ ] Role-based access control (staff/admin cannot see provider portal and vice versa)
 - [ ] Admin user management (promote users to staff role)
 
+## Admin Portal Overhaul
+- [ ] Rename Staff Login to Admin Login site-wide (nav, pages, routes)
+- [ ] Add lead management to admin dashboard: hide/unhide leads (toggle isActive), edit lead details, delete leads
+- [ ] Add tRPC admin procedures: leads.adminList, leads.toggleActive, leads.update, leads.delete
+- [ ] Remove active lead count from provider dashboard Live Enquiries header
+- [ ] Save signed referral agreement as a document in provider Documents tab on expressInterest submit
+
 ## Provider Registration Overhaul
 - [ ] Expand /provider/register to multi-step form with all fields: org name, ABN (optional), contact name, role/position, phone, email, password, state, company type, current vacancies yes/no
 - [ ] Update provider tRPC register mutation to accept and store all new fields
