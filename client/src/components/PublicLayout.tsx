@@ -60,8 +60,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         <div className="container flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
-            <APGPLogo variant="full" height={36} className="hidden sm:block" />
-            <APGPLogo variant="compact" height={36} className="sm:hidden" />
+            <APGPLogo variant="full" height={36} />
           </Link>
 
           {/* Desktop nav */}
