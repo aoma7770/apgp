@@ -180,8 +180,10 @@ export default function ReferralAgreementModal({
     onError: (err) => toast.error(err.message),
   });
 
+  // Australian ABN is 11 digits. Accept 9-11 digits to be flexible.
+  const abnDigits = form.abn.replace(/[\s-]/g, "");
   const canProceedFromDetails = form.organisationName.trim().length >= 2 &&
-    form.abn.trim().length >= 9 &&
+    abnDigits.length >= 9 && abnDigits.length <= 11 && /^\d+$/.test(abnDigits) &&
     form.contactName.trim().length >= 2 &&
     form.partnershipModel !== "";
 
@@ -275,8 +277,9 @@ export default function ReferralAgreementModal({
                   <Input value={form.organisationName} onChange={(e) => setForm({ ...form, organisationName: e.target.value })} placeholder="Legal entity name" className="mt-1.5" required />
                 </div>
                 <div>
-                  <Label className="text-navy font-semibold text-sm">ABN * <span className="text-red-500">(required to sign)</span></Label>
-                  <Input value={form.abn} onChange={(e) => setForm({ ...form, abn: e.target.value })} placeholder="e.g. 12 345 678 901" className="mt-1.5" required />
+                  <Label className="text-navy font-semibold text-sm">ABN * <span className="text-red-500">(required — 9 to 11 digits)</span></Label>
+                  <Input value={form.abn} onChange={(e) => setForm({ ...form, abn: e.target.value })} placeholder="e.g. 12 345 678 901" className={`mt-1.5 ${form.abn && (abnDigits.length < 9 || !/^\d+$/.test(abnDigits)) ? 'border-red-400' : ''}`} required />
+                  {form.abn && abnDigits.length < 9 && <p className="text-xs text-red-500 mt-1">ABN must be at least 9 digits</p>}
                 </div>
                 <div>
                   <Label className="text-navy font-semibold text-sm">Contact Name *</Label>

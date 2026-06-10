@@ -1,11 +1,18 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { BlogPost, InsertBlogPost, blogPosts } from "../drizzle/schema";
 import { getDb } from "./db";
 
-export async function listPublishedPosts(): Promise<BlogPost[]> {
+export async function listPublishedPosts(limit = 100, offset = 0): Promise<BlogPost[]> {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(blogPosts).where(eq(blogPosts.published, true)).orderBy(desc(blogPosts.publishedAt));
+  return db.select().from(blogPosts).where(eq(blogPosts.published, true)).orderBy(desc(blogPosts.publishedAt)).limit(limit).offset(offset);
+}
+
+export async function getBlogPostCount(): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select({ count: count() }).from(blogPosts).where(eq(blogPosts.published, true));
+  return Number(result[0]?.count ?? 0);
 }
 
 export async function listAllPosts(): Promise<BlogPost[]> {

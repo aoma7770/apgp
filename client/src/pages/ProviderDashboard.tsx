@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Building2, User, LogOut, Plus, Edit2, Trash2, CheckCircle2, AlertCircle,
-  Home, MapPin, ChevronRight, Settings, Menu, X, Users, Clock, Tag, Handshake,
+  Home, MapPin, ChevronRight, Settings, Menu, X, Users, Clock, Tag, Handshake, ExternalLink,
   FileText, CreditCard, Upload, Download, Trash
 } from "lucide-react";
 import ReferralAgreementModal from "@/components/ReferralAgreementModal";
@@ -358,26 +358,28 @@ export default function ProviderDashboard() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                <button onClick={() => setTab("leads")} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-teal/30 transition-all text-left group">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-purple-600" />
+                    <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center group-hover:bg-teal-light transition-colors">
+                      <Users className="w-5 h-5 text-purple-600 group-hover:text-teal transition-colors" />
                     </div>
                     <span className="text-sm font-semibold text-navy">Live Enquiries</span>
+                    <ChevronRight className="w-4 h-4 text-gray-300 ml-auto group-hover:text-teal transition-colors" />
                   </div>
                   <div className="text-3xl font-bold text-navy">{leads.length}</div>
-                  <p className="text-xs text-gray-400 mt-1">New participant leads</p>
-                </div>
-                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                  <p className="text-xs text-gray-400 mt-1">New participant leads — click to view</p>
+                </button>
+                <button onClick={() => setTab("documents")} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-teal/30 transition-all text-left group">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                      <FileText className="w-5 h-5 text-blue-600" />
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-teal-light transition-colors">
+                      <FileText className="w-5 h-5 text-blue-600 group-hover:text-teal transition-colors" />
                     </div>
                     <span className="text-sm font-semibold text-navy">Documents</span>
+                    <ChevronRight className="w-4 h-4 text-gray-300 ml-auto group-hover:text-teal transition-colors" />
                   </div>
                   <div className="text-3xl font-bold text-navy">{documents.length}</div>
-                  <p className="text-xs text-gray-400 mt-1">Uploaded documents</p>
-                </div>
+                  <p className="text-xs text-gray-400 mt-1">Uploaded documents — click to view</p>
+                </button>
               </div>
 
               <h2 className="text-xl font-bold text-navy font-heading mb-4">Your Listings</h2>
@@ -657,7 +659,18 @@ export default function ProviderDashboard() {
                             href={doc.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal-light transition-colors"
+                            title="View document"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-teal bg-teal-light hover:bg-teal hover:text-white transition-colors"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" /> View
+                          </a>
+                          <a
+                            href={doc.fileUrl}
+                            download={doc.fileName}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Download"
+                            className="p-2 rounded-lg text-gray-400 hover:text-navy hover:bg-gray-100 transition-colors"
                           >
                             <Download className="w-4 h-4" />
                           </a>

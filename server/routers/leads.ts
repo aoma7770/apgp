@@ -179,18 +179,30 @@ export const leadsRouter = router({
         providerNotes: input.providerNotes,
       });
 
-      // Save a record of the signed agreement to provider's documents
+      // Save a signed agreement record to provider's documents with lead details
       try {
         const db = await import('../db').then(m => m.getDb());
         if (db) {
-          const { providerDocuments } = await import('../../drizzle/schema');
+          const { providerDocuments, participantLeads } = await import('../../drizzle/schema');
+          const { eq } = await import('drizzle-orm');
           const today = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          
+          // Fetch lead details to include in the document
+          const leads = await db.select().from(participantLeads).where(eq(participantLeads.id, input.leadId)).limit(1);
+          const lead = leads[0];
+          const leadRef = lead?.mondayLeadId ?? `LEAD-${input.leadId}`;
+          const leadSummary = lead ? `${lead.accommodationType} | ${lead.dwellingType} | ${lead.moveInTimeline} | Postcode: ${lead.postcode ?? lead.preferredState ?? 'N/A'}` : `Lead ID: ${input.leadId}`;
+          
+          const fileName = `APGP_Referral_Agreement_${leadRef}_${today.replace(/\//g, '-')}.pdf`;
+          const fileKey = `agreements/${ctx.provider.id}/lead-${input.leadId}-${Date.now()}.pdf`;
+          
+          // Store the agreement as a downloadable record with full details
           await db.insert(providerDocuments).values({
             providerId: ctx.provider.id,
-            fileName: `APGP_Referral_Agreement_Lead${input.leadId}_${today.replace(/\//g, '-')}.txt`,
-            fileKey: `agreements/${ctx.provider.id}/lead-${input.leadId}-${Date.now()}.txt`,
-            fileUrl: '/terms',
-            fileType: 'text/plain',
+            fileName,
+            fileKey,
+            fileUrl: `/api/agreements/${ctx.provider.id}/${input.leadId}?ref=${leadRef}&signatory=${encodeURIComponent(input.signatoryName)}&org=${encodeURIComponent(input.signatoryOrg)}&date=${encodeURIComponent(today)}&lead=${encodeURIComponent(leadSummary)}`,
+            fileType: 'application/pdf',
             fileSize: 0,
             category: 'Referral Agreement',
           });
@@ -201,9 +213,29 @@ export const leadsRouter = router({
 
       // Notify Ausnew team
       notifyOwner({
-        title: "Provider Expressed Interest in a Lead",
-        content: `Provider: ${ctx.provider.organisationName ?? ctx.provider.email}\nSignatory: ${input.signatoryName} (${input.signatoryOrg})\nLead ID: ${input.leadId}\nNotes: ${input.providerNotes ?? "None"}\n\nReferral Agreement: Signed ✓\nConsent Form: Signed ✓`,
+        title: `Provider Signed Referral Agreement — Lead ${input.leadId}`,
+        content: `Provider: ${ctx.provider.organisationName ?? ctx.provider.email}\nABN: ${ctx.provider.abn ?? 'Not provided'}\nContact: ${input.signatoryName} (${input.signatoryOrg})\nLead ID: ${input.leadId}\nNotes: ${input.providerNotes ?? 'None'}\n\nReferral Agreement: Signed ✓\nConsent Form: Signed ✓`,
       }).catch(console.error);
+
+      // Zap signed inquiry to Monday.com CRM (if webhook configured)
+      const zapierCrmWebhook = process.env.ZAPIER_CRM_WEBHOOK_URL;
+      if (zapierCrmWebhook) {
+        fetch(zapierCrmWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event: 'referral_agreement_signed',
+            lead_id: input.leadId,
+            provider_name: ctx.provider.organisationName ?? ctx.provider.email,
+            provider_email: ctx.provider.email,
+            provider_abn: ctx.provider.abn ?? '',
+            signatory_name: input.signatoryName,
+            signatory_org: input.signatoryOrg,
+            signed_at: new Date().toISOString(),
+            notes: input.providerNotes ?? '',
+          }),
+        }).catch((e) => console.error('[Zapier CRM] Failed to send:', e));
+      }
 
       return { success: true };
     }),

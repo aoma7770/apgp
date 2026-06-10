@@ -112,8 +112,8 @@ export function registerLeadsIngestRoute(app: Express) {
         sdaCategory: body.sda_category as "Improved Liveability" | "Fully Accessible" | "Robust" | "High Physical Support" | "Not sure" | "N/A" | undefined,
         moveInTimeline: mapField(body.move_in_timeline, TIMELINE_MAP, "Unsure") as "Immediately" | "Within 30 days" | "Within 60 days" | "Within 90 days" | "Unsure",
         preferredState: mapField(body.preferred_state, STATE_MAP, "Any") as "NSW" | "VIC" | "QLD" | "SA" | "WA" | "TAS" | "ACT" | "NT" | "Any",
-        supportNeeds: body.support_needs || undefined,
-        postcode: body.postcode || body.post_code || undefined,
+        supportNeeds: body.support_needs || body.notes || body.support_notes || undefined,
+        postcode: body.postcode || body.post_code || body.zip || body.zip_code || body.suburb_postcode || undefined,
         mondayLeadId,
       };
 

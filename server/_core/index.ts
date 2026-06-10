@@ -8,6 +8,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import { registerLeadsIngestRoute } from "../leadsIngest";
 import { registerArvowWebhookRoute } from "../arvowWebhook";
+import { registerAgreementRoute } from "../agreementRoute";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -42,6 +43,7 @@ async function startServer() {
   registerOAuthRoutes(app);
   registerLeadsIngestRoute(app);
   registerArvowWebhookRoute(app);
+  registerAgreementRoute(app);
   // tRPC API
   app.use(
     "/api/trpc",

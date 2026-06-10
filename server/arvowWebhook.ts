@@ -4,7 +4,7 @@ import { blogPosts } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 // ─── Fallback image selector ────────────────────────────────────────────────
-function selectFallbackImage(keywordSeed: string, title: string): string {
+export function selectFallbackImage(keywordSeed: string, title: string): string {
   const text = `${keywordSeed} ${title}`.toLowerCase();
   const fallbacks: Record<string, string> = {
     accommodation: "https://d2xsxph8kpxj0f.cloudfront.net/310519663486953469/VXENecN32kGDVq7itT27ZC/apgp-accommodation-drDCRERqX3KVFHXAG7Ad66.webp",

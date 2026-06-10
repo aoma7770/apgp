@@ -1,9 +1,81 @@
+import { useEffect } from "react";
 import { Link, useParams } from "wouter";
-import { Calendar, Tag, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, Calendar, Tag } from "lucide-react";
 import PublicLayout from "@/components/PublicLayout";
 import { trpc } from "@/lib/trpc";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+
+const FALLBACK_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663486953469/VXENecN32kGDVq7itT27ZC/apgp-hero-home-UrsEnEjTwniUeLFyWQ3XFG.webp";
+const BRAND_NAME = "APGP — Accommodation Provider Growth Program";
+
+// ─── Contextual CTA detection (Arvow Part 6) ─────────────────────────────────
+type ServiceCTA = {
+  label: string;
+  tagline: string;
+  description: string;
+  servicePage: string;
+  formLabel: string;
+  accentColor: string;
+};
+
+const SERVICES: Record<string, ServiceCTA> = {
+  accommodation: {
+    label: "Accommodation Services",
+    tagline: "Find the Right SDA or SIL Home",
+    description: "APGP connects NDIS participants with high-quality SDA and SIL accommodation providers across Australia. Our team manages the full intake process — from matching to move-in.",
+    servicePage: "/participant-enquiries",
+    formLabel: "Register Your Vacancy",
+    accentColor: "#2BBFCF",
+  },
+  communityAccess: {
+    label: "Community Access Supports",
+    tagline: "Engage, Connect, and Thrive",
+    description: "Ausnew Support Services delivers community access and social participation supports to NDIS participants. Our Joint Venture model means no placement fee for accommodation providers.",
+    servicePage: "/pathways",
+    formLabel: "Learn About JV Partnership",
+    accentColor: "#1B3A5C",
+  },
+  dailyLife: {
+    label: "Daily Living Supports",
+    tagline: "Independence at Home",
+    description: "Our SIL providers deliver exceptional in-home supports that help participants live independently. APGP matches the right provider to the right participant.",
+    servicePage: "/pathways",
+    formLabel: "Register as a Provider",
+    accentColor: "#2BBFCF",
+  },
+  default: {
+    label: "APGP Provider Growth Program",
+    tagline: "Fill Your Vacancies. Pay Per Result.",
+    description: "APGP is Australia's leading NDIS accommodation provider growth program. We find participants, manage intake, and support move-in. You pay nothing until they walk through the door.",
+    servicePage: "/done-for-you",
+    formLabel: "Register Free",
+    accentColor: "#2BBFCF",
+  },
+};
+
+function detectService(title: string, keywordSeed?: string | null, content?: string): ServiceCTA {
+  const text = `${title} ${keywordSeed ?? ""} ${(content ?? "").slice(0, 500)}`.toLowerCase();
+  if (/accommodation|sda|sil|housing|property|specialist disability|vacancy|vacancies/.test(text)) return SERVICES.accommodation;
+  if (/community access|social|outing|recreation|participation/.test(text)) return SERVICES.communityAccess;
+  if (/daily life|daily living|personal care|household|meal prep/.test(text)) return SERVICES.dailyLife;
+  return SERVICES.default;
+}
+
+type BlogPost = {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  coverImage?: string | null;
+  thumbnailUrl?: string | null;
+  category?: string | null;
+  author?: string | null;
+  keywordSeed?: string | null;
+  publishedAt?: Date | null;
+  createdAt: Date;
+};
 
 export default function BlogPost() {
   const params = useParams<{ slug: string }>();
@@ -14,8 +86,26 @@ export default function BlogPost() {
     { enabled: !!slug, retry: false }
   );
 
-  const { data: allPosts = [] } = trpc.blog.list.useQuery();
-  const related = allPosts.filter((p) => p.slug !== slug).slice(0, 2);
+  const { data: blogData } = trpc.blog.list.useQuery({ page: 1, limit: 20 });
+  const allPosts: BlogPost[] = blogData?.posts ?? [];
+  const related = allPosts.filter((p: BlogPost) => p.slug !== slug).slice(0, 2);
+
+  // ── Dynamic SEO meta (Arvow Part 5) ──────────────────────────────────────
+  useEffect(() => {
+    if (post) {
+      document.title = `${post.title} | ${BRAND_NAME}`;
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement("meta");
+        metaDesc.setAttribute("name", "description");
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.setAttribute("content", (post.excerpt ?? post.title).slice(0, 160));
+    }
+    return () => {
+      document.title = BRAND_NAME;
+    };
+  }, [post]);
 
   if (isLoading) {
     return (
@@ -36,10 +126,9 @@ export default function BlogPost() {
   if (error || !post) {
     return (
       <PublicLayout>
-        <div className="container max-w-3xl py-24 text-center">
-          <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-navy font-heading mb-4">Post Not Found</h1>
-          <p className="text-gray-500 mb-8">This article doesn't exist or has been removed.</p>
+        <div className="container max-w-3xl py-20 text-center">
+          <h1 className="text-2xl font-bold text-navy mb-4">Article Not Found</h1>
+          <p className="text-gray-500 mb-8">This article may have been moved or removed.</p>
           <Link href="/blog">
             <Button className="bg-teal hover:bg-teal-600 text-white">
               <ArrowLeft className="w-4 h-4 mr-2" /> Back to Blog
@@ -50,89 +139,133 @@ export default function BlogPost() {
     );
   }
 
+  const typedPost = post as BlogPost;
+  const heroImg = typedPost.thumbnailUrl ?? typedPost.coverImage ?? FALLBACK_IMG;
+  const date = typedPost.publishedAt
+    ? new Date(typedPost.publishedAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })
+    : new Date(typedPost.createdAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
+
+  const service = detectService(typedPost.title, typedPost.keywordSeed, typedPost.content);
+
   return (
     <PublicLayout>
-      {/* Hero */}
-      <section className="bg-navy text-white py-12 lg:py-16">
+      <article className="py-12 lg:py-16 bg-white">
         <div className="container max-w-3xl">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-teal-300 hover:text-teal transition-colors text-sm mb-6">
-            <ArrowLeft className="w-4 h-4" /> Back to Blog
-          </Link>
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
-            {post.category && (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-teal text-white">
-                <Tag className="w-3 h-3" />{post.category}
+
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+            <Link href="/" className="hover:text-teal transition-colors">Home</Link>
+            <span>/</span>
+            <Link href="/blog" className="hover:text-teal transition-colors">Blog</Link>
+            <span>/</span>
+            <span className="text-gray-600 truncate max-w-xs">{typedPost.title}</span>
+          </nav>
+
+          {/* Hero image */}
+          <div className="blog-hero-image-container mb-8">
+            <img src={heroImg} alt={typedPost.title} />
+          </div>
+
+          {/* Article header */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 flex-wrap mb-4">
+              {typedPost.category && (
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-teal bg-teal-light px-2.5 py-1 rounded-full">
+                  <Tag className="w-3 h-3" />{typedPost.category}
+                </span>
+              )}
+              <span className="flex items-center gap-1 text-xs text-gray-400">
+                <Calendar className="w-3 h-3" />{date}
               </span>
+              {typedPost.author && (
+                <span className="text-xs text-gray-400">By {typedPost.author}</span>
+              )}
+            </div>
+            <h1 className="text-3xl lg:text-4xl font-extrabold text-navy font-heading leading-tight mb-4">
+              {typedPost.title}
+            </h1>
+            {typedPost.excerpt && (
+              <p className="text-lg text-gray-500 leading-relaxed border-l-4 border-teal pl-4">
+                {typedPost.excerpt}
+              </p>
             )}
-            <span className="flex items-center gap-1 text-xs text-gray-400">
-              <Calendar className="w-3 h-3" />
-              {new Date(post.publishedAt ?? post.createdAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}
-            </span>
-            <span className="text-xs text-gray-400">By {post.author}</span>
           </div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold font-heading leading-tight">{post.title}</h1>
-          {post.excerpt && <p className="text-gray-300 mt-4 text-lg leading-relaxed">{post.excerpt}</p>}
-        </div>
-      </section>
 
-      {/* Cover image */}
-      {post.coverImage && (
-        <div className="bg-navy">
-          <div className="container max-w-3xl pb-0">
-            <img
-              src={post.coverImage}
-              alt={post.title}
-              className="w-full h-64 lg:h-96 object-cover rounded-t-2xl"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Article body */}
-      <section className="py-12 lg:py-16 bg-white">
-        <div className="container max-w-3xl">
+          {/* Article body — Arvow prose typography */}
           <div
-            className="prose prose-lg max-w-none text-gray-700 prose-headings:text-navy prose-headings:font-heading prose-a:text-teal prose-strong:text-navy"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            className="blog-content"
+            dangerouslySetInnerHTML={{ __html: typedPost.content }}
           />
 
-          {/* CTA inline */}
-          <div className="mt-12 bg-teal-light rounded-2xl p-8 text-center border border-teal/20">
-            <h3 className="text-xl font-bold text-navy font-heading mb-3">Ready to Partner with APGP?</h3>
-            <p className="text-gray-600 text-sm mb-5">Register your organisation for free and our team will be in touch within 2 business days.</p>
-            <Link href="/provider/register">
-  <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">
-    Register Now — Free <ArrowRight className="w-4 h-4 ml-2" />
-  </Button>
-</Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Related posts */}
-      {related.length > 0 && (
-        <section className="py-12 lg:py-16 bg-gray-50">
-          <div className="container max-w-3xl">
-            <h2 className="text-2xl font-bold text-navy font-heading mb-8">More Articles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {related.map((p) => (
-                <Link key={p.id} href={`/blog/${p.slug}`}>
-                  <article className="group bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                    {p.category && (
-                      <span className="text-xs font-semibold text-teal uppercase tracking-widest mb-2 block">{p.category}</span>
-                    )}
-                    <h3 className="font-bold text-navy font-heading mb-2 group-hover:text-teal transition-colors line-clamp-2">{p.title}</h3>
-                    {p.excerpt && <p className="text-gray-500 text-sm line-clamp-2 mb-3">{p.excerpt}</p>}
-                    <span className="inline-flex items-center gap-1 text-teal text-sm font-semibold">
-                      Read <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </article>
+          {/* Contextual CTA block (Arvow Part 6) */}
+          <div className="mt-12 rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+            <div
+              className="p-6 text-white"
+              style={{ background: `linear-gradient(135deg, #0A2342, ${service.accentColor})` }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-widest opacity-75 mb-1">
+                Also Considering Your Options?
+              </p>
+              <h3 className="text-xl font-bold font-heading">{service.label}</h3>
+              <p className="text-sm opacity-90 mt-1">{service.tagline}</p>
+            </div>
+            <div className="p-6 bg-white">
+              <p className="text-gray-600 text-sm leading-relaxed mb-5">{service.description}</p>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/provider/register">
+                  <button
+                    className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                    style={{ background: service.accentColor }}
+                  >
+                    {service.formLabel}
+                  </button>
                 </Link>
-              ))}
+                <Link href={service.servicePage}>
+                  <button className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
+                    Learn More
+                  </button>
+                </Link>
+              </div>
+              <p className="mt-4 text-xs text-gray-400">
+                NDIS Registered Provider · Serving Australia-Wide
+              </p>
             </div>
           </div>
-        </section>
-      )}
+
+          {/* Back to blog */}
+          <div className="mt-10 pt-8 border-t border-gray-100">
+            <Link href="/blog">
+              <Button variant="outline" className="border-navy text-navy hover:bg-navy hover:text-white">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Blog
+              </Button>
+            </Link>
+          </div>
+
+          {/* Related posts */}
+          {related.length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-xl font-bold text-navy font-heading mb-6">Related Articles</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {related.map((rel: BlogPost) => (
+                  <Link key={rel.id} href={`/blog/${rel.slug}`}>
+                    <div className="group bg-gray-50 rounded-2xl p-5 hover:bg-teal-light transition-colors cursor-pointer">
+                      <h3 className="font-bold text-navy font-heading text-sm line-clamp-2 mb-2 group-hover:text-teal transition-colors">
+                        {rel.title}
+                      </h3>
+                      {rel.excerpt && (
+                        <p className="text-xs text-gray-500 line-clamp-2">{rel.excerpt}</p>
+                      )}
+                      <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-teal">
+                        Read More <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </article>
     </PublicLayout>
   );
 }
