@@ -38,6 +38,8 @@ import ProviderDashboard from "./pages/ProviderDashboard";
 import StaffLogin from "./pages/StaffLogin";
 import StaffDashboard from "./pages/StaffDashboard";
 import StaffBlog from "./pages/StaffBlog";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Router() {
   return (
@@ -67,6 +69,8 @@ function Router() {
       <Route path="/staff/login" component={StaffLogin} />
       <Route path="/staff/dashboard" component={StaffDashboard} />
       <Route path="/staff/blog" component={StaffBlog} />
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin/dashboard" component={AdminDashboard} />
 
       {/* Fallback */}
       <Route path="/404" component={NotFound} />

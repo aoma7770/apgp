@@ -22,6 +22,7 @@ import { createMondayProviderItem, updateMondayProviderItem } from "./monday";
 import { blogRouter } from "./routers/blog";
 import { leadsRouter } from "./routers/leads";
 import { documentsRouter } from "./routers/documents";
+import { adminAuthRouter } from "./routers/adminAuth";
 import { notifyOwner } from "./_core/notification";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
@@ -300,6 +301,35 @@ export const appRouter = router({
       return getAccommodationsByProvider(ctx.provider.id);
     }),
 
+    // Admin portal search (uses admin session token)
+    adminSearch: publicProcedure
+      .input(
+        z.object({
+          state: z.string().optional(),
+          propertyType: z.string().optional(),
+          vacancyStatus: z.string().optional(),
+          supportNeeds: z.string().optional(),
+          suburb: z.string().optional(),
+        })
+      )
+      .query(async ({ input, ctx }) => {
+        // Validate admin token
+        const authHeader = ctx.req.headers?.authorization;
+        const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : ctx.req.cookies?.apgp_admin_session;
+        if (!token) throw new TRPCError({ code: 'UNAUTHORIZED' });
+        const { adminSessions, adminUsers } = await import('../drizzle/schema');
+        const { eq, and, gt } = await import('drizzle-orm');
+        const { getDb: getDatabase } = await import('./db');
+        const db = await getDatabase();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        const sessions = await db.select({ admin: adminUsers }).from(adminSessions)
+          .innerJoin(adminUsers, eq(adminSessions.adminId, adminUsers.id))
+          .where(and(eq(adminSessions.token, token), gt(adminSessions.expiresAt, new Date())))
+          .limit(1);
+        if (!sessions[0]) throw new TRPCError({ code: 'UNAUTHORIZED' });
+        return searchAccommodations(input);
+      }),
+
     // Staff-only: search all accommodations
     search: staffProcedure
       .input(
@@ -318,6 +348,9 @@ export const appRouter = router({
 
   // ─── Blog ────────────────────────────────────────────────────────────────────────────────
   blog: blogRouter,
+
+  // ─── Admin auth
+  adminAuth: adminAuthRouter,
 
   // ─── Provider documents
   documents: documentsRouter,

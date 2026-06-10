@@ -41,10 +41,12 @@ const trpcClient = trpc.createClient({
       url: "/api/trpc",
       transformer: superjson,
       headers() {
-        // Send provider session token as Bearer header (fallback when cookies are blocked)
+        // Send provider or admin session token as Bearer header (fallback when cookies are blocked)
         try {
-          const token = localStorage.getItem(TOKEN_KEY);
-          if (token) return { Authorization: `Bearer ${token}` };
+          const adminToken = localStorage.getItem('apgp_admin_token');
+          if (adminToken) return { Authorization: `Bearer ${adminToken}` };
+          const providerToken = localStorage.getItem(TOKEN_KEY);
+          if (providerToken) return { Authorization: `Bearer ${providerToken}` };
         } catch {
           // localStorage unavailable
         }

@@ -189,6 +189,33 @@ export const providerDocuments = mysqlTable("providerDocuments", {
 export type ProviderDocument = typeof providerDocuments.$inferSelect;
 export type InsertProviderDocument = typeof providerDocuments.$inferInsert;
 
+// ─── Admin users (separate from Manus OAuth, username/password login) ─────────────────────────────────────────────────────────────────────────────────
+export const adminUsers = mysqlTable("adminUsers", {
+  id: int("id").autoincrement().primaryKey(),
+  username: varchar("username", { length: 64 }).notNull().unique(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
+  fullName: varchar("fullName", { length: 255 }),
+  role: mysqlEnum("role", ["super_admin", "admin"]).default("admin").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastSignedIn: timestamp("lastSignedIn"),
+});
+
+export type AdminUser = typeof adminUsers.$inferSelect;
+export type InsertAdminUser = typeof adminUsers.$inferInsert;
+
+// ─── Admin sessions ─────────────────────────────────────────────────────────────────────────────────
+export const adminSessions = mysqlTable("adminSessions", {
+  id: int("id").autoincrement().primaryKey(),
+  adminId: int("adminId").notNull(),
+  token: varchar("token", { length: 512 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AdminSession = typeof adminSessions.$inferSelect;
+
 // ─── Blog posts ─────────────────────────────────────────────────────────────────────────────────
 export const blogPosts = mysqlTable("blogPosts", {
   id: int("id").autoincrement().primaryKey(),
