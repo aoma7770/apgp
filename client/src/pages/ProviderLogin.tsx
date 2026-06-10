@@ -1,4 +1,5 @@
 import { useState } from "react";
+import APGPLogo from "@/components/APGPLogo";
 import { Link, useLocation } from "wouter";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,7 @@ export default function ProviderLogin() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 gradient-hero text-white flex-col justify-between p-12">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-teal flex items-center justify-center text-white font-bold text-lg font-heading">A</div>
+          <APGPLogo variant="compact" height={40} />
           <div>
             <div className="font-bold text-white font-heading">APGP</div>
             <div className="text-xs text-teal-300">by Ausnew Support Services</div>
@@ -61,7 +62,7 @@ export default function ProviderLogin() {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <Link href="/" className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="w-9 h-9 rounded-lg bg-navy flex items-center justify-center text-white font-bold font-heading">A</div>
+            <APGPLogo variant="compact" height={36} />
             <div className="font-bold text-navy font-heading text-sm">APGP by Ausnew</div>
           </Link>
 

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
+import APGPLogo from "@/components/APGPLogo";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -132,7 +133,7 @@ export default function StaffDashboard() {
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-navy text-white flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:flex`}>
         <div className="p-6 border-b border-white/10">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-teal flex items-center justify-center text-white font-bold font-heading">A</div>
+            <APGPLogo variant="compact" height={36} />
             <div>
               <div className="font-bold text-white font-heading text-sm">APGP Admin</div>
               <div className="text-xs text-teal-300">Internal Portal</div>
@@ -294,7 +295,6 @@ export default function StaffDashboard() {
                               <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${lead.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                                 {lead.isActive ? '● Visible' : '○ Hidden'}
                               </span>
-                              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-navy text-white">{lead.accommodationType}</span>
                               {lead.mondayLeadId && <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">ID: {lead.mondayLeadId}</span>}
                             </div>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-600">

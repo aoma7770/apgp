@@ -224,6 +224,11 @@ export const blogPosts = mysqlTable("blogPosts", {
   excerpt: text("excerpt"),
   content: text("content").notNull(),
   coverImage: varchar("coverImage", { length: 500 }),
+  // Arvow fields
+  thumbnailUrl: text("thumbnailUrl"),
+  keywordSeed: varchar("keywordSeed", { length: 255 }),
+  tags: text("tags"), // JSON string e.g. '["tag1","tag2"]'
+  source: varchar("source", { length: 50 }).default("manual"), // 'manual' | 'arvow'
   category: varchar("category", { length: 100 }),
   author: varchar("author", { length: 255 }).default("Ausnew APGP Team"),
   published: boolean("published").default(false).notNull(),

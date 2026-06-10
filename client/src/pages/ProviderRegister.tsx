@@ -9,6 +9,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { TOKEN_KEY } from "@/contexts/ProviderAuthContext";
 import { cn } from "@/lib/utils";
+import APGPLogo from "@/components/APGPLogo";
 
 const STATES = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 
@@ -116,7 +117,7 @@ export default function ProviderRegister() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-5/12 gradient-hero text-white flex-col justify-between p-12">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-teal flex items-center justify-center font-bold text-lg font-heading">A</div>
+          <APGPLogo variant="compact" height={40} />
           <div>
             <div className="font-bold text-white font-heading">APGP</div>
             <div className="text-xs text-teal-300">by Ausnew Support Services</div>
@@ -156,7 +157,7 @@ export default function ProviderRegister() {
         <div className="w-full max-w-lg py-6">
           {/* Mobile logo */}
           <Link href="/" className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="w-9 h-9 rounded-xl bg-navy flex items-center justify-center text-white font-bold font-heading">A</div>
+            <APGPLogo variant="compact" height={36} />
             <div className="font-bold text-navy font-heading text-sm">APGP by Ausnew</div>
           </Link>
 

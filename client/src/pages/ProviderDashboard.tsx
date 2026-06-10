@@ -6,6 +6,7 @@ import {
   FileText, CreditCard, Upload, Download, Trash
 } from "lucide-react";
 import ReferralAgreementModal from "@/components/ReferralAgreementModal";
+import APGPLogo from "@/components/APGPLogo";
 import LeadNotificationToast from "@/components/LeadNotificationToast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -241,7 +242,7 @@ export default function ProviderDashboard() {
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-navy text-white flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:flex`}>
         <div className="p-6 border-b border-white/10">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-teal flex items-center justify-center text-white font-bold font-heading">A</div>
+            <APGPLogo variant="compact" height={36} />
             <div>
               <div className="font-bold text-white font-heading text-sm">APGP Portal</div>
               <div className="text-xs text-teal-300">Provider Dashboard</div>
@@ -346,159 +347,40 @@ export default function ProviderDashboard() {
                 </div>
                 <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-navy/10 flex items-center justify-center">
-                      <User className="w-5 h-5 text-navy" />
+                    <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-yellow-600" />
                     </div>
-                    <span className="text-sm font-semibold text-navy">Profile</span>
+                    <span className="text-sm font-semibold text-navy">Pending</span>
                   </div>
-                  <div className="text-sm font-semibold text-navy">{provider.profileComplete ? "Complete" : "Incomplete"}</div>
-                  <p className="text-xs text-gray-400 mt-1">{provider.companyType ?? "Type not set"}</p>
+                  <div className="text-3xl font-bold text-navy">{listings.filter((l) => l.vacancyStatus === "Pending").length}</div>
+                  <p className="text-xs text-gray-400 mt-1">Listings awaiting approval</p>
                 </div>
               </div>
 
-              {/* Quick actions */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button onClick={initProfileForm} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-teal-light flex items-center justify-center"><Settings className="w-5 h-5 text-teal" /></div>
-                    <div className="text-left">
-                      <p className="font-semibold text-navy text-sm">Company Profile</p>
-                      <p className="text-xs text-gray-400">Update your organisation details</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                      <Users className="w-5 h-5 text-purple-600" />
                     </div>
+                    <span className="text-sm font-semibold text-navy">Live Enquiries</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-teal transition-colors" />
-                </button>
-                <button onClick={() => setTab("add-listing")} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-teal-light flex items-center justify-center"><Plus className="w-5 h-5 text-teal" /></div>
-                    <div className="text-left">
-                      <p className="font-semibold text-navy text-sm">Add Property</p>
-                      <p className="text-xs text-gray-400">List a new SDA or SIL accommodation</p>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-teal transition-colors" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Profile */}
-          {tab === "profile" && (
-            <div>
-              <h1 className="text-2xl font-bold text-navy font-heading mb-2">Company Profile</h1>
-              <p className="text-gray-500 text-sm mb-6">Your profile details are pre-filled from your registration. Update any information below and click Save Profile to keep it current.</p>
-
-              {/* Registration data summary card */}
-              {(provider.organisationName || provider.contactName || provider.phone) && (
-                <div className="bg-teal-light border border-teal/20 rounded-2xl p-5 mb-6 flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-teal flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-navy font-heading text-sm mb-1">Registration details loaded</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1 text-xs text-gray-600">
-                      {provider.organisationName && <span><strong>Org:</strong> {provider.organisationName}</span>}
-                      {provider.abn && <span><strong>ABN:</strong> {provider.abn}</span>}
-                      {provider.contactName && <span><strong>Contact:</strong> {provider.contactName}</span>}
-                      {provider.phone && <span><strong>Phone:</strong> {provider.phone}</span>}
-                      {provider.companyType && <span><strong>Type:</strong> {provider.companyType}</span>}
-                      {provider.regionsServiced && <span><strong>States:</strong> {provider.regionsServiced}</span>}
-                    </div>
-                  </div>
+                  <div className="text-3xl font-bold text-navy">{leads.length}</div>
+                  <p className="text-xs text-gray-400 mt-1">New participant leads</p>
                 </div>
-              )}
-
-              <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm max-w-2xl">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    updateProfile.mutate({
-                      ...profileForm,
-                      companyType: profileForm.companyType as "SDA" | "SIL" | "Both" | undefined,
-                    });
-                  }}
-                  className="space-y-5"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="sm:col-span-2">
-                      <Label className="text-navy font-medium text-sm">Organisation Name</Label>
-                      <Input value={profileForm.organisationName} onChange={(e) => setProfileForm({ ...profileForm, organisationName: e.target.value })} placeholder="e.g. Sunrise Disability Housing" className="mt-1.5" />
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                      <FileText className="w-5 h-5 text-blue-600" />
                     </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">ABN</Label>
-                      <Input value={profileForm.abn} onChange={(e) => setProfileForm({ ...profileForm, abn: e.target.value })} placeholder="XX XXX XXX XXX" className="mt-1.5" />
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Company Type</Label>
-                      <Select value={profileForm.companyType} onValueChange={(v) => setProfileForm({ ...profileForm, companyType: v as "SDA" | "SIL" | "Both" })}>
-                        <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select type" /></SelectTrigger>
-                        <SelectContent>
-                          {SUPPORT_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Contact Name</Label>
-                      <Input value={profileForm.contactName} onChange={(e) => setProfileForm({ ...profileForm, contactName: e.target.value })} placeholder="Full name" className="mt-1.5" />
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Contact Title</Label>
-                      <Input value={profileForm.contactTitle} onChange={(e) => setProfileForm({ ...profileForm, contactTitle: e.target.value })} placeholder="e.g. Director" className="mt-1.5" />
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Phone</Label>
-                      <Input value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })} placeholder="04XX XXX XXX" className="mt-1.5" />
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Website</Label>
-                      <Input value={profileForm.website} onChange={(e) => setProfileForm({ ...profileForm, website: e.target.value })} placeholder="https://yourwebsite.com.au" className="mt-1.5" />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Label className="text-navy font-medium text-sm">Regions Serviced</Label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {REGIONS.map((r) => {
-                          const selected = profileForm.regionsServiced.split(",").map((s) => s.trim()).includes(r);
-                          return (
-                            <button
-                              key={r}
-                              type="button"
-                              onClick={() => {
-                                const current = profileForm.regionsServiced.split(",").map((s) => s.trim()).filter(Boolean);
-                                const updated = selected ? current.filter((s) => s !== r) : [...current, r];
-                                setProfileForm({ ...profileForm, regionsServiced: updated.join(", ") });
-                              }}
-                              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${selected ? "bg-teal text-white border-teal" : "bg-white text-gray-600 border-gray-200 hover:border-teal"}`}
-                            >
-                              {r}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+                    <span className="text-sm font-semibold text-navy">Documents</span>
                   </div>
-                  <div className="flex gap-3 pt-2">
-                    <Button type="submit" className="bg-teal hover:bg-teal-600 text-white" disabled={updateProfile.isPending}>
-                      {updateProfile.isPending ? "Saving..." : "Save Profile"}
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => setTab("overview")}>Cancel</Button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-
-          {/* Listings */}
-          {tab === "listings" && (
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h1 className="text-2xl font-bold text-navy font-heading">My Listings</h1>
-                  <p className="text-gray-500 text-sm mt-1">{listings.length} active {listings.length === 1 ? "property" : "properties"}</p>
+                  <div className="text-3xl font-bold text-navy">{documents.length}</div>
+                  <p className="text-xs text-gray-400 mt-1">Uploaded documents</p>
                 </div>
-                <Button onClick={() => setTab("add-listing")} className="bg-teal hover:bg-teal-600 text-white">
-                  <Plus className="w-4 h-4 mr-2" /> Add Property
-                </Button>
               </div>
+
+              <h2 className="text-xl font-bold text-navy font-heading mb-4">Your Listings</h2>
               {listings.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
                   <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
@@ -732,63 +614,62 @@ export default function ProviderDashboard() {
                     <Select value={uploadCategory} onValueChange={(v) => setUploadCategory(v as typeof uploadCategory)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {["Referral Agreement", "Consent Form", "NDIS Registration", "Insurance", "Other"].map((c) => (
-                          <SelectItem key={c} value={c}>{c}</SelectItem>
-                        ))}
+                        <SelectItem value="Referral Agreement">Referral Agreement</SelectItem>
+                        <SelectItem value="Consent Form">Consent Form</SelectItem>
+                        <SelectItem value="NDIS Registration">NDIS Registration</SelectItem>
+                        <SelectItem value="Insurance">Insurance</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-end">
-                    <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileUpload} accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />
-                    <Button
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading || uploadDoc.isPending}
-                      className="bg-teal hover:bg-teal-600 text-white"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      {uploading || uploadDoc.isPending ? "Uploading..." : "Choose File"}
-                    </Button>
+                  <div className="flex-1">
+                    <Label className="text-navy font-medium text-sm mb-1.5 block">File Upload</Label>
+                    <div className="flex items-center gap-2">
+                      <Input type="file" ref={fileInputRef} onChange={handleFileUpload} className="flex-1" />
+                      <Button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="bg-teal hover:bg-teal-600 text-white">
+                        {uploading ? "Uploading..." : "Upload"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-3">Accepted formats: PDF, Word, PNG, JPG. Maximum file size: 10MB.</p>
               </div>
 
-              {/* Document list */}
               {documents.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
                   <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="font-semibold text-navy mb-2">No documents yet</h3>
-                  <p className="text-gray-500 text-sm">Upload your signed agreements, NDIS registration, and other documents to keep them organised in one place.</p>
+                  <h3 className="font-semibold text-navy mb-2">No documents uploaded</h3>
+                  <p className="text-gray-500 text-sm">Upload your agreements, registration, and insurance documents here.</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {documents.map((doc) => (
-                    <div key={doc.id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-teal-light flex items-center justify-center shrink-0">
-                          <FileText className="w-5 h-5 text-teal" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-navy text-sm truncate">{doc.fileName}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
+                    <div key={doc.id} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-2 flex-wrap">
+                            <h3 className="font-bold text-navy">{doc.fileName}</h3>
                             <Badge variant="outline" className="text-xs border-teal text-teal">{doc.category}</Badge>
-                            {doc.fileSize && <span className="text-xs text-gray-400">{(doc.fileSize / 1024).toFixed(0)} KB</span>}
-                            <span className="text-xs text-gray-400">{new Date(doc.uploadedAt).toLocaleDateString('en-AU')}</span>
                           </div>
+                          <p className="text-sm text-gray-500">Uploaded {new Date(doc.uploadedAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer">
-                          <button className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal-light transition-colors">
+                        <div className="flex items-center gap-2 shrink-0">
+                          <a
+                            href={doc.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal-light transition-colors"
+                          >
                             <Download className="w-4 h-4" />
+                          </a>
+                          <button
+                            onClick={() => {
+                              if (confirm("Remove this document?")) deleteDoc.mutate({ id: doc.id });
+                            }}
+                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash className="w-4 h-4" />
                           </button>
-                        </a>
-                        <button
-                          onClick={() => { if (confirm("Remove this document?")) deleteDoc.mutate({ id: doc.id }); }}
-                          className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                        >
-                          <Trash className="w-4 h-4" />
-                        </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -800,143 +681,403 @@ export default function ProviderDashboard() {
           {/* Billing */}
           {tab === "billing" && (
             <div>
-              <h1 className="text-2xl font-bold text-navy font-heading mb-2">Billing</h1>
-              <p className="text-gray-500 text-sm mb-6">View your billing history, invoices, and payment details.</p>
-              <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
-                <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="font-semibold text-navy mb-2">Billing Coming Soon</h3>
-                <p className="text-gray-500 text-sm max-w-sm mx-auto leading-relaxed">
-                  Your billing history and invoices will appear here once your first placement is confirmed. Remember — you only pay when a participant moves in.
-                </p>
-                <div className="mt-6 bg-teal-light rounded-xl p-4 max-w-sm mx-auto">
-                  <p className="text-sm font-semibold text-navy">Current Balance</p>
-                  <p className="text-3xl font-extrabold text-teal font-heading mt-1">$0.00</p>
-                  <p className="text-xs text-gray-500 mt-1">No outstanding invoices</p>
-                </div>
+              <h1 className="text-2xl font-bold text-navy font-heading mb-2">Billing & Payments</h1>
+              <p className="text-gray-500 text-sm mb-6">Manage your subscription, view invoices, and update payment methods.</p>
+
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6">
+                <h3 className="font-bold text-navy font-heading mb-4">Subscription Plan</h3>
+                <p className="text-lg font-semibold text-navy mb-2">Free Tier</p>
+                <p className="text-gray-500 text-sm mb-4">You are currently on the free tier. Contact Ausnew Support to upgrade to a paid plan for more features.</p>
+                <Button className="bg-teal hover:bg-teal-600 text-white">Contact Support</Button>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                <h3 className="font-bold text-navy font-heading mb-4">Payment Methods</h3>
+                <p className="text-gray-500 text-sm">No payment methods on file for the free tier.</p>
               </div>
             </div>
           )}
 
-          {/* Add/Edit listing */}
+          {/* Company Profile */}
+          {tab === "profile" && (
+            <div>
+              <h1 className="text-2xl font-bold text-navy font-heading mb-2">Company Profile</h1>
+              <p className="text-gray-500 text-sm mb-6">Update your organisation details, contact information, and service regions.</p>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                updateProfile.mutate({ ...profileForm, companyType: profileForm.companyType || undefined });
+              }} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <Label htmlFor="organisationName" className="text-navy font-medium text-sm mb-1.5 block">Organisation Name</Label>
+                    <Input
+                      id="organisationName"
+                      value={profileForm.organisationName}
+                      onChange={(e) => setProfileForm({ ...profileForm, organisationName: e.target.value })}
+                      placeholder="Your Organisation Name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="abn" className="text-navy font-medium text-sm mb-1.5 block">ABN</Label>
+                    <Input
+                      id="abn"
+                      value={profileForm.abn}
+                      onChange={(e) => setProfileForm({ ...profileForm, abn: e.target.value })}
+                      placeholder="Your ABN"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contactName" className="text-navy font-medium text-sm mb-1.5 block">Contact Name</Label>
+                    <Input
+                      id="contactName"
+                      value={profileForm.contactName}
+                      onChange={(e) => setProfileForm({ ...profileForm, contactName: e.target.value })}
+                      placeholder="Contact Person's Name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contactTitle" className="text-navy font-medium text-sm mb-1.5 block">Contact Title</Label>
+                    <Input
+                      id="contactTitle"
+                      value={profileForm.contactTitle}
+                      onChange={(e) => setProfileForm({ ...profileForm, contactTitle: e.target.value })}
+                      placeholder="e.g., CEO, Manager"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="phone" className="text-navy font-medium text-sm mb-1.5 block">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                      placeholder="e.g., 0412 345 678"
+                      type="tel"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="website" className="text-navy font-medium text-sm mb-1.5 block">Website</Label>
+                    <Input
+                      id="website"
+                      value={profileForm.website}
+                      onChange={(e) => setProfileForm({ ...profileForm, website: e.target.value })}
+                      placeholder="https://yourcompany.com.au"
+                      type="url"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="companyType" className="text-navy font-medium text-sm mb-1.5 block">Company Type</Label>
+                    <Select value={profileForm.companyType} onValueChange={(v) => setProfileForm({ ...profileForm, companyType: v as "SDA" | "SIL" | "Both" })}> 
+                      <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="SDA">SDA Provider</SelectItem>
+                        <SelectItem value="SIL">SIL Provider</SelectItem>
+                        <SelectItem value="Both">Both SDA & SIL</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="supportTypes" className="text-navy font-medium text-sm mb-1.5 block">Support Types Provided</Label>
+                    <Select value={profileForm.supportTypes} onValueChange={(v) => setProfileForm({ ...profileForm, supportTypes: v })}> 
+                      <SelectTrigger><SelectValue placeholder="Select support types" /></SelectTrigger>
+                      <SelectContent>
+                        {SUPPORT_TYPES.map((type) => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="mb-6">
+                  <Label htmlFor="regionsServiced" className="text-navy font-medium text-sm mb-1.5 block">Regions Serviced (comma-separated)</Label>
+                  <Input
+                    id="regionsServiced"
+                    value={profileForm.regionsServiced}
+                    onChange={(e) => setProfileForm({ ...profileForm, regionsServiced: e.target.value })}
+                    placeholder="e.g., Sydney, Melbourne, Brisbane"
+                  />
+                </div>
+                <Button type="submit" disabled={updateProfile.isPending} className="bg-teal hover:bg-teal-600 text-white">
+                  {updateProfile.isPending ? "Saving..." : "Save Profile"}
+                </Button>
+              </form>
+            </div>
+          )}
+
+          {/* My Listings */}
+          {tab === "listings" && (
+            <div>
+              <h1 className="text-2xl font-bold text-navy font-heading mb-2">My Property Listings</h1>
+              <p className="text-gray-500 text-sm mb-6">Manage your SDA and SIL property listings. These are visible to the Ausnew team for participant matching.</p>
+
+              <div className="flex justify-end mb-4">
+                <Button onClick={() => setTab("add-listing")} className="bg-teal hover:bg-teal-600 text-white">
+                  <Plus className="w-4 h-4 mr-2" /> Add New Listing
+                </Button>
+              </div>
+
+              {listings.length === 0 ? (
+                <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+                  <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <h3 className="font-semibold text-navy mb-2">No listings yet</h3>
+                  <p className="text-gray-500 text-sm mb-6">Add your first SDA or SIL property to make it visible to the Ausnew team.</p>
+                  <Button onClick={() => setTab("add-listing")} className="bg-teal hover:bg-teal-600 text-white">
+                    <Plus className="w-4 h-4 mr-2" /> Add Your First Property
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {listings.map((listing) => (
+                    <div key={listing.id} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-2 flex-wrap">
+                            <h3 className="font-bold text-navy">{listing.propertyName || listing.address}</h3>
+                            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${vacancyBadge[listing.vacancyStatus]}`}>
+                              {listing.vacancyStatus}
+                            </span>
+                            <Badge variant="outline" className="text-xs border-teal text-teal">{listing.propertyType}</Badge>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <MapPin className="w-3.5 h-3.5 shrink-0" />
+                            <span>{listing.address}{listing.suburb ? `, ${listing.suburb}` : ""}{listing.state ? `, ${listing.state}` : ""}</span>
+                          </div>
+                          <div className="flex gap-4 mt-3 text-xs text-gray-500">
+                            <span>{listing.availableRooms} available / {listing.totalRooms} total rooms</span>
+                            {listing.sdaCategory && <span>SDA: {listing.sdaCategory}</span>}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={() => {
+                              setListingForm({
+                                propertyName: listing.propertyName ?? "",
+                                address: listing.address ?? "",
+                                suburb: listing.suburb ?? "",
+                                state: (listing.state ?? "NSW") as typeof listingForm.state,
+                                postcode: listing.postcode ?? "",
+                                propertyType: (listing.propertyType ?? "SDA") as "SDA" | "SIL" | "Both",
+                                sdaCategory: (listing.sdaCategory ?? "") as SdaCategoryType | "",
+                                vacancyStatus: (listing.vacancyStatus ?? "Available") as "Available" | "Pending" | "Occupied",
+                                availableRooms: listing.availableRooms ?? 1,
+                                totalRooms: listing.totalRooms ?? 1,
+                                supportNeeds: listing.supportNeeds ?? "",
+                                description: listing.description ?? "",
+                                propertyLink: listing.propertyLink ?? "",
+                              });
+                              setEditingId(listing.id);
+                              setTab("add-listing");
+                            }}
+                            className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal-light transition-colors"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm("Remove this listing?")) deleteListing.mutate({ id: listing.id });
+                            }}
+                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Add/Edit Listing */}
           {tab === "add-listing" && (
             <div>
-              <h1 className="text-2xl font-bold text-navy font-heading mb-2">{editingId ? "Edit Property" : "Add New Property"}</h1>
-              <p className="text-gray-500 text-sm mb-8">Fill in the details of your SDA or SIL accommodation.</p>
-              <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm max-w-2xl">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const payload = {
-                      ...listingForm,
-                      sdaCategory: listingForm.sdaCategory as typeof listingForm.sdaCategory | undefined || undefined,
-                      propertyLink: listingForm.propertyLink || undefined,
-                    };
-                    if (editingId) {
-                      updateListing.mutate({ id: editingId, ...payload });
-                    } else {
-                      createListing.mutate(payload);
-                    }
-                  }}
-                  className="space-y-5"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="sm:col-span-2">
-                      <Label className="text-navy font-medium text-sm">Property Name</Label>
-                      <Input value={listingForm.propertyName} onChange={(e) => setListingForm({ ...listingForm, propertyName: e.target.value })} placeholder="e.g. Sunrise House — Parramatta" className="mt-1.5" required />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Label className="text-navy font-medium text-sm">Full Address</Label>
-                      <Input value={listingForm.address} onChange={(e) => setListingForm({ ...listingForm, address: e.target.value })} placeholder="Street address" className="mt-1.5" required />
-                    </div>
+              <h1 className="text-2xl font-bold text-navy font-heading mb-2">{editingId ? "Edit Property Listing" : "Add New Property Listing"}</h1>
+              <p className="text-gray-500 text-sm mb-6">{editingId ? "Update the details for your property listing." : "Add a new SDA or SIL property to your listings."}</p>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                if (editingId) {
+                  updateListing.mutate({ id: editingId as number, ...listingForm, sdaCategory: listingForm.sdaCategory || undefined });
+                } else {
+                  createListing.mutate({ ...listingForm, sdaCategory: listingForm.sdaCategory || undefined });
+                }
+              }} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <Label htmlFor="propertyName" className="text-navy font-medium text-sm mb-1.5 block">Property Name</Label>
+                    <Input
+                      id="propertyName"
+                      value={listingForm.propertyName}
+                      onChange={(e) => setListingForm({ ...listingForm, propertyName: e.target.value })}
+                      placeholder="e.g., 'The Sanctuary' or 'Main Street House'"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="address" className="text-navy font-medium text-sm mb-1.5 block">Street Address</Label>
+                    <Input
+                      id="address"
+                      value={listingForm.address}
+                      onChange={(e) => setListingForm({ ...listingForm, address: e.target.value })}
+                      placeholder="e.g., 123 Main St"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="suburb" className="text-navy font-medium text-sm mb-1.5 block">Suburb</Label>
+                    <Input
+                      id="suburb"
+                      value={listingForm.suburb}
+                      onChange={(e) => setListingForm({ ...listingForm, suburb: e.target.value })}
+                      placeholder="e.g., Sydney"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="state" className="text-navy font-medium text-sm mb-1.5 block">State</Label>
+                    <Select value={listingForm.state} onValueChange={(v) => setListingForm({ ...listingForm, state: v as StateType })}>
+                      <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
+                      <SelectContent>
+                        {STATES.map((state) => (
+                          <SelectItem key={state} value={state}>{state}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="postcode" className="text-navy font-medium text-sm mb-1.5 block">Postcode</Label>
+                    <Input
+                      id="postcode"
+                      value={listingForm.postcode}
+                      onChange={(e) => setListingForm({ ...listingForm, postcode: e.target.value })}
+                      placeholder="e.g., 2000"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="propertyType" className="text-navy font-medium text-sm mb-1.5 block">Property Type</Label>
+                    <Select value={listingForm.propertyType} onValueChange={(v) => setListingForm({ ...listingForm, propertyType: v as "SDA" | "SIL" | "Both" })}>
+                      <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="SDA">SDA Property</SelectItem>
+                        <SelectItem value="SIL">SIL Property</SelectItem>
+                        <SelectItem value="Both">Both SDA & SIL</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {listingForm.propertyType !== "SIL" && (
                     <div>
-                      <Label className="text-navy font-medium text-sm">Suburb</Label>
-                      <Input value={listingForm.suburb} onChange={(e) => setListingForm({ ...listingForm, suburb: e.target.value })} placeholder="Suburb" className="mt-1.5" required />
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Postcode</Label>
-                      <Input value={listingForm.postcode} onChange={(e) => setListingForm({ ...listingForm, postcode: e.target.value })} placeholder="2000" maxLength={4} className="mt-1.5" required />
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">State</Label>
-                      <Select value={listingForm.state} onValueChange={(v) => setListingForm({ ...listingForm, state: v as typeof listingForm.state })}>
-                        <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                        <SelectContent>{STATES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Property Type</Label>
-                      <Select value={listingForm.propertyType} onValueChange={(v) => setListingForm({ ...listingForm, propertyType: v as "SDA" | "SIL" | "Both" })}>
-                        <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                        <SelectContent>{SUPPORT_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
-                      </Select>
-                    </div>
-                    {(listingForm.propertyType === "SDA" || listingForm.propertyType === "Both") && (
-                      <div>
-                        <Label className="text-navy font-medium text-sm">SDA Category</Label>
-                        <Select value={listingForm.sdaCategory} onValueChange={(v) => setListingForm({ ...listingForm, sdaCategory: v as SdaCategoryType })}>
-                          <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select category" /></SelectTrigger>
-                          <SelectContent>{SDA_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                        </Select>
-                      </div>
-                    )}
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Vacancy Status</Label>
-                      <Select value={listingForm.vacancyStatus} onValueChange={(v) => setListingForm({ ...listingForm, vacancyStatus: v as "Available" | "Pending" | "Occupied" })}>
-                        <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                      <Label htmlFor="sdaCategory" className="text-navy font-medium text-sm mb-1.5 block">SDA Category</Label>
+                      <Select value={listingForm.sdaCategory} onValueChange={(v) => setListingForm({ ...listingForm, sdaCategory: v as SdaCategoryType })}>
+                        <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Available">Available</SelectItem>
-                          <SelectItem value="Pending">Pending</SelectItem>
-                          <SelectItem value="Occupied">Occupied</SelectItem>
+                          {SDA_CATEGORIES.map((category) => (
+                            <SelectItem key={category} value={category}>{category}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Available Rooms</Label>
-                      <Input type="number" min={0} value={listingForm.availableRooms} onChange={(e) => setListingForm({ ...listingForm, availableRooms: parseInt(e.target.value) || 0 })} className="mt-1.5" />
-                    </div>
-                    <div>
-                      <Label className="text-navy font-medium text-sm">Total Rooms</Label>
-                      <Input type="number" min={1} value={listingForm.totalRooms} onChange={(e) => setListingForm({ ...listingForm, totalRooms: parseInt(e.target.value) || 1 })} className="mt-1.5" />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Label className="text-navy font-medium text-sm">Support Needs Catered For</Label>
-                      <Input value={listingForm.supportNeeds} onChange={(e) => setListingForm({ ...listingForm, supportNeeds: e.target.value })} placeholder="e.g. High Physical Support, Behaviour Support" className="mt-1.5" />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Label className="text-navy font-medium text-sm">Property Description</Label>
-                      <Textarea value={listingForm.description} onChange={(e) => setListingForm({ ...listingForm, description: e.target.value })} placeholder="Describe the property, features, and any relevant details..." className="mt-1.5" rows={3} />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Label className="text-navy font-medium text-sm">Property Link <span className="text-gray-400 font-normal">(Housing Hub / Go-Nest)</span></Label>
-                      <Input value={listingForm.propertyLink} onChange={(e) => setListingForm({ ...listingForm, propertyLink: e.target.value })} placeholder="https://housinghub.org.au/..." className="mt-1.5" />
-                    </div>
+                  )}
+                  <div>
+                    <Label htmlFor="vacancyStatus" className="text-navy font-medium text-sm mb-1.5 block">Vacancy Status</Label>
+                    <Select value={listingForm.vacancyStatus} onValueChange={(v) => setListingForm({ ...listingForm, vacancyStatus: v as "Available" | "Pending" | "Occupied" })}>
+                      <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Available">Available</SelectItem>
+                        <SelectItem value="Pending">Pending</SelectItem>
+                        <SelectItem value="Occupied">Occupied</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <div className="flex gap-3 pt-2">
-                    <Button type="submit" className="bg-teal hover:bg-teal-600 text-white" disabled={createListing.isPending || updateListing.isPending}>
-                      {createListing.isPending || updateListing.isPending ? "Saving..." : editingId ? "Update Listing" : "Add Listing"}
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => { setTab("listings"); setEditingId(null); }}>Cancel</Button>
+                  <div>
+                    <Label htmlFor="totalRooms" className="text-navy font-medium text-sm mb-1.5 block">Total Rooms</Label>
+                    <Input
+                      id="totalRooms"
+                      value={listingForm.totalRooms}
+                      onChange={(e) => setListingForm({ ...listingForm, totalRooms: parseInt(e.target.value) || 0 })}
+                      type="number"
+                      min={1}
+                      required
+                    />
                   </div>
-                </form>
-              </div>
+                  <div>
+                    <Label htmlFor="availableRooms" className="text-navy font-medium text-sm mb-1.5 block">Available Rooms</Label>
+                    <Input
+                      id="availableRooms"
+                      value={listingForm.availableRooms}
+                      onChange={(e) => setListingForm({ ...listingForm, availableRooms: parseInt(e.target.value) || 0 })}
+                      type="number"
+                      min={0}
+                      max={listingForm.totalRooms}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="mb-6">
+                  <Label htmlFor="supportNeeds" className="text-navy font-medium text-sm mb-1.5 block">Support Needs Provided (comma-separated)</Label>
+                  <Textarea
+                    id="supportNeeds"
+                    value={listingForm.supportNeeds}
+                    onChange={(e) => setListingForm({ ...listingForm, supportNeeds: e.target.value })}
+                    placeholder="e.g., 24/7 care, personal care, community access"
+                    rows={3}
+                  />
+                </div>
+                <div className="mb-6">
+                  <Label htmlFor="description" className="text-navy font-medium text-sm mb-1.5 block">Property Description</Label>
+                  <Textarea
+                    id="description"
+                    value={listingForm.description}
+                    onChange={(e) => setListingForm({ ...listingForm, description: e.target.value })}
+                    placeholder="Provide a detailed description of the property, its features, and the supports available."
+                    rows={5}
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <Label htmlFor="propertyLink" className="text-navy font-medium text-sm mb-1.5 block">External Property Link (Optional)</Label>
+                  <Input
+                    id="propertyLink"
+                    value={listingForm.propertyLink}
+                    onChange={(e) => setListingForm({ ...listingForm, propertyLink: e.target.value })}
+                    placeholder="https://yourwebsite.com/property-listing"
+                    type="url"
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <Button type="submit" disabled={createListing.isPending || updateListing.isPending} className="bg-teal hover:bg-teal-600 text-white">
+                    {editingId ? (updateListing.isPending ? "Saving..." : "Save Changes") : (createListing.isPending ? "Adding..." : "Add Listing")}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => {
+                    setEditingId(null);
+                    setTab("listings");
+                    setListingForm({ propertyName: "", address: "", suburb: "", state: "NSW", postcode: "", propertyType: "SDA", sdaCategory: "", vacancyStatus: "Available", availableRooms: 1, totalRooms: 1, supportNeeds: "", description: "", propertyLink: "" });
+                  }}>Cancel</Button>
+                </div>
+              </form>
             </div>
           )}
         </main>
       </div>
 
-      {/* Live lead notifications for logged-in providers */}
-      <LeadNotificationToast isPublic={false} />
-
-      {/* Referral Agreement Modal */}
       {interestLeadId !== null && provider && (
         <ReferralAgreementModal
+          onClose={() => setInterestLeadId(null)}
           leadId={interestLeadId}
           leadSummary={interestLeadSummary}
           provider={provider}
-          onClose={() => { setInterestLeadId(null); setInterestLeadSummary(""); }}
-          onSuccess={() => { setInterestLeadId(null); setInterestLeadSummary(""); refetchLeads(); }}
+          onSuccess={() => {
+            toast.success("Interest submitted. Ausnew team will be in touch.");
+            refetchLeads();
+            setInterestLeadId(null);
+          }}
         />
       )}
+
+      <LeadNotificationToast />
     </div>
   );
 }

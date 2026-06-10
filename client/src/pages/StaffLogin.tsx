@@ -4,6 +4,7 @@ import { Shield, ArrowRight, Lock, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import APGPLogo from "@/components/APGPLogo";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
@@ -30,7 +31,7 @@ export default function AdminLogin() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 border-r border-white/10">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-teal flex items-center justify-center text-white font-bold text-lg font-heading">A</div>
+          <APGPLogo variant="compact" height={40} />
           <div>
             <div className="font-bold text-white font-heading">APGP</div>
             <div className="text-xs text-teal-300">by Ausnew Support Services</div>
@@ -79,7 +80,7 @@ export default function AdminLogin() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <Link href="/" className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="w-9 h-9 rounded-lg bg-teal flex items-center justify-center text-white font-bold font-heading">A</div>
+            <APGPLogo variant="compact" height={36} />
             <div className="font-bold text-white font-heading text-sm">APGP Admin Portal</div>
           </Link>
 

@@ -4,6 +4,7 @@ import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FloatingRegisterButton from "@/components/FloatingRegisterButton";
 import LeadNotificationToast from "@/components/LeadNotificationToast";
+import APGPLogo from "@/components/APGPLogo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -58,12 +59,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="container flex items-center justify-between h-16 gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 shrink-0">
-            <div className="w-9 h-9 rounded-xl bg-navy flex items-center justify-center text-white font-bold font-heading text-sm">A</div>
-            <div className="hidden sm:block">
-              <div className="font-bold text-navy font-heading text-sm leading-tight">APGP</div>
-              <div className="text-xs text-gray-400 leading-tight">by Ausnew Support Services</div>
-            </div>
+          <Link href="/" className="flex items-center shrink-0">
+            <APGPLogo variant="full" height={36} className="hidden sm:block" />
+            <APGPLogo variant="compact" height={36} className="sm:hidden" />
           </Link>
 
           {/* Desktop nav */}
@@ -193,12 +191,8 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             {/* Brand */}
             <div className="lg:col-span-1">
-              <Link href="/" className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-teal flex items-center justify-center font-bold font-heading">A</div>
-                <div>
-                  <div className="font-bold text-white font-heading">APGP</div>
-                  <div className="text-xs text-teal-300">by Ausnew Support Services</div>
-                </div>
+              <Link href="/" className="flex items-center mb-4">
+                <APGPLogo variant="white" height={44} />
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
                 Australia's leading NDIS accommodation provider growth program. Real occupancy. Real stability. Zero upfront cost.
