@@ -295,17 +295,16 @@ export default function ProviderDashboard() {
             <Plus className="w-4 h-4" />
             Add Property
           </button>
+          <div className="border-t border-white/10 mt-2 pt-2">
+            <button
+              onClick={() => logout.mutate()}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          </div>
         </nav>
-
-        <div className="p-4 border-t border-white/10">
-          <button
-            onClick={() => logout.mutate()}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </button>
-        </div>
       </aside>
 
       {/* Overlay for mobile */}
@@ -637,14 +636,18 @@ export default function ProviderDashboard() {
                                 <p className="text-xs text-gray-400 mb-1">Accommodation type</p>
                                 <p className="text-sm font-semibold text-navy">{lead.accommodationType.split('(')[0].trim()}</p>
                               </div>
-                              <div className="bg-gray-50 rounded-xl p-3">
-                                <p className="text-xs text-gray-400 mb-1">Dwelling type</p>
-                                <p className="text-sm font-semibold text-navy">{lead.dwellingType}</p>
-                              </div>
-                              <div className="bg-gray-50 rounded-xl p-3">
-                                <p className="text-xs text-gray-400 mb-1">Move-in timeline</p>
-                                <p className="text-sm font-semibold text-navy flex items-center gap-1"><Clock className="w-3 h-3 text-teal" />{lead.moveInTimeline}</p>
-                              </div>
+                              {lead.dwellingType && lead.dwellingType !== 'Not specified' && (
+                                <div className="bg-gray-50 rounded-xl p-3">
+                                  <p className="text-xs text-gray-400 mb-1">Dwelling type</p>
+                                  <p className="text-sm font-semibold text-navy">{lead.dwellingType}</p>
+                                </div>
+                              )}
+                              {lead.moveInTimeline && lead.moveInTimeline !== 'Not specified' && (
+                                <div className="bg-gray-50 rounded-xl p-3">
+                                  <p className="text-xs text-gray-400 mb-1">Move-in timeline</p>
+                                  <p className="text-sm font-semibold text-navy flex items-center gap-1"><Clock className="w-3 h-3 text-teal" />{lead.moveInTimeline}</p>
+                                </div>
+                              )}
                               <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-xs text-gray-400 mb-1">Postcode</p>
                                 <p className="text-sm font-semibold text-navy flex items-center gap-1">
