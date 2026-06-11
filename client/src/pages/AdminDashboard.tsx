@@ -387,12 +387,12 @@ export default function AdminDashboard() {
                   <table className="w-full whitespace-nowrap">
                     <thead>
                       <tr className="text-left text-xs font-semibold text-gray-500 border-b border-gray-100">
-                        <th className="p-4">ID</th>
+                        <th className="p-4">Lead ID</th>
+                        <th className="p-4">Request For</th>
                         <th className="p-4">Accommodation Type</th>
-                        <th className="p-4">Location</th>
-                        <th className="p-4">Move-in Timeline</th>
-                        <th className="p-4">NDIS Registered</th>
-                        <th className="p-4">Support Needs</th>
+                        <th className="p-4">Postcode / State</th>
+                        <th className="p-4">NDIS</th>
+                        <th className="p-4">Timeline</th>
                         <th className="p-4">Status</th>
                         <th className="p-4">Actions</th>
                       </tr>
@@ -405,12 +405,19 @@ export default function AdminDashboard() {
                       )}
                       {filteredLeads.map((lead) => (
                         <tr key={lead.id} className="border-b border-gray-100 last:border-b-0">
-                          <td className="p-4 text-sm text-gray-800">{lead.id}</td>
-                          <td className="p-4 text-sm text-gray-800">{lead.accommodationType}</td>
-                          <td className="p-4 text-sm text-gray-800">{lead.postcode ?? lead.preferredState ?? '—'}</td>
-                          <td className="p-4 text-sm text-gray-800">{lead.moveInTimeline}</td>
-                          <td className="p-4 text-sm text-gray-800">{lead.ndisRegistered}</td>
-                          <td className="p-4 text-sm text-gray-800">{lead.supportNeeds}</td>
+                          <td className="p-4 text-xs font-mono text-gray-500">{lead.mondayLeadId ?? lead.id}</td>
+                          <td className="p-4 text-sm text-gray-800">{lead.careFor ?? '—'}</td>
+                          <td className="p-4 text-sm text-gray-800">{lead.accommodationType?.split('(')[0].trim() ?? '—'}</td>
+                          <td className="p-4 text-sm text-gray-800">
+                            {lead.postcode ? <span className="font-semibold">{lead.postcode}</span> : '—'}
+                            {lead.preferredState ? <span className="text-xs text-gray-400 ml-1">({lead.preferredState})</span> : ''}
+                          </td>
+                          <td className="p-4 text-sm">
+                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                              lead.ndisRegistered?.toLowerCase().includes('yes') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                            }`}>{lead.ndisRegistered?.toLowerCase().includes('yes') ? 'Yes' : lead.ndisRegistered ?? '—'}</span>
+                          </td>
+                          <td className="p-4 text-sm text-gray-600">{lead.moveInTimeline && lead.moveInTimeline !== 'Not specified' ? lead.moveInTimeline : '—'}</td>
                           <td className="p-4 text-sm">
                             <Badge variant={lead.isActive ? "default" : "secondary"}>
                               {lead.isActive ? "Visible" : "Hidden"}
