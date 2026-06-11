@@ -75,10 +75,10 @@ export default function Pathways() {
               <h3 className="font-bold text-navy font-heading text-lg mb-6">Pricing Structure</h3>
               <div className="space-y-5">
                 {[
-                  { label: "Placement Fee (Success-Based)", value: "Fixed fee per successful onboarding", note: "No payment until the participant completes intake and moves into your accommodation." },
-                  { label: "Weekly Subscription (VPP)", value: "Fixed weekly fee per property", note: "Priority referral access and vacancy replacement support to minimise downtime." },
-                  { label: "Replacement Search", value: "Included in weekly subscription", note: "Reduces downtime between participants and helps maintain stable occupancy." },
-                  { label: "CRM Vacancy Management", value: "Included in weekly subscription", note: "Your property and vacancy data are maintained and actively used for matching." },
+                  { label: "Placement Fee (Success-Based)", value: "Quoted per lead — tailored to your region", note: "No payment until the participant completes intake and moves into your accommodation. A quote is issued for each successful placement." },
+                  { label: "Lead Generation", value: "Included — no additional cost", note: "Ausnew sources and qualifies participants from its pipeline at no extra charge." },
+                  { label: "Intake Coordination", value: "Included — no additional cost", note: "Documentation, assessments, inspections, and onboarding all managed by Ausnew." },
+                  { label: "Move-In Support", value: "Included — no additional cost", note: "Ausnew stays engaged through the transition to ensure a stable start." },
                 ].map((row) => (
                   <div key={row.label} className="border-b border-gray-100 pb-5 last:border-0 last:pb-0">
                     <div className="flex justify-between items-start gap-4 mb-1">
@@ -89,12 +89,12 @@ export default function Pathways() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-400 mt-6 italic">Final pricing depends on region, participant needs, and provider portfolio.</p>
+              <p className="text-xs text-gray-400 mt-6 italic">Pricing is per lead and per result — a tailored quote is issued for each successful placement.</p>
             </div>
             <div className="order-1 lg:order-2">
               <div className="inline-block bg-teal text-white text-xs font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">Pathway 2</div>
               <h2 className="text-3xl font-bold text-navy font-heading mb-3">Referral Partnership</h2>
-              <p className="text-teal font-semibold mb-6">Success-Based Placement Fee + Weekly Subscription</p>
+              <p className="text-teal font-semibold mb-6">Success-Based Placement Fee — Quoted Per Lead</p>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 When Ausnew cannot deliver ongoing supports due to location or rostering feasibility, participants are referred through our success-based referral model. You pay only when a participant successfully moves in.
               </p>
@@ -106,9 +106,9 @@ export default function Pathways() {
                   </li>
                 ))}
               </ul>
-              <h3 className="font-bold text-navy font-heading mb-4">Vacancy Protection Plan (VPP)</h3>
+              <h3 className="font-bold text-navy font-heading mb-4">Ongoing Support After Placement</h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                Once the participant is onboarded, a small weekly subscription begins, supporting priority search and replacement if the participant exits, ongoing visibility of your vacancies, continuous intake activity and matching, and CRM maintenance of your property portfolio.
+                Once the participant is onboarded, Ausnew continues to support the relationship — assisting with vacancy management, ongoing matching, and participant retention to help you maintain stable long-term occupancy.
               </p>
               <Link href="/provider/register">
   <Button size="lg" className="bg-teal hover:bg-teal-600 text-white font-semibold px-10">

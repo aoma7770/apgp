@@ -26,10 +26,7 @@ const faqs = [
     q: "What types of supports can Ausnew provide?",
     a: "Ausnew Support Services delivers Community Access supports, social and community participation, and support coordination. In the context of APGP, Ausnew focuses on Community Access supports delivered to participants living in partner providers' SDA and SIL properties.",
   },
-  {
-    q: "What is the Vacancy Protection Plan (VPP), and is it mandatory?",
-    a: "The Vacancy Protection Plan is an optional weekly subscription available under the Referral Partnership. It provides priority replacement search if a participant exits, ongoing visibility of your vacancies, continuous intake activity and matching, and CRM maintenance of your property portfolio. It is not mandatory but is strongly recommended for providers seeking consistent long-term occupancy.",
-  },
+
   {
     q: "How does APGP benefit accommodation providers?",
     a: "APGP enables providers to maintain stable occupancy, reduce vacancy downtime, remove marketing and recruitment overhead, improve participant matching quality, and focus on delivering exceptional in-home supports — all through a zero-financial-risk partnership structure.",

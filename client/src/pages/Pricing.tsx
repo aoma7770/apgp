@@ -67,10 +67,9 @@ export default function Pricing() {
               <tbody className="divide-y divide-gray-100">
                 {[
                   { item: "Placement Fee (Success-Based)", structure: "Quoted per lead — tailored to region and participant profile", benefit: "No payment until participant completes intake and moves into your accommodation. A quote is issued for each placement." },
-                  { item: "Weekly Subscription (VPP)", structure: "Fixed weekly fee per property", benefit: "Priority referral access and vacancy replacement support to minimise downtime." },
-                  { item: "Replacement Search", structure: "Included in weekly subscription", benefit: "Reduces downtime between participants and helps maintain stable occupancy." },
-                  { item: "CRM Vacancy Management", structure: "Included in weekly subscription", benefit: "Your property and vacancy data are maintained and actively used for matching." },
-                  { item: "Vacancy Visibility & Matching", structure: "Included in weekly subscription", benefit: "Your homes remain in front of a steady flow of pre-qualified leads." },
+                  { item: "Lead Generation", structure: "Included — no additional cost", benefit: "Ausnew sources and qualifies participants from its pipeline at no extra charge to the provider." },
+                  { item: "Intake Coordination", structure: "Included — no additional cost", benefit: "Documentation, assessments, inspections, and onboarding are all managed by Ausnew." },
+                  { item: "Move-In Support", structure: "Included — no additional cost", benefit: "Ausnew stays engaged through the transition to ensure a stable start for the participant." },
                 ].map((row) => (
                   <tr key={row.item} className="bg-white hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-5 font-medium text-navy">{row.item}</td>

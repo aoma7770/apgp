@@ -52,12 +52,12 @@ const pathwayCards = [
   {
     badge: "Pathway 2",
     title: "Referral Partnership",
-    subtitle: "Success-Based Placement Fee + Weekly Subscription",
+    subtitle: "Success-Based Placement Fee — Quoted Per Lead",
     features: [
       "Pay only when participant moves in",
       "Marketing and lead generation included",
       "Suitability assessment and matching",
-      "Vacancy Protection Plan available",
+      "Ongoing matching and vacancy support",
       "CRM maintenance of your portfolio",
     ],
     href: "/pathways",
