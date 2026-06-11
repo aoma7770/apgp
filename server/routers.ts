@@ -119,6 +119,27 @@ export const appRouter = router({
         const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
         await createProviderSession(providerId, token, expiresAt);
 
+        // Fire Zapier webhook to sync provider registration to Monday.com CRM (non-blocking)
+        const zapierProviderWebhook = process.env.ZAPIER_PROVIDER_WEBHOOK_URL;
+        if (zapierProviderWebhook) {
+          fetch(zapierProviderWebhook, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              event: 'provider_registered',
+              provider_email: input.email,
+              organisation_name: input.organisationName ?? '',
+              abn: input.abn ?? '',
+              contact_name: input.contactName ?? '',
+              phone: input.phone ?? '',
+              company_type: input.companyType ?? '',
+              states_serviced: input.regionsServiced ?? '',
+              has_vacancies: input.hasVacancies ? 'Yes' : 'No',
+              registered_at: new Date().toISOString(),
+            }),
+          }).catch((err) => console.error('[Zapier] Provider webhook failed:', err));
+        }
+
         // Notify Ausnew team of new provider registration (non-blocking)
         notifyOwner({
           title: `New Provider Registration: ${input.organisationName ?? input.email}`,
