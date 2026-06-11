@@ -15,11 +15,15 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ username: "", password: "" });
 
-  const { data: me } = trpc.adminAuth.me.useQuery();
+  const { data: me, isLoading: meLoading } = trpc.adminAuth.me.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
-    if (me) setLocation("/admin/dashboard");
-  }, [me, setLocation]);
+    // Only auto-redirect if we have a confirmed valid session
+    if (!meLoading && me) setLocation("/admin/dashboard");
+  }, [me, meLoading, setLocation]);
 
   const login = trpc.adminAuth.login.useMutation({
     onSuccess: (data) => {
@@ -155,10 +159,17 @@ export default function AdminLogin() {
             </p>
           </div>
 
-          <div className="mt-8 text-center">
+          <div className="mt-8 flex items-center justify-between">
             <Link href="/" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
               ← Back to APGP website
             </Link>
+            <button
+              type="button"
+              onClick={() => { try { localStorage.removeItem('apgp_admin_token'); } catch { /* ignore */ } window.location.reload(); }}
+              className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+            >
+              Clear session
+            </button>
           </div>
         </div>
       </div>

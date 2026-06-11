@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import {
   Building2, User, LogOut, Plus, Edit2, Trash2, CheckCircle2, AlertCircle,
   Home, MapPin, ChevronRight, Settings, Menu, X, Users, Clock, Tag, Handshake, ExternalLink,
-  FileText, CreditCard, Upload, Download, Trash
+  FileText, CreditCard, Upload, Download, Trash, Search
 } from "lucide-react";
 import ReferralAgreementModal from "@/components/ReferralAgreementModal";
 import APGPLogo from "@/components/APGPLogo";
@@ -50,6 +50,8 @@ export default function ProviderDashboard() {
   const { data: leads = [], refetch: refetchLeads } = trpc.leads.list.useQuery(undefined, { enabled: !!provider });
   const [interestLeadId, setInterestLeadId] = useState<number | null>(null);
   const [interestLeadSummary, setInterestLeadSummary] = useState("");
+  const [leadSearchQuery, setLeadSearchQuery] = useState("");
+  const [leadStateFilter, setLeadStateFilter] = useState("");
 
   // Documents
   const { data: documents = [], refetch: refetchDocs } = trpc.documents.list.useQuery(undefined, { enabled: !!provider });
@@ -471,8 +473,68 @@ export default function ProviderDashboard() {
                   </div>
                   <p className="text-gray-500 text-sm">Real-time NDIS accommodation enquiries from Ausnew's participant pipeline. These leads come directly from our CRM — no personal information is shown.</p>
                 </div>
-
               </div>
+
+              {/* Search + State Filter */}
+              {leads.length > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm mb-5">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        value={leadSearchQuery}
+                        onChange={(e) => setLeadSearchQuery(e.target.value)}
+                        placeholder="Search by accommodation type, postcode, timeline..."
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-teal outline-none"
+                      />
+                    </div>
+                    <div className="sm:w-48">
+                      <select
+                        value={leadStateFilter}
+                        onChange={(e) => setLeadStateFilter(e.target.value)}
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:border-teal outline-none bg-white"
+                      >
+                        <option value="">All States</option>
+                        {["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"].map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
+                    {(leadSearchQuery || leadStateFilter) && (
+                      <button
+                        onClick={() => { setLeadSearchQuery(""); setLeadStateFilter(""); }}
+                        className="text-xs text-gray-400 hover:text-navy transition-colors px-2"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  {/* State quick-filter pills */}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <button
+                      onClick={() => setLeadStateFilter("")}
+                      className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
+                        leadStateFilter === "" ? "bg-navy text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      All
+                    </button>
+                    {["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"].map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setLeadStateFilter(leadStateFilter === s ? "" : s)}
+                        className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
+                          leadStateFilter === s ? "bg-teal text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
 
               {/* How it works banner */}
               <div className="bg-navy rounded-2xl p-5 mb-6 flex items-start gap-3">
@@ -483,17 +545,31 @@ export default function ProviderDashboard() {
                 </div>
               </div>
 
-              {leads.length === 0 ? (
+              {(() => {
+                const q = leadSearchQuery.toLowerCase().trim();
+                const filteredLeads = leads.filter((lead) => {
+                  const matchSearch = !q ||
+                    lead.accommodationType.toLowerCase().includes(q) ||
+                    lead.dwellingType.toLowerCase().includes(q) ||
+                    lead.moveInTimeline.toLowerCase().includes(q) ||
+                    (lead.postcode ?? "").includes(q) ||
+                    (lead.mondayLeadId ?? "").includes(q);
+                  const matchState = !leadStateFilter ||
+                    (lead.postcode ?? "").startsWith(leadStateFilter === "NSW" ? "2" : leadStateFilter === "VIC" ? "3" : leadStateFilter === "QLD" ? "4" : leadStateFilter === "SA" ? "5" : leadStateFilter === "WA" ? "6" : leadStateFilter === "TAS" ? "7" : leadStateFilter === "NT" ? "0" : leadStateFilter === "ACT" ? "26" : "") ||
+                    (lead.preferredState ?? "").toUpperCase().includes(leadStateFilter);
+                  return matchSearch && matchState;
+                });
+                return filteredLeads.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
                   <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="font-semibold text-navy mb-2">No active leads at this time</h3>
-                  <p className="text-gray-500 text-sm">New participant requests will appear here as they come in. Check back soon.</p>
+                  <h3 className="font-semibold text-navy mb-2">{leads.length === 0 ? "No active leads at this time" : "No leads match your search"}</h3>
+                  <p className="text-gray-500 text-sm">{leads.length === 0 ? "New participant requests will appear here as they come in. Check back soon." : "Try adjusting your search or state filter."}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {leads.map((lead) => {
+                  {filteredLeads.map((lead) => {
                     const summary = `${lead.accommodationType} · ${lead.dwellingType} · ${lead.moveInTimeline} · ${lead.postcode ? `Postcode ${lead.postcode}` : (lead.preferredState ?? 'Any state')}`;
-                    const isNew = (Date.now() - new Date(lead.createdAt).getTime()) < 48 * 60 * 60 * 1000; // within 48h
+                    const isNew = (Date.now() - new Date(lead.createdAt).getTime()) < 24 * 60 * 60 * 1000; // within 24h
                     return (
                       <div key={lead.id} className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-all duration-200 p-6 ${lead.alreadyInterested ? 'border-green-200 bg-green-50/30' : isNew ? 'border-teal/40 ring-1 ring-teal/20' : 'border-gray-100'}`}>
                         <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -531,8 +607,12 @@ export default function ProviderDashboard() {
                               </div>
                               <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-xs text-gray-400 mb-1">NDIS Registered</p>
-                                <p className={`text-sm font-semibold flex items-center gap-1 ${lead.ndisRegistered === 'Yes' ? 'text-green-700' : lead.ndisRegistered === 'No' ? 'text-red-600' : 'text-amber-600'}`}>
-                                  {lead.ndisRegistered === 'Yes' ? '✓' : lead.ndisRegistered === 'No' ? '✗' : '~'} {lead.ndisRegistered}
+                                <p className={`text-sm font-semibold flex items-center gap-1 ${
+                                  lead.ndisRegistered.toLowerCase().includes('yes') ? 'text-green-700' :
+                                  lead.ndisRegistered.toLowerCase().includes('no') ? 'text-red-600' : 'text-amber-600'
+                                }`}>
+                                  {lead.ndisRegistered.toLowerCase().includes('yes') ? '✅' :
+                                   lead.ndisRegistered.toLowerCase().includes('no') ? '❌' : '⏳'} {lead.ndisRegistered}
                                 </p>
                               </div>
                               <div className="bg-gray-50 rounded-xl p-3">
@@ -575,7 +655,7 @@ export default function ProviderDashboard() {
                               </p>
                               {lead.mondayLeadId && (
                                 <p className="text-xs font-mono font-bold text-navy bg-navy/10 px-2.5 py-1 rounded-lg">
-                                  Ref: {lead.mondayLeadId}
+                                  Lead ID: {lead.mondayLeadId}
                                 </p>
                               )}
                             </div>
@@ -603,7 +683,8 @@ export default function ProviderDashboard() {
                     );
                   })}
                 </div>
-              )}
+              )
+              })()}
             </div>
           )}
 

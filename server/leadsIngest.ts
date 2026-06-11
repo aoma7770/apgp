@@ -39,11 +39,11 @@ export function registerLeadsIngestRoute(app: Express) {
     try {
       const body = req.body as Record<string, string>;
 
-      // Use Monday.com item ID — prefix with M12- if it's a plain number
+      // Use Monday.com item ID exactly as sent — no prefix
       const rawId = body.monday_lead_id || body.lead_id || body.item_id || body.id || '';
       const mondayLeadId = rawId
-        ? (rawId.toString().startsWith('M') ? rawId.toString() : `M12-${rawId}`)
-        : `M12-${Math.floor(100000 + Math.random() * 900000)}`;
+        ? rawId.toString().trim()
+        : `${Math.floor(1000000 + Math.random() * 9000000)}`;
 
       // Store ALL values exactly as sent — no mapping
       const lead = {
