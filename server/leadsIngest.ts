@@ -21,10 +21,19 @@ import { createLead } from "./leadsDb";
 const CARE_FOR_MAP: Record<string, string> = {
   myself: "Myself",
   self: "Myself",
+  "for myself": "Myself",
+  "inquiring about disability accommodation for myself": "Myself",
+  "i'm inquiring about disability accommodation for myself": "Myself",
   "a loved one": "A loved one",
   "loved one": "A loved one",
+  "for a loved one": "A loved one",
+  "inquiring about disability accommodation for a loved one": "A loved one",
+  "i'm inquiring about disability accommodation for a loved one": "A loved one",
   "a client": "A client",
   client: "A client",
+  "for a client": "A client",
+  "on behalf of a client": "A client",
+  "inquiring about disability accommodation for a client": "A client",
 };
 
 const REQUESTER_MAP: Record<string, string> = {
@@ -39,8 +48,16 @@ const REQUESTER_MAP: Record<string, string> = {
 
 const NDIS_MAP: Record<string, string> = {
   yes: "Yes",
+  "yes - ndis registered": "Yes",
+  "yes, ndis registered": "Yes",
+  "ndis registered": "Yes",
+  "registered": "Yes",
   no: "No",
+  "not registered": "No",
+  "no - not ndis registered": "No",
   "in progress": "In progress",
+  "applying": "In progress",
+  "pending": "In progress",
 };
 
 const ACCOM_MAP: Record<string, string> = {
@@ -52,7 +69,15 @@ const ACCOM_MAP: Record<string, string> = {
   "short-term accommodation": "STA (Short-Term Accommodation / Respite)",
   mta: "MTA (Medium-Term Accommodation)",
   "medium-term accommodation": "MTA (Medium-Term Accommodation)",
+  "medium term accommodation": "MTA (Medium-Term Accommodation)",
+  "medium term": "MTA (Medium-Term Accommodation)",
+  "short term accommodation": "STA (Short-Term Accommodation / Respite)",
+  "short term": "STA (Short-Term Accommodation / Respite)",
+  "respite": "STA (Short-Term Accommodation / Respite)",
+  "long term": "SIL (Supported Independent Living)",
+  "long-term": "SIL (Supported Independent Living)",
   "not sure": "Not sure",
+  "unsure": "Not sure",
 };
 
 const DWELLING_MAP: Record<string, string> = {
@@ -64,17 +89,33 @@ const DWELLING_MAP: Record<string, string> = {
   unit: "Villa / unit",
   any: "Any suitable",
   "any suitable": "Any suitable",
+  "any that is available": "Any suitable",
+  "any available": "Any suitable",
+  "no preference": "Any suitable",
+  "flexible": "Any suitable",
 };
 
 const TIMELINE_MAP: Record<string, string> = {
   immediately: "Immediately",
+  "asap": "Immediately",
+  "as soon as possible": "Immediately",
   "within 30 days": "Within 30 days",
   "30 days": "Within 30 days",
+  "in 30 days": "Within 30 days",
+  "within a month": "Within 30 days",
   "within 60 days": "Within 60 days",
   "60 days": "Within 60 days",
+  "in 60 days": "Within 60 days",
+  "in 30-60 days": "Within 60 days",
+  "30-60 days": "Within 60 days",
+  "within 2 months": "Within 60 days",
   "within 90 days": "Within 90 days",
   "90 days": "Within 90 days",
+  "in 90 days": "Within 90 days",
+  "within 3 months": "Within 90 days",
   unsure: "Unsure",
+  "not sure": "Unsure",
+  "unknown": "Unsure",
 };
 
 const STATE_MAP: Record<string, string> = {
