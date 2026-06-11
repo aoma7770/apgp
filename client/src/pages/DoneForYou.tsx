@@ -394,7 +394,7 @@ export default function DoneForYou() {
                 $0 until the participant moves in.
               </p>
               <p className="text-gray-600 text-sm max-w-xl mx-auto">
-                One fixed fee per successful placement — covering everything from lead generation to move-in support. No retainers. No ad spend. No wasted hours on unqualified enquiries.
+                A success-based fee per placement — quoted and tailored to your specific lead. Covers everything from lead generation to move-in support. No retainers. No ad spend. No wasted hours on unqualified enquiries.
               </p>
             </div>
           </FadeUp>

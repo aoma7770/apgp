@@ -64,7 +64,13 @@ export default function AdminDashboard() {
   const logout = trpc.adminAuth.logout.useMutation({
     onSuccess: () => {
       try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch { /* ignore */ }
-      setLocation("/admin/login");
+      // Use hard navigation to avoid React state update on unmounted component (error #300)
+      window.location.href = '/admin/login';
+    },
+    onError: () => {
+      // Even if the server call fails, clear local token and redirect
+      try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch { /* ignore */ }
+      window.location.href = '/admin/login';
     },
   });
 

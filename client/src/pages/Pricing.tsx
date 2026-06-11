@@ -11,7 +11,7 @@ export default function Pricing() {
           <div className="text-teal-300 text-sm font-semibold uppercase tracking-widest mb-4">Pricing Structure</div>
           <h1 className="text-4xl lg:text-5xl font-extrabold font-heading mb-6">Transparent, Success-Based Pricing</h1>
           <p className="text-gray-300 text-lg leading-relaxed">
-            Below is a proposed pricing structure for both partnership pathways. Final pricing will depend on region, participant needs, and provider portfolio.
+            APGP operates on a <strong className="text-teal-300">per-result, per-lead basis</strong>. No upfront fees, no retainers. A tailored quote is prepared for each successful placement based on your region, participant profile, and portfolio. Register free to receive a personalised proposal.
           </p>
         </div>
       </section>
@@ -66,7 +66,7 @@ export default function Pricing() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {[
-                  { item: "Placement Fee (Success-Based)", structure: "Fixed fee per successful onboarding", benefit: "No payment until participant completes intake and moves into your accommodation." },
+                  { item: "Placement Fee (Success-Based)", structure: "Quoted per lead — tailored to region and participant profile", benefit: "No payment until participant completes intake and moves into your accommodation. A quote is issued for each placement." },
                   { item: "Weekly Subscription (VPP)", structure: "Fixed weekly fee per property", benefit: "Priority referral access and vacancy replacement support to minimise downtime." },
                   { item: "Replacement Search", structure: "Included in weekly subscription", benefit: "Reduces downtime between participants and helps maintain stable occupancy." },
                   { item: "CRM Vacancy Management", structure: "Included in weekly subscription", benefit: "Your property and vacancy data are maintained and actively used for matching." },
@@ -82,7 +82,7 @@ export default function Pricing() {
             </table>
           </div>
           <p className="text-xs text-gray-400 mt-4 text-center italic">
-            Final pricing will depend on region, participant needs, and provider portfolio. Contact Ausnew for a tailored proposal.
+            Pricing is per lead and per result — a tailored quote is issued for each successful placement based on your region, participant needs, and portfolio. No upfront fees apply. Contact Ausnew for a personalised proposal.
           </p>
         </div>
       </section>
