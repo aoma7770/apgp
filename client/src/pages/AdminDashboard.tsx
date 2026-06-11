@@ -267,9 +267,48 @@ export default function AdminDashboard() {
                   <h1 className="text-2xl font-bold text-navy font-heading">Leads Management</h1>
                   <p className="text-gray-500 text-sm mt-1">{filteredLeads.length} of {allLeads.length} leads shown · {allLeads.filter(l => l.isActive).length} visible, {allLeads.filter(l => !l.isActive).length} hidden</p>
                 </div>
-                <Button onClick={() => setShowAddLead(!showAddLead)} className="bg-teal hover:bg-teal-600 text-white">
-                  <Plus className="w-4 h-4 mr-2" /> Add Lead
-                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={() => setShowAddLead(!showAddLead)} className="bg-teal hover:bg-teal-600 text-white">
+                    <Plus className="w-4 h-4 mr-2" /> Add Lead
+                  </Button>
+                  <label className="cursor-pointer">
+                    <input type="file" accept=".csv" className="hidden" onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const text = await file.text();
+                      const lines = text.trim().split('\n');
+                      const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/[^a-z_]/g, '_'));
+                      let added = 0, skipped = 0;
+                      for (let i = 1; i < lines.length; i++) {
+                        const vals = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                        const row: Record<string, string> = {};
+                        headers.forEach((h, idx) => { row[h] = vals[idx] ?? ''; });
+                        const postcode = row['postcode'] || row['post_code'] || row['zip'] || '';
+                        if (!postcode) { skipped++; continue; }
+                        const state = postcodeToState(postcode);
+                        try {
+                          await addLeadMutation.mutateAsync({
+                            mondayLeadId: row['monday_item_id'] || row['lead_id'] || row['id'] || undefined,
+                            postcode,
+                            preferredState: state,
+                            careFor: row['care_for'] || row['who_is_the_care_for'] || 'Not specified',
+                            accommodationType: row['accommodation_type'] || row['type_of_lead_accommodation'] || 'Not specified',
+                            ndisRegistered: row['ndis_registered'] || row['ndis_registered_'] || 'Not specified',
+                            requesterType: 'Not specified',
+                            dwellingType: 'Not specified',
+                            moveInTimeline: 'Not specified',
+                          });
+                          added++;
+                        } catch { skipped++; }
+                      }
+                      toast.success(`CSV imported: ${added} leads added, ${skipped} skipped`);
+                      e.target.value = '';
+                    }} />
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-navy text-white text-sm font-medium cursor-pointer hover:bg-navy/80 transition-colors">
+                      <Save className="w-4 h-4" /> Import CSV
+                    </span>
+                  </label>
+                </div>
               </div>
 
               {/* Manual Add Lead Form */}
@@ -383,75 +422,106 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Leads Table */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-                <div className="overflow-x-auto">
-                  <table className="w-full whitespace-nowrap">
-                    <thead>
-                      <tr className="text-left text-xs font-semibold text-gray-500 border-b border-gray-100">
-                        <th className="p-4">Lead ID</th>
-                        <th className="p-4">Request For</th>
-                        <th className="p-4">Accommodation Type</th>
-                        <th className="p-4">Postcode / State</th>
-                        <th className="p-4">NDIS</th>
-                        <th className="p-4">Timeline</th>
-                        <th className="p-4">Status</th>
-                        <th className="p-4">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredLeads.length === 0 && (
-                        <tr>
-                          <td colSpan={8} className="text-center p-6 text-gray-500 text-sm">No leads found.</td>
-                        </tr>
-                      )}
-                      {filteredLeads.map((lead) => (
-                        <tr key={lead.id} className="border-b border-gray-100 last:border-b-0">
-                          <td className="p-4 text-xs font-mono text-gray-500">{lead.mondayLeadId ?? lead.id}</td>
-                          <td className="p-4 text-sm text-gray-800">{lead.careFor ?? '—'}</td>
-                          <td className="p-4 text-sm text-gray-800">{lead.accommodationType?.split('(')[0].trim() ?? '—'}</td>
-                          <td className="p-4 text-sm text-gray-800">
-                            {lead.postcode ? <span className="font-semibold">{lead.postcode}</span> : '—'}
-                            {lead.preferredState ? <span className="text-xs text-gray-400 ml-1">({lead.preferredState})</span> : ''}
-                          </td>
-                          <td className="p-4 text-sm">
-                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                              lead.ndisRegistered?.toLowerCase().includes('yes') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                            }`}>{lead.ndisRegistered?.toLowerCase().includes('yes') ? 'Yes' : lead.ndisRegistered ?? '—'}</span>
-                          </td>
-                          <td className="p-4 text-sm text-gray-600">{lead.moveInTimeline && lead.moveInTimeline !== 'Not specified' ? lead.moveInTimeline : '—'}</td>
-                          <td className="p-4 text-sm">
-                            <Badge variant={lead.isActive ? "default" : "secondary"}>
-                              {lead.isActive ? "Visible" : "Hidden"}
-                            </Badge>
-                          </td>
-                          <td className="p-4 text-sm">
-                            <div className="flex items-center gap-2">
-                              {editingLeadId === lead.id ? (
-                                <div className="flex items-center gap-2">
-                                  <Button size="sm" className="bg-teal hover:bg-teal-600 text-white" onClick={() => updateLead.mutate({ id: lead.id, ...editForm })} disabled={updateLead.isPending}>Save</Button>
-                                  <Button size="sm" variant="outline" onClick={() => setEditingLeadId(null)}>Cancel</Button>
-                                </div>
-                              ) : (
-                                <>
-                                  <button onClick={() => { setEditingLeadId(lead.id); setEditForm({ accommodationType: lead.accommodationType, moveInTimeline: lead.moveInTimeline, ndisRegistered: lead.ndisRegistered, supportNeeds: lead.supportNeeds ?? "" }); }} className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal-light transition-colors" title="Edit lead">
-                                    <Edit2 className="w-4 h-4" />
-                                  </button>
-                                  <button onClick={() => toggleActive.mutate({ id: lead.id })} className={`p-2 rounded-lg transition-colors ${lead.isActive ? "text-green-600 hover:bg-green-50" : "text-gray-400 hover:bg-gray-50"}`} title={lead.isActive ? "Hide lead" : "Show lead"}>
-                                    {lead.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                                  </button>
-                                  <button onClick={() => deleteLead.mutate({ id: lead.id })} className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete lead">
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                </>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              {/* Leads Cards */}
+              <div className="space-y-3">
+                {filteredLeads.length === 0 && (
+                  <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-500 text-sm shadow-sm">No leads found.</div>
+                )}
+                {filteredLeads.map((lead) => (
+                  <div key={lead.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    {/* Clickable summary row */}
+                    <button
+                      className="w-full text-left px-5 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors"
+                      onClick={() => setEditingLeadId(editingLeadId === lead.id ? null : lead.id)}
+                    >
+                      <div className="flex-1 grid grid-cols-2 sm:grid-cols-5 gap-3 items-center">
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Lead ID</p>
+                          <p className="text-xs font-mono font-semibold text-navy">{lead.mondayLeadId ?? lead.id}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Request For</p>
+                          <p className="text-sm font-medium text-gray-800">{lead.careFor ?? '—'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Accommodation</p>
+                          <p className="text-sm font-medium text-gray-800">{lead.accommodationType?.split('(')[0].trim() ?? '—'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Postcode / State</p>
+                          <p className="text-sm font-semibold text-navy">{lead.postcode ?? '—'} {lead.preferredState ? <span className="text-xs text-gray-400">({lead.preferredState})</span> : ''}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                            lead.ndisRegistered?.toLowerCase().includes('yes') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                          }`}>{lead.ndisRegistered?.toLowerCase().includes('yes') ? 'NDIS ✓' : 'NDIS ?'}</span>
+                          <Badge variant={lead.isActive ? 'default' : 'secondary'} className="text-xs">{lead.isActive ? 'Visible' : 'Hidden'}</Badge>
+                        </div>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${editingLeadId === lead.id ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {/* Expanded detail + edit panel */}
+                    {editingLeadId === lead.id && (
+                      <div className="border-t border-gray-100 bg-gray-50 px-5 py-5">
+                        <h4 className="font-bold text-navy font-heading text-sm mb-4">Full Lead Details — Edit as needed</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">Lead ID</label>
+                            <input value={editForm.mondayLeadId ?? lead.mondayLeadId ?? ''} onChange={(e) => setEditForm({...editForm, mondayLeadId: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">Postcode</label>
+                            <input value={editForm.postcode ?? lead.postcode ?? ''} onChange={(e) => setEditForm({...editForm, postcode: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">State</label>
+                            <select value={editForm.preferredState ?? lead.preferredState ?? ''} onChange={(e) => setEditForm({...editForm, preferredState: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white">
+                              <option value="">Auto-detect</option>
+                              {["NSW","VIC","QLD","SA","WA","TAS","ACT","NT"].map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">Request For</label>
+                            <input value={editForm.careFor ?? lead.careFor ?? ''} onChange={(e) => setEditForm({...editForm, careFor: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">Accommodation Type</label>
+                            <input value={editForm.accommodationType ?? lead.accommodationType ?? ''} onChange={(e) => setEditForm({...editForm, accommodationType: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">NDIS Registered</label>
+                            <input value={editForm.ndisRegistered ?? lead.ndisRegistered ?? ''} onChange={(e) => setEditForm({...editForm, ndisRegistered: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">Move-in Timeline</label>
+                            <input value={editForm.moveInTimeline ?? lead.moveInTimeline ?? ''} onChange={(e) => setEditForm({...editForm, moveInTimeline: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">Dwelling Type</label>
+                            <input value={editForm.dwellingType ?? lead.dwellingType ?? ''} onChange={(e) => setEditForm({...editForm, dwellingType: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">Support Needs</label>
+                            <input value={editForm.supportNeeds ?? lead.supportNeeds ?? ''} onChange={(e) => setEditForm({...editForm, supportNeeds: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Button size="sm" className="bg-teal hover:bg-teal-600 text-white" onClick={() => updateLead.mutate({ id: lead.id, accommodationType: editForm.accommodationType ?? lead.accommodationType, moveInTimeline: editForm.moveInTimeline ?? lead.moveInTimeline, ndisRegistered: editForm.ndisRegistered ?? lead.ndisRegistered, careFor: editForm.careFor ?? lead.careFor ?? undefined, supportNeeds: editForm.supportNeeds ?? lead.supportNeeds ?? undefined, postcode: editForm.postcode ?? lead.postcode ?? undefined, preferredState: editForm.preferredState ?? lead.preferredState ?? undefined, mondayLeadId: editForm.mondayLeadId ?? lead.mondayLeadId ?? undefined, dwellingType: editForm.dwellingType ?? lead.dwellingType ?? undefined })} disabled={updateLead.isPending}>
+                            {updateLead.isPending ? 'Saving...' : 'Save Changes'}
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => toggleActive.mutate({ id: lead.id })}>
+                            {lead.isActive ? <><EyeOff className="w-3 h-3 mr-1" /> Hide Lead</> : <><Eye className="w-3 h-3 mr-1" /> Show Lead</>}
+                          </Button>
+                          <button onClick={() => { if (confirm('Delete this lead permanently?')) deleteLead.mutate({ id: lead.id }); }} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-red-50 border border-red-200 transition-colors">
+                            <Trash2 className="w-3 h-3" /> Delete
+                          </button>
+                          <Button size="sm" variant="outline" onClick={() => setEditingLeadId(null)}>Close</Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           )}

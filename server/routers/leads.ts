@@ -128,6 +128,8 @@ export const leadsRouter = router({
     postcode: z.string().optional(),
     supportNeeds: z.string().optional(),
     mondayLeadId: z.string().optional(),
+    ndisRegistered: z.string().optional(),
+    careFor: z.string().optional(),
   })).mutation(async ({ input }) => {
     const db = await import('../db').then(m => m.getDb());
     if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
