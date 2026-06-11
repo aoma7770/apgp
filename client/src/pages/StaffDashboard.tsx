@@ -251,10 +251,10 @@ export default function StaffDashboard() {
                             {[
                               { key: 'accommodationType', label: 'Accommodation Type' },
                               { key: 'dwellingType', label: 'Dwelling Type' },
+                              { key: 'ndisRegistered', label: 'NDIS Registered' },
                               { key: 'moveInTimeline', label: 'Move-in Timeline' },
-                              { key: 'preferredState', label: 'State' },
                               { key: 'postcode', label: 'Postcode' },
-                              { key: 'mondayLeadId', label: 'Monday Lead ID' },
+                              { key: 'mondayLeadId', label: 'Lead ID' },
                             ].map(({ key, label }) => (
                               <div key={key}>
                                 <label className="text-xs font-semibold text-navy block mb-1">{label}</label>
@@ -265,15 +265,6 @@ export default function StaffDashboard() {
                                 />
                               </div>
                             ))}
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-navy block mb-1">Support Needs</label>
-                            <textarea
-                              value={editForm['supportNeeds'] ?? ''}
-                              onChange={(e) => setEditForm({ ...editForm, supportNeeds: e.target.value })}
-                              rows={2}
-                              className="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:border-teal outline-none resize-none"
-                            />
                           </div>
                           <div className="flex gap-2">
                             <Button
@@ -295,15 +286,14 @@ export default function StaffDashboard() {
                               <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${lead.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                                 {lead.isActive ? '● Visible' : '○ Hidden'}
                               </span>
-                              {lead.mondayLeadId && <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">ID: {lead.mondayLeadId}</span>}
+                              {lead.mondayLeadId && <span className="text-xs font-mono font-bold text-navy bg-navy/10 px-2.5 py-1 rounded-lg">Lead ID: {lead.mondayLeadId}</span>}
                             </div>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-600">
                               <span><strong>Dwelling:</strong> {lead.dwellingType}</span>
                               <span><strong>Timeline:</strong> {lead.moveInTimeline}</span>
-                              <span><strong>Postcode:</strong> {lead.postcode ?? lead.preferredState ?? '—'}</span>
+                              <span><strong>Postcode:</strong> {lead.postcode ?? '—'}</span>
                               <span><strong>NDIS:</strong> {lead.ndisRegistered}</span>
                             </div>
-                            {lead.supportNeeds && <p className="text-xs text-gray-500 mt-1 truncate"><strong>Notes:</strong> {lead.supportNeeds}</p>}
                             <p className="text-xs text-gray-400 mt-1">{new Date(lead.createdAt).toLocaleString('en-AU')}</p>
                           </div>
                           <div className="flex items-center gap-1.5 shrink-0">
@@ -315,7 +305,7 @@ export default function StaffDashboard() {
                               {lead.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                             </button>
                             <button
-                              onClick={() => { setEditingLeadId(lead.id); setEditForm({ accommodationType: lead.accommodationType, dwellingType: lead.dwellingType, moveInTimeline: lead.moveInTimeline, preferredState: lead.preferredState ?? '', postcode: lead.postcode ?? '', mondayLeadId: lead.mondayLeadId ?? '', supportNeeds: lead.supportNeeds ?? '' }); }}
+                              onClick={() => { setEditingLeadId(lead.id); setEditForm({ accommodationType: lead.accommodationType, dwellingType: lead.dwellingType, ndisRegistered: lead.ndisRegistered, moveInTimeline: lead.moveInTimeline, postcode: lead.postcode ?? '', mondayLeadId: lead.mondayLeadId ?? '' }); }}
                               className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal-light transition-colors"
                               title="Edit lead"
                             >
