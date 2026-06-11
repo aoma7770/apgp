@@ -554,9 +554,9 @@ export default function ProviderDashboard() {
                     lead.moveInTimeline.toLowerCase().includes(q) ||
                     (lead.postcode ?? "").includes(q) ||
                     (lead.mondayLeadId ?? "").includes(q);
+                  // Match state filter against preferredState (auto-derived from postcode on ingest)
                   const matchState = !leadStateFilter ||
-                    (lead.postcode ?? "").startsWith(leadStateFilter === "NSW" ? "2" : leadStateFilter === "VIC" ? "3" : leadStateFilter === "QLD" ? "4" : leadStateFilter === "SA" ? "5" : leadStateFilter === "WA" ? "6" : leadStateFilter === "TAS" ? "7" : leadStateFilter === "NT" ? "0" : leadStateFilter === "ACT" ? "26" : "") ||
-                    (lead.preferredState ?? "").toUpperCase().includes(leadStateFilter);
+                    (lead.preferredState ?? "").toUpperCase() === leadStateFilter.toUpperCase();
                   return matchSearch && matchState;
                 });
                 return filteredLeads.length === 0 ? (
