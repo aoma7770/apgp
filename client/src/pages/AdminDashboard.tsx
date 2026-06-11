@@ -15,6 +15,23 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
 const ADMIN_TOKEN_KEY = "apgp_admin_token";
+
+// Postcode → state lookup (official Australia Post ranges)
+function postcodeToState(postcode: string | null | undefined): string | undefined {
+  if (!postcode) return undefined;
+  const raw = postcode.trim().padStart(4, '0');
+  const pc = parseInt(raw, 10);
+  if (isNaN(pc)) return undefined;
+  if (raw.startsWith('08')) return 'NT';
+  if ((pc >= 2600 && pc <= 2618) || (pc >= 2900 && pc <= 2920)) return 'ACT';
+  if ((pc >= 2000 && pc <= 2599) || (pc >= 2619 && pc <= 2899) || (pc >= 2921 && pc <= 2999)) return 'NSW';
+  if (pc >= 3000 && pc <= 3999) return 'VIC';
+  if (pc >= 4000 && pc <= 4999) return 'QLD';
+  if (pc >= 5000 && pc <= 5799) return 'SA';
+  if (pc >= 6000 && pc <= 6797) return 'WA';
+  if (pc >= 7000 && pc <= 7799) return 'TAS';
+  return undefined;
+}
 const STATES = ["", "NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 const PROPERTY_TYPES = ["", "SDA", "SIL", "Both"];
 const VACANCY_STATUSES = ["", "Available", "Pending", "Occupied"];
@@ -54,9 +71,11 @@ export default function AdminDashboard() {
   // ── Leads state ────────────────────────────────────────────────────────────
   const { data: allLeads = [], refetch: refetchLeads } = trpc.leads.adminList.useQuery(undefined, { enabled: tab === "leads" });
   const [leadSearch, setLeadSearch] = useState("");
-  const [leadFilters, setLeadFilters] = useState({ accommodationType: "", moveInTimeline: "", ndisRegistered: "", visibility: "" });
+  const [leadFilters, setLeadFilters] = useState({ accommodationType: "", moveInTimeline: "", ndisRegistered: "", visibility: "", state: "" });
   const [editingLeadId, setEditingLeadId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Record<string, string>>({});
+  const [showAddLead, setShowAddLead] = useState(false);
+  const [addLeadForm, setAddLeadForm] = useState({ mondayLeadId: "", postcode: "", careFor: "Myself", accommodationType: "", ndisRegistered: "Yes - NDIS Registered" });
 
   const filteredLeads = useMemo(() => {
     return allLeads.filter((lead) => {
@@ -70,7 +89,9 @@ export default function AdminDashboard() {
       const matchVis = !leadFilters.visibility ||
         (leadFilters.visibility === "visible" && lead.isActive) ||
         (leadFilters.visibility === "hidden" && !lead.isActive);
-      return matchSearch && matchType && matchTimeline && matchNdis && matchVis;
+      const leadState = lead.preferredState || postcodeToState(lead.postcode);
+      const matchState = !leadFilters.state || (leadState ?? "").toUpperCase() === leadFilters.state.toUpperCase();
+      return matchSearch && matchType && matchTimeline && matchNdis && matchVis && matchState;
     });
   }, [allLeads, leadSearch, leadFilters]);
 
@@ -85,6 +106,10 @@ export default function AdminDashboard() {
   const deleteLead = trpc.leads.adminDelete.useMutation({
     onSuccess: () => { toast.success("Lead deleted."); refetchLeads(); },
     onError: (e) => toast.error(e.message),
+  });
+  const addLeadMutation = trpc.leads.adminCreate.useMutation({
+    onSuccess: () => { toast.success("Lead added."); refetchLeads(); },
+    onError: (e: { message: string }) => toast.error(e.message),
   });
 
   // ── Property search state ───────────────────────────────────────────────────
@@ -234,7 +259,69 @@ export default function AdminDashboard() {
                   <h1 className="text-2xl font-bold text-navy font-heading">Leads Management</h1>
                   <p className="text-gray-500 text-sm mt-1">{filteredLeads.length} of {allLeads.length} leads shown · {allLeads.filter(l => l.isActive).length} visible, {allLeads.filter(l => !l.isActive).length} hidden</p>
                 </div>
+                <Button onClick={() => setShowAddLead(!showAddLead)} className="bg-teal hover:bg-teal-600 text-white">
+                  <Plus className="w-4 h-4 mr-2" /> Add Lead
+                </Button>
               </div>
+
+              {/* Manual Add Lead Form */}
+              {showAddLead && (
+                <div className="bg-teal-light border border-teal/20 rounded-2xl p-5 mb-5">
+                  <h3 className="font-bold text-navy font-heading mb-4">Add Lead Manually</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                    <div>
+                      <label className="text-xs font-semibold text-navy block mb-1">Lead ID (Monday.com)</label>
+                      <Input value={addLeadForm.mondayLeadId} onChange={(e) => setAddLeadForm({...addLeadForm, mondayLeadId: e.target.value})} placeholder="e.g. 12249378125" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-navy block mb-1">Postcode *</label>
+                      <Input value={addLeadForm.postcode} onChange={(e) => setAddLeadForm({...addLeadForm, postcode: e.target.value})} placeholder="e.g. 2000" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-navy block mb-1">Request for</label>
+                      <select value={addLeadForm.careFor} onChange={(e) => setAddLeadForm({...addLeadForm, careFor: e.target.value})} className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:border-teal outline-none bg-white">
+                        <option>Myself</option>
+                        <option>A loved one</option>
+                        <option>A client</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-navy block mb-1">Accommodation Type</label>
+                      <Input value={addLeadForm.accommodationType} onChange={(e) => setAddLeadForm({...addLeadForm, accommodationType: e.target.value})} placeholder="e.g. SIL, SDA, MTA..." />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-navy block mb-1">NDIS Registered</label>
+                      <Input value={addLeadForm.ndisRegistered} onChange={(e) => setAddLeadForm({...addLeadForm, ndisRegistered: e.target.value})} placeholder="Yes - NDIS Registered" />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      className="bg-navy hover:bg-navy-dark text-white"
+                      onClick={async () => {
+                        if (!addLeadForm.postcode) { toast.error('Postcode is required'); return; }
+                        const state = postcodeToState(addLeadForm.postcode);
+                        await addLeadMutation.mutateAsync({
+                          mondayLeadId: addLeadForm.mondayLeadId || undefined,
+                          postcode: addLeadForm.postcode,
+                          preferredState: state,
+                          careFor: addLeadForm.careFor,
+                          accommodationType: addLeadForm.accommodationType || 'Not specified',
+                          ndisRegistered: addLeadForm.ndisRegistered || 'Not specified',
+                          requesterType: 'Not specified',
+                          dwellingType: 'Not specified',
+                          moveInTimeline: 'Not specified',
+                        });
+                        setAddLeadForm({ mondayLeadId: '', postcode: '', careFor: 'Myself', accommodationType: '', ndisRegistered: 'Yes - NDIS Registered' });
+                        setShowAddLead(false);
+                      }}
+                      disabled={addLeadMutation.isPending}
+                    >
+                      {addLeadMutation.isPending ? 'Adding...' : 'Add Lead'}
+                    </Button>
+                    <Button variant="outline" onClick={() => setShowAddLead(false)}>Cancel</Button>
+                  </div>
+                </div>
+              )}
 
               {/* Search + Filters */}
               <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm mb-5 space-y-4">
@@ -252,23 +339,24 @@ export default function AdminDashboard() {
                     </button>
                   )}
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-navy block mb-1">Accommodation Type</label>
-                    <select value={leadFilters.accommodationType} onChange={(e) => setLeadFilters({ ...leadFilters, accommodationType: e.target.value })} className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:border-teal outline-none">
-                      {ACCOM_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
+                    <label className="text-xs font-semibold text-navy block mb-1">State</label>
+                    <select value={leadFilters.state} onChange={(e) => setLeadFilters({ ...leadFilters, state: e.target.value })} className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:border-teal outline-none">
+                      <option value="">All States</option>
+                      {["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"].map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-navy block mb-1">Move-in Timeline</label>
-                    <select value={leadFilters.moveInTimeline} onChange={(e) => setLeadFilters({ ...leadFilters, moveInTimeline: e.target.value })} className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:border-teal outline-none">
-                      {TIMELINES.map((timeline) => <option key={timeline} value={timeline}>{timeline}</option>)}
+                    <label className="text-xs font-semibold text-navy block mb-1">Accommodation Type</label>
+                    <select value={leadFilters.accommodationType} onChange={(e) => setLeadFilters({ ...leadFilters, accommodationType: e.target.value })} className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:border-teal outline-none">
+                      {ACCOM_TYPES.map((type) => <option key={type} value={type}>{type || 'All Types'}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-navy block mb-1">NDIS Registered</label>
                     <select value={leadFilters.ndisRegistered} onChange={(e) => setLeadFilters({ ...leadFilters, ndisRegistered: e.target.value })} className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:border-teal outline-none">
-                      {NDIS_OPTS.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+                      {NDIS_OPTS.map((opt) => <option key={opt} value={opt}>{opt || 'All'}</option>)}
                     </select>
                   </div>
                   <div>
@@ -278,6 +366,11 @@ export default function AdminDashboard() {
                       <option value="visible">Visible</option>
                       <option value="hidden">Hidden</option>
                     </select>
+                  </div>
+                  <div className="flex items-end">
+                    <button onClick={() => setLeadFilters({ accommodationType: '', moveInTimeline: '', ndisRegistered: '', visibility: '', state: '' })} className="w-full text-xs text-gray-500 hover:text-navy border border-gray-200 rounded-lg px-2.5 py-2 transition-colors">
+                      Clear Filters
+                    </button>
                   </div>
                 </div>
               </div>

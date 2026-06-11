@@ -15,14 +15,21 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ username: "", password: "" });
 
+  // On mount, verify the token is still valid server-side before auto-redirecting
   const { data: me, isLoading: meLoading } = trpc.adminAuth.me.useQuery(undefined, {
     retry: false,
     refetchOnWindowFocus: false,
+    staleTime: 0, // always re-fetch on mount — never use cached result
   });
 
   useEffect(() => {
-    // Only auto-redirect if we have a confirmed valid session
-    if (!meLoading && me) setLocation("/admin/dashboard");
+    // Only redirect if the server confirms the session is valid
+    if (!meLoading && me) {
+      setLocation("/admin/dashboard");
+    } else if (!meLoading && !me) {
+      // Clear any stale token
+      try { localStorage.removeItem('apgp_admin_token'); } catch { /* ignore */ }
+    }
   }, [me, meLoading, setLocation]);
 
   const login = trpc.adminAuth.login.useMutation({

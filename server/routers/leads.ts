@@ -138,6 +138,43 @@ export const leadsRouter = router({
     return { success: true };
   }),
 
+  // Admin: manually create a lead
+  adminCreate: publicProcedure.use(async ({ ctx, next }) => {
+    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+    }
+    return next({ ctx });
+  }).input(z.object({
+    mondayLeadId: z.string().optional(),
+    postcode: z.string().min(1),
+    preferredState: z.string().optional(),
+    careFor: z.string().default('Myself'),
+    accommodationType: z.string().default('Not specified'),
+    ndisRegistered: z.string().default('Not specified'),
+    requesterType: z.string().default('Not specified'),
+    dwellingType: z.string().default('Not specified'),
+    moveInTimeline: z.string().default('Not specified'),
+    supportNeeds: z.string().optional(),
+  })).mutation(async ({ input }) => {
+    const db = await import('../db').then(m => m.getDb());
+    if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+    const { participantLeads } = await import('../../drizzle/schema');
+    const result = await db.insert(participantLeads).values({
+      mondayLeadId: input.mondayLeadId ?? null,
+      postcode: input.postcode,
+      preferredState: input.preferredState ?? null,
+      careFor: input.careFor,
+      accommodationType: input.accommodationType,
+      ndisRegistered: input.ndisRegistered,
+      requesterType: input.requesterType,
+      dwellingType: input.dwellingType,
+      moveInTimeline: input.moveInTimeline,
+      supportNeeds: input.supportNeeds ?? null,
+      isActive: true,
+    });
+    return { success: true, id: (result[0] as { insertId: number }).insertId };
+  }),
+
   // Admin: delete lead
   adminDelete: publicProcedure.use(async ({ ctx, next }) => {
     if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
