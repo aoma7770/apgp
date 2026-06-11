@@ -65,9 +65,9 @@ function Router() {
       <Route path="/provider/login" component={ProviderLogin} />
       <Route path="/provider/dashboard" component={ProviderDashboard} />
 
-      {/* Staff portal */}
-      <Route path="/staff/login" component={StaffLogin} />
-      <Route path="/staff/dashboard" component={StaffDashboard} />
+      {/* Staff / Admin portal — both URLs serve the new AdminDashboard */}
+      <Route path="/staff/login" component={AdminLogin} />
+      <Route path="/staff/dashboard" component={AdminDashboard} />
       <Route path="/staff/blog" component={StaffBlog} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/dashboard" component={AdminDashboard} />

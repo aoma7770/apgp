@@ -25,7 +25,9 @@ export default function AdminLogin() {
   useEffect(() => {
     // Only redirect if the server confirms the session is valid
     if (!meLoading && me) {
-      setLocation("/admin/dashboard");
+      // Redirect to the matching dashboard URL
+      const isStaffUrl = window.location.pathname.startsWith('/staff');
+      setLocation(isStaffUrl ? '/staff/dashboard' : '/admin/dashboard');
     } else if (!meLoading && !me) {
       // Clear any stale token
       try { localStorage.removeItem('apgp_admin_token'); } catch { /* ignore */ }

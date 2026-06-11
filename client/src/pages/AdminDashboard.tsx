@@ -57,9 +57,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isLoading && !me) {
       try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch { /* ignore */ }
-      setLocation("/admin/login");
+      // Redirect to whichever login page the user came from
+      const isStaffUrl = window.location.pathname.startsWith('/staff');
+      window.location.href = isStaffUrl ? '/staff/login' : '/admin/login';
     }
-  }, [me, isLoading, setLocation]);
+  }, [me, isLoading]);
 
   const logout = trpc.adminAuth.logout.useMutation({
     onSuccess: () => {
