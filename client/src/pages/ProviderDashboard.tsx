@@ -24,6 +24,23 @@ const SUPPORT_TYPES = ["SDA", "SIL", "Both"];
 const REGIONS = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 const SDA_CATEGORIES = ["Improved Liveability", "Fully Accessible", "Robust", "High Physical Support", "Basic"];
 
+// Client-side postcode → state lookup (mirrors server formula exactly)
+function postcodeToState(postcode: string | null | undefined): string | undefined {
+  if (!postcode) return undefined;
+  const raw = postcode.trim().padStart(4, '0');
+  const pc = parseInt(raw, 10);
+  if (isNaN(pc)) return undefined;
+  if (raw.startsWith('08')) return 'NT';
+  if ((pc >= 2600 && pc <= 2618) || (pc >= 2900 && pc <= 2920)) return 'ACT';
+  if ((pc >= 2000 && pc <= 2599) || (pc >= 2619 && pc <= 2899) || (pc >= 2921 && pc <= 2999)) return 'NSW';
+  if (pc >= 3000 && pc <= 3999) return 'VIC';
+  if (pc >= 4000 && pc <= 4999) return 'QLD';
+  if (pc >= 5000 && pc <= 5799) return 'SA';
+  if (pc >= 6000 && pc <= 6797) return 'WA';
+  if (pc >= 7000 && pc <= 7799) return 'TAS';
+  return undefined;
+}
+
 const vacancyBadge: Record<string, string> = {
   Available: "bg-green-100 text-green-800",
   Pending: "bg-yellow-100 text-yellow-800",
@@ -554,9 +571,10 @@ export default function ProviderDashboard() {
                     lead.moveInTimeline.toLowerCase().includes(q) ||
                     (lead.postcode ?? "").includes(q) ||
                     (lead.mondayLeadId ?? "").includes(q);
-                  // Match state filter against preferredState (auto-derived from postcode on ingest)
+                  // Match state: use preferredState first, then derive from postcode as fallback
+                  const leadState = lead.preferredState || postcodeToState(lead.postcode);
                   const matchState = !leadStateFilter ||
-                    (lead.preferredState ?? "").toUpperCase() === leadStateFilter.toUpperCase();
+                    (leadState ?? "").toUpperCase() === leadStateFilter.toUpperCase();
                   return matchSearch && matchState;
                 });
                 return filteredLeads.length === 0 ? (
