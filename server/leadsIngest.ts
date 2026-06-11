@@ -29,35 +29,45 @@ import { createLead } from "./leadsDb";
 
 /**
  * Derive Australian state from postcode.
- * Australian postcode ranges:
- *  NSW: 1000-2999 (also 2600-2618 is ACT but we keep simple)
- *  ACT: 0200-0299, 2600-2618, 2900-2920
- *  VIC: 3000-3999, 8000-8999
- *  QLD: 4000-4999, 9000-9999
- *  SA:  5000-5999
- *  WA:  6000-6999
- *  TAS: 7000-7999
- *  NT:  0800-0999
+ * Official Australia Post postcode ranges:
+ *  NSW: 1000-1999 (LVR/PO Box), 2000-2599, 2619-2899, 2921-2999
+ *  ACT: 0200-0299 (LVR/PO Box), 2600-2618, 2900-2920
+ *  VIC: 3000-3999, 8000-8999 (LVR/PO Box)
+ *  QLD: 4000-4999, 9000-9999 (LVR/PO Box)
+ *  SA:  5000-5799, 5800-5999 (LVR/PO Box)
+ *  WA:  6000-6797, 6800-6999 (LVR/PO Box)
+ *  TAS: 7000-7799, 7800-7999 (LVR/PO Box)
+ *  NT:  0800-0899, 0900-0999 (LVR/PO Box)
+ *  Note: NT postcodes start with 0 so must be handled as strings
  */
 function postcodeToState(postcode: string): string | undefined {
-  const pc = parseInt(postcode.trim(), 10);
+  const raw = postcode.trim();
+  const pc = parseInt(raw, 10);
   if (isNaN(pc)) return undefined;
 
-  // ACT (before NSW to take priority on overlapping ranges)
+  // NT — postcodes starting with 08 or 09 (e.g. 0812, 0900)
+  // Must check string prefix because parseInt('0812') = 812 which overlaps with nothing else
+  if (raw.startsWith('08') || raw.startsWith('09') || (pc >= 800 && pc <= 999)) return 'NT';
+
+  // ACT — 0200-0299 (LVR), 2600-2618, 2900-2920
   if ((pc >= 200 && pc <= 299) || (pc >= 2600 && pc <= 2618) || (pc >= 2900 && pc <= 2920)) return 'ACT';
-  // NT
-  if (pc >= 800 && pc <= 999) return 'NT';
-  // NSW
-  if (pc >= 1000 && pc <= 2999) return 'NSW';
-  // VIC
+
+  // NSW — 1000-1999 (LVR), 2000-2599, 2619-2899, 2921-2999
+  if ((pc >= 1000 && pc <= 1999) || (pc >= 2000 && pc <= 2599) || (pc >= 2619 && pc <= 2899) || (pc >= 2921 && pc <= 2999)) return 'NSW';
+
+  // VIC — 3000-3999, 8000-8999 (LVR)
   if ((pc >= 3000 && pc <= 3999) || (pc >= 8000 && pc <= 8999)) return 'VIC';
-  // QLD
+
+  // QLD — 4000-4999, 9000-9999 (LVR)
   if ((pc >= 4000 && pc <= 4999) || (pc >= 9000 && pc <= 9999)) return 'QLD';
-  // SA
+
+  // SA — 5000-5799, 5800-5999 (LVR)
   if (pc >= 5000 && pc <= 5999) return 'SA';
-  // WA
+
+  // WA — 6000-6797, 6800-6999 (LVR)
   if (pc >= 6000 && pc <= 6999) return 'WA';
-  // TAS
+
+  // TAS — 7000-7799, 7800-7999 (LVR)
   if (pc >= 7000 && pc <= 7999) return 'TAS';
 
   return undefined;
