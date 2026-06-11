@@ -29,46 +29,44 @@ import { createLead } from "./leadsDb";
 
 /**
  * Derive Australian state from postcode.
- * Official Australia Post postcode ranges:
- *  NSW: 1000-1999 (LVR/PO Box), 2000-2599, 2619-2899, 2921-2999
- *  ACT: 0200-0299 (LVR/PO Box), 2600-2618, 2900-2920
- *  VIC: 3000-3999, 8000-8999 (LVR/PO Box)
- *  QLD: 4000-4999, 9000-9999 (LVR/PO Box)
- *  SA:  5000-5799, 5800-5999 (LVR/PO Box)
- *  WA:  6000-6797, 6800-6999 (LVR/PO Box)
- *  TAS: 7000-7799, 7800-7999 (LVR/PO Box)
- *  NT:  0800-0899, 0900-0999 (LVR/PO Box)
- *  Note: NT postcodes start with 0 so must be handled as strings
+ * Source: Australia Post official ranges (excluding LVR/PO Box data)
+ *  NSW: 2000-2599, 2619-2899, 2921-2999
+ *  ACT: 2600-2618, 2900-2920
+ *  VIC: 3000-3999
+ *  QLD: 4000-4999
+ *  SA:  5000-5799
+ *  WA:  6000-6797
+ *  TAS: 7000-7799
+ *  NT:  0800-0899 (stored as 4-digit strings with leading zero)
  */
 function postcodeToState(postcode: string): string | undefined {
-  const raw = postcode.trim();
+  const raw = postcode.trim().padStart(4, '0'); // ensure 4 digits e.g. '812' -> '0812'
   const pc = parseInt(raw, 10);
   if (isNaN(pc)) return undefined;
 
-  // NT — postcodes starting with 08 or 09 (e.g. 0812, 0900)
-  // Must check string prefix because parseInt('0812') = 812 which overlaps with nothing else
-  if (raw.startsWith('08') || raw.startsWith('09') || (pc >= 800 && pc <= 999)) return 'NT';
+  // NT — 0800-0899 (4-digit string starting with 08)
+  if (raw.startsWith('08')) return 'NT';
 
-  // ACT — 0200-0299 (LVR), 2600-2618, 2900-2920
-  if ((pc >= 200 && pc <= 299) || (pc >= 2600 && pc <= 2618) || (pc >= 2900 && pc <= 2920)) return 'ACT';
+  // ACT — 2600-2618, 2900-2920 (carved out of NSW)
+  if ((pc >= 2600 && pc <= 2618) || (pc >= 2900 && pc <= 2920)) return 'ACT';
 
-  // NSW — 1000-1999 (LVR), 2000-2599, 2619-2899, 2921-2999
-  if ((pc >= 1000 && pc <= 1999) || (pc >= 2000 && pc <= 2599) || (pc >= 2619 && pc <= 2899) || (pc >= 2921 && pc <= 2999)) return 'NSW';
+  // NSW — 2000-2599, 2619-2899, 2921-2999
+  if ((pc >= 2000 && pc <= 2599) || (pc >= 2619 && pc <= 2899) || (pc >= 2921 && pc <= 2999)) return 'NSW';
 
-  // VIC — 3000-3999, 8000-8999 (LVR)
-  if ((pc >= 3000 && pc <= 3999) || (pc >= 8000 && pc <= 8999)) return 'VIC';
+  // VIC — 3000-3999
+  if (pc >= 3000 && pc <= 3999) return 'VIC';
 
-  // QLD — 4000-4999, 9000-9999 (LVR)
-  if ((pc >= 4000 && pc <= 4999) || (pc >= 9000 && pc <= 9999)) return 'QLD';
+  // QLD — 4000-4999
+  if (pc >= 4000 && pc <= 4999) return 'QLD';
 
-  // SA — 5000-5799, 5800-5999 (LVR)
-  if (pc >= 5000 && pc <= 5999) return 'SA';
+  // SA — 5000-5799
+  if (pc >= 5000 && pc <= 5799) return 'SA';
 
-  // WA — 6000-6797, 6800-6999 (LVR)
-  if (pc >= 6000 && pc <= 6999) return 'WA';
+  // WA — 6000-6797
+  if (pc >= 6000 && pc <= 6797) return 'WA';
 
-  // TAS — 7000-7799, 7800-7999 (LVR)
-  if (pc >= 7000 && pc <= 7999) return 'TAS';
+  // TAS — 7000-7799
+  if (pc >= 7000 && pc <= 7799) return 'TAS';
 
   return undefined;
 }
