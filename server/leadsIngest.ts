@@ -99,9 +99,12 @@ export function registerLeadsIngestRoute(app: Express) {
     try {
       const body = req.body as Record<string, string>;
 
-      // Generate Monday.com-style lead ID if not provided
-      const mondayLeadId = body.monday_lead_id || body.lead_id ||
-        `M12-${Math.floor(100000 + Math.random() * 900000)}`;
+      // Use Monday.com item ID directly — Zapier sends it as the item's numeric ID
+      // Prefix with M12- if it's a plain number (Monday.com item IDs are numeric)
+      const rawId = body.monday_lead_id || body.lead_id || body.item_id || body.id || '';
+      const mondayLeadId = rawId
+        ? (rawId.toString().startsWith('M') ? rawId.toString() : `M12-${rawId}`)
+        : `M12-${Math.floor(100000 + Math.random() * 900000)}`;
 
       const lead = {
         careFor: mapField(body.care_for, CARE_FOR_MAP, "Myself") as "Myself" | "A loved one" | "A client",

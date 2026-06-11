@@ -506,7 +506,7 @@ export default function ProviderDashboard() {
                                 </span>
                               )}
                               <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-navy text-white">
-                                <Tag className="w-3 h-3" /> {lead.accommodationType}
+                                <Tag className="w-3 h-3" /> {lead.accommodationType.split('(')[0].trim()}
                               </span>
                               {lead.ndisRegistered === 'Yes' && (
                                 <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-green-100 text-green-700">
@@ -530,19 +530,19 @@ export default function ProviderDashboard() {
                                 <p className="text-sm font-semibold text-navy">{lead.careFor}</p>
                               </div>
                               <div className="bg-gray-50 rounded-xl p-3">
-                                <p className="text-xs text-gray-400 mb-1">Submitted by</p>
-                                <p className="text-sm font-semibold text-navy">{lead.requesterType}</p>
+                                <p className="text-xs text-gray-400 mb-1">NDIS Registered</p>
+                                <p className={`text-sm font-semibold flex items-center gap-1 ${lead.ndisRegistered === 'Yes' ? 'text-green-700' : lead.ndisRegistered === 'No' ? 'text-red-600' : 'text-amber-600'}`}>
+                                  {lead.ndisRegistered === 'Yes' ? '✓' : lead.ndisRegistered === 'No' ? '✗' : '~'} {lead.ndisRegistered}
+                                </p>
+                              </div>
+                              <div className="bg-gray-50 rounded-xl p-3">
+                                <p className="text-xs text-gray-400 mb-1">Accommodation type</p>
+                                <p className="text-sm font-semibold text-navy">{lead.accommodationType.split('(')[0].trim()}</p>
                               </div>
                               <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-xs text-gray-400 mb-1">Dwelling type</p>
                                 <p className="text-sm font-semibold text-navy">{lead.dwellingType}</p>
                               </div>
-                              {lead.sdaCategory && lead.sdaCategory !== 'N/A' && (
-                                <div className="bg-gray-50 rounded-xl p-3">
-                                  <p className="text-xs text-gray-400 mb-1">SDA category</p>
-                                  <p className="text-sm font-semibold text-navy">{lead.sdaCategory}</p>
-                                </div>
-                              )}
                               <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-xs text-gray-400 mb-1">Move-in timeline</p>
                                 <p className="text-sm font-semibold text-navy flex items-center gap-1"><Clock className="w-3 h-3 text-teal" />{lead.moveInTimeline}</p>
@@ -551,9 +551,15 @@ export default function ProviderDashboard() {
                                 <p className="text-xs text-gray-400 mb-1">Postcode</p>
                                 <p className="text-sm font-semibold text-navy flex items-center gap-1">
                                   <MapPin className="w-3 h-3 text-teal" />
-                                  {lead.postcode ? lead.postcode : (lead.preferredState ?? 'Not specified')}
+                                  {lead.postcode ? lead.postcode : (lead.preferredState && lead.preferredState !== 'Any' ? lead.preferredState : 'Not provided')}
                                 </p>
                               </div>
+                              {lead.sdaCategory && lead.sdaCategory !== 'N/A' && (
+                                <div className="bg-gray-50 rounded-xl p-3">
+                                  <p className="text-xs text-gray-400 mb-1">SDA category</p>
+                                  <p className="text-sm font-semibold text-navy">{lead.sdaCategory}</p>
+                                </div>
+                              )}
                             </div>
 
                             {lead.supportNeeds && (
@@ -563,13 +569,13 @@ export default function ProviderDashboard() {
                               </div>
                             )}
 
-                            <div className="flex items-center gap-4 mt-3">
+                            <div className="flex items-center gap-4 mt-3 flex-wrap">
                               <p className="text-xs text-gray-400">
-                                Submitted {new Date(lead.createdAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                Received {new Date(lead.createdAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </p>
                               {lead.mondayLeadId && (
-                                <p className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
-                                  ID: {lead.mondayLeadId}
+                                <p className="text-xs font-mono font-bold text-navy bg-navy/10 px-2.5 py-1 rounded-lg">
+                                  Ref: {lead.mondayLeadId}
                                 </p>
                               )}
                             </div>
