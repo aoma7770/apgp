@@ -93,53 +93,22 @@ export type InsertAccommodation = typeof accommodations.$inferInsert;
 // ─── Participant accommodation leads ───────────────────────────────────────────────
 export const participantLeads = mysqlTable("participantLeads", {
   id: int("id").autoincrement().primaryKey(),
-  // Who is this request for?
-  careFor: mysqlEnum("careFor", ["Myself", "A loved one", "A client"]).notNull(),
-  // Requester type
-  requesterType: mysqlEnum("requesterType", [
-    "Self",
-    "Family member / carer",
-    "Support coordinator",
-    "Plan manager",
-    "Other",
-  ]).notNull(),
-  // NDIS status
-  ndisRegistered: mysqlEnum("ndisRegistered", ["Yes", "No", "In progress"]).notNull(),
-  // Accommodation type requested
-  accommodationType: mysqlEnum("accommodationType", [
-    "SDA (Specialist Disability Accommodation)",
-    "SIL (Supported Independent Living)",
-    "STA (Short-Term Accommodation / Respite)",
-    "MTA (Medium-Term Accommodation)",
-    "Not sure",
-  ]).notNull(),
-  // Dwelling type
-  dwellingType: mysqlEnum("dwellingType", [
-    "Apartment",
-    "House",
-    "Group home",
-    "Villa / unit",
-    "Any suitable",
-  ]).notNull(),
+  // Who is this request for? — stored exactly as sent by Zapier
+  careFor: varchar("careFor", { length: 255 }).notNull().default("Not specified"),
+  // Requester type — stored exactly as sent by Zapier
+  requesterType: varchar("requesterType", { length: 255 }).notNull().default("Not specified"),
+  // NDIS status — stored exactly as sent by Zapier
+  ndisRegistered: varchar("ndisRegistered", { length: 100 }).notNull().default("Not specified"),
+  // Accommodation type requested — stored exactly as sent by Zapier
+  accommodationType: varchar("accommodationType", { length: 255 }).notNull().default("Not specified"),
+  // Dwelling type — stored exactly as sent by Zapier
+  dwellingType: varchar("dwellingType", { length: 255 }).notNull().default("Not specified"),
   // SDA category if applicable
-  sdaCategory: mysqlEnum("sdaCategory", [
-    "Improved Liveability",
-    "Fully Accessible",
-    "Robust",
-    "High Physical Support",
-    "Not sure",
-    "N/A",
-  ]),
-  // Move-in timeline
-  moveInTimeline: mysqlEnum("moveInTimeline", [
-    "Immediately",
-    "Within 30 days",
-    "Within 60 days",
-    "Within 90 days",
-    "Unsure",
-  ]).notNull(),
+  sdaCategory: varchar("sdaCategory", { length: 100 }),
+  // Move-in timeline — stored exactly as sent by Zapier
+  moveInTimeline: varchar("moveInTimeline", { length: 100 }).notNull().default("Not specified"),
   // Preferred state
-  preferredState: mysqlEnum("preferredState", ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT", "Any"]),
+  preferredState: varchar("preferredState", { length: 50 }),
   // Postcode
   postcode: varchar("postcode", { length: 10 }),
   // Additional support needs (free text, anonymous)
