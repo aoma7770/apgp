@@ -11,6 +11,11 @@ const ADMIN_COOKIE = "apgp_admin_session";
 const COOKIE_MAX_AGE = 8 * 60 * 60; // 8 hours
 
 // ─── Middleware: require admin session ────────────────────────────────────────
+export async function getAdminFromCtx(ctx: { req: { cookies?: Record<string, string> | unknown; headers?: Record<string, string> | unknown } }) {
+  const req = ctx.req as { cookies?: Record<string, string>; headers?: Record<string, string> };
+  return getAdminFromRequest(req);
+}
+
 async function getAdminFromRequest(req: { cookies?: Record<string, string>; headers?: Record<string, string> }) {
   const cookieToken = req.cookies?.[ADMIN_COOKIE];
   const authHeader = req.headers?.authorization;

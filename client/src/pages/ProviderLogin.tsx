@@ -109,6 +109,10 @@ export default function ProviderLogin() {
               </div>
             </div>
 
+            <div className="flex justify-end -mt-1 mb-1">
+              <Link href="/provider/forgot-password" className="text-xs text-teal hover:underline">Forgot password?</Link>
+            </div>
+
             <Button
               type="submit"
               className="w-full bg-teal hover:bg-teal-600 text-white font-semibold h-11"

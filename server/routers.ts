@@ -204,6 +204,22 @@ export const appRouter = router({
 
     me: providerProcedure.query(({ ctx }) => sanitizeProvider(ctx.provider)),
 
+    // Password reset request — sends notification to admin with provider email
+    requestPasswordReset: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        // Don't reveal if email exists — always return success
+        const provider = await getProviderByEmail(input.email);
+        if (provider) {
+          // Notify admin team to manually reset the password
+          notifyOwner({
+            title: `Password Reset Request: ${provider.email}`,
+            content: `A provider has requested a password reset.\n\nEmail: ${provider.email}\nOrganisation: ${provider.organisationName ?? 'Not set'}\n\nTo reset their password, go to the Admin Portal → Provider Management and update their password.\n\nAlternatively, contact them directly at ${provider.email}.`,
+          }).catch(console.error);
+        }
+        return { success: true };
+      }),
+
     updateProfile: providerProcedure
       .input(
         z.object({

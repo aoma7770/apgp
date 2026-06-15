@@ -33,6 +33,7 @@ import ParticipantEnquiries from "./pages/ParticipantEnquiries";
 import ProviderRegister from "./pages/ProviderRegister";
 import ProviderLogin from "./pages/ProviderLogin";
 import ProviderDashboard from "./pages/ProviderDashboard";
+import ProviderForgotPassword from "./pages/ProviderForgotPassword";
 
 // Staff portal
 import StaffLogin from "./pages/StaffLogin";
@@ -64,6 +65,7 @@ function Router() {
       <Route path="/provider/register" component={ProviderRegister} />
       <Route path="/provider/login" component={ProviderLogin} />
       <Route path="/provider/dashboard" component={ProviderDashboard} />
+      <Route path="/provider/forgot-password" component={ProviderForgotPassword} />
 
       {/* Staff / Admin portal — both URLs serve the new AdminDashboard */}
       <Route path="/staff/login" component={AdminLogin} />

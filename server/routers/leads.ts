@@ -84,9 +84,9 @@ export const leadsRouter = router({
 
   // Admin: list all leads (including hidden)
   adminList: publicProcedure.use(async ({ ctx, next }) => {
-    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
-      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
-    }
+    const { getAdminFromCtx } = await import('./adminAuth');
+    const admin = await getAdminFromCtx(ctx);
+    if (!admin) throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
     return next({ ctx });
   }).query(async () => {
     const db = await import('../db').then(m => m.getDb());
@@ -98,9 +98,9 @@ export const leadsRouter = router({
 
   // Admin: toggle isActive (hide/unhide)
   toggleActive: publicProcedure.use(async ({ ctx, next }) => {
-    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
-      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
-    }
+    const { getAdminFromCtx } = await import('./adminAuth');
+    const admin = await getAdminFromCtx(ctx);
+    if (!admin) throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
     return next({ ctx });
   }).input(z.object({ id: z.number() })).mutation(async ({ input }) => {
     const db = await import('../db').then(m => m.getDb());
@@ -115,9 +115,9 @@ export const leadsRouter = router({
 
   // Admin: update lead details
   adminUpdate: publicProcedure.use(async ({ ctx, next }) => {
-    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
-      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
-    }
+    const { getAdminFromCtx } = await import('./adminAuth');
+    const admin = await getAdminFromCtx(ctx);
+    if (!admin) throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
     return next({ ctx });
   }).input(z.object({
     id: z.number(),
@@ -142,9 +142,9 @@ export const leadsRouter = router({
 
   // Admin: manually create a lead
   adminCreate: publicProcedure.use(async ({ ctx, next }) => {
-    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
-      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
-    }
+    const { getAdminFromCtx } = await import('./adminAuth');
+    const admin = await getAdminFromCtx(ctx);
+    if (!admin) throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
     return next({ ctx });
   }).input(z.object({
     mondayLeadId: z.string().optional(),
@@ -179,9 +179,9 @@ export const leadsRouter = router({
 
   // Admin: delete lead
   adminDelete: publicProcedure.use(async ({ ctx, next }) => {
-    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'staff')) {
-      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
-    }
+    const { getAdminFromCtx } = await import('./adminAuth');
+    const admin = await getAdminFromCtx(ctx);
+    if (!admin) throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
     return next({ ctx });
   }).input(z.object({ id: z.number() })).mutation(async ({ input }) => {
     const db = await import('../db').then(m => m.getDb());
