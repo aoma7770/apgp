@@ -30,9 +30,9 @@ export default function Outcomes() {
             {[
               { icon: <Building2 className="w-7 h-7 text-teal" />, title: "Stable Occupancy", desc: "Maintain consistent occupancy rates through a managed pipeline of pre-qualified, intake-ready participants matched to your specific properties.", variant: "left" as const },
               { icon: <Clock className="w-7 h-7 text-teal" />, title: "Reduced Vacancy Downtime", desc: "Minimise the time between participants with priority replacement search and proactive vacancy management — all included as part of the APGP service.", variant: "bottom" as const },
-              { icon: <Star className="w-7 h-7 text-teal" />, title: "No Marketing Overhead", desc: "Remove the cost and effort of marketing your vacancies. Ausnew handles all lead generation, qualification, and matching on your behalf.", variant: "right" as const },
+              { icon: <Star className="w-7 h-7 text-teal" />, title: "No Marketing Overhead", desc: "Remove the cost and effort of marketing your vacancies. APGP handles all lead generation, qualification, and matching on your behalf.", variant: "right" as const },
               { icon: <Users className="w-7 h-7 text-teal" />, title: "Quality Participant Matching", desc: "Every participant is professionally screened and assessed for suitability before being matched to your property — improving placement quality and retention.", variant: "left" as const },
-              { icon: <Shield className="w-7 h-7 text-teal" />, title: "Focus on In-Home Supports", desc: "With intake, marketing, and matching handled by Ausnew, your team can focus entirely on delivering exceptional in-home support to residents.", variant: "bottom" as const },
+              { icon: <Shield className="w-7 h-7 text-teal" />, title: "Focus on In-Home Supports", desc: "With intake, marketing, and matching handled by APGP, your team can focus entirely on delivering exceptional in-home support to residents.", variant: "bottom" as const },
               { icon: <TrendingUp className="w-7 h-7 text-teal" />, title: "Long-Term Growth", desc: "Build a sustainable, growing accommodation portfolio backed by a consistent referral partner with a proven track record in NDIS participant placement.", variant: "right" as const },
             ].map((item, i) => (
               <Animate key={item.title} variant={item.variant} delay={Math.floor(i / 3) * 0.1}>
@@ -52,7 +52,7 @@ export default function Outcomes() {
           <Animate variant="bottom">
             <h2 className="text-3xl font-bold text-navy font-heading mb-6">Partnership Engagement</h2>
             <p className="text-gray-700 leading-relaxed mb-6">
-              All partnership arrangements under the Accommodation Provider Growth Program are strictly business-to-business. Fees relate solely to the commercial services provided by Ausnew Support Services to accommodation providers, such as marketing, intake coordination, participant matching, vacancy support, and ongoing portfolio management.
+              All partnership arrangements under the Accommodation Provider Growth Program are strictly business-to-business. Fees relate solely to the commercial referral services provided by APGP to accommodation providers, such as marketing, intake coordination, participant matching, vacancy support, and ongoing portfolio management.
             </p>
             <p className="text-gray-700 leading-relaxed">
               These arrangements do not involve participant billing and are entirely separate from NDIS funding processes.

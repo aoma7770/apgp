@@ -53,7 +53,7 @@ export default function AdminLogin() {
           <APGPLogo variant="compact" height={40} />
           <div>
             <div className="font-bold text-white font-heading">APGP</div>
-            <div className="text-xs text-teal-300">by Ausnew Support Services</div>
+            <div className="text-xs text-teal-300">Internal Admin Portal</div>
           </div>
         </Link>
         <div>
@@ -62,7 +62,7 @@ export default function AdminLogin() {
           </div>
           <h2 className="text-3xl font-bold font-heading text-white mb-4">Admin Portal</h2>
           <p className="text-gray-300 text-sm leading-relaxed mb-6">
-            Restricted access for the Ausnew admin team. Manage participant leads, provider listings, blog content, and all backend operations.
+            Restricted access for the APGP admin team. Manage participant leads, provider listings, blog content, and all backend operations.
           </p>
           <div className="space-y-3">
             {[
@@ -82,7 +82,7 @@ export default function AdminLogin() {
             <div className="flex items-start gap-3">
               <Lock className="w-4 h-4 text-teal-300 mt-0.5 shrink-0" />
               <p className="text-xs text-gray-400 leading-relaxed">
-                This portal is restricted to authorised Ausnew admin team members only. Providers should use the{" "}
+                This portal is restricted to authorised APGP admin team members only. Providers should use the{" "}
                 <Link href="/provider/login" className="text-teal-300 hover:text-teal transition-colors">Provider Portal</Link>{" "}
                 instead.
               </p>
@@ -160,7 +160,7 @@ export default function AdminLogin() {
 
           <div className="mt-6 bg-white/5 border border-white/10 rounded-xl p-4">
             <p className="text-xs text-gray-400 text-center leading-relaxed">
-              This login is for the Ausnew admin team only. If you are an accommodation provider,{" "}
+              This login is for the APGP admin team only. If you are an accommodation provider,{" "}
               <Link href="/provider/login" className="text-teal-300 hover:text-teal transition-colors">
                 use the Provider Portal
               </Link>{" "}

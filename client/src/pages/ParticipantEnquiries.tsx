@@ -81,7 +81,7 @@ const whatYouSee = [
   { label: "Move-in timeline", example: "Immediately, Within 30 days" },
   { label: "Preferred state", example: "NSW, VIC, QLD, etc." },
   { label: "Support needs notes", example: "High physical support, 24-hour care" },
-  { label: "Ausnew lead ID", example: "M12-847291" },
+  { label: "APGP lead ID", example: "M12-847291" },
 ];
 
 const whatYouDontSee = [

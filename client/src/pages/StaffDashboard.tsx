@@ -44,7 +44,7 @@ export default function StaffDashboard() {
   useEffect(() => {
     if (!loading && user) {
       if (user.role !== "admin" && user.role !== "staff") {
-        toast.error("Access restricted to Ausnew staff only.");
+        toast.error("Access restricted to APGP admin team only.");
         setLocation("/staff/login");
       }
     } else if (!loading && !user) {
@@ -332,7 +332,7 @@ export default function StaffDashboard() {
           {tab === "search" && (
             <div>
               <h1 className="text-2xl font-bold text-navy font-heading mb-2">Property Search</h1>
-              <p className="text-gray-500 text-sm mb-6">Search all provider accommodation listings. This tool is restricted to authorised Ausnew staff.</p>
+              <p className="text-gray-500 text-sm mb-6">Search all provider accommodation listings. This tool is restricted to authorised APGP admin team members.</p>
 
               {/* Filters */}
               <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6">

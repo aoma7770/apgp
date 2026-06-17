@@ -120,7 +120,7 @@ export default function ProviderRegister() {
           <APGPLogo variant="compact" height={40} />
           <div>
             <div className="font-bold text-white font-heading">APGP</div>
-            <div className="text-xs text-teal-300">by Ausnew Support Services</div>
+            <div className="text-xs text-teal-300">Accommodation Provider Growth Program</div>
           </div>
         </Link>
 
@@ -134,7 +134,7 @@ export default function ProviderRegister() {
               "Access the live participant enquiries feed immediately",
               "List your SDA and SIL vacancies in minutes",
               "Pay only when a participant moves in",
-              "Ausnew handles the full intake process for you",
+              "APGP handles the full intake process for you",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 text-sm text-gray-200">
                 <CheckCircle2 className="w-4 h-4 text-teal-300 shrink-0 mt-0.5" />
@@ -158,7 +158,7 @@ export default function ProviderRegister() {
           {/* Mobile logo */}
           <Link href="/" className="flex items-center gap-3 mb-8 lg:hidden">
             <APGPLogo variant="compact" height={36} />
-            <div className="font-bold text-navy font-heading text-sm">APGP by Ausnew</div>
+            <div className="font-bold text-navy font-heading text-sm">APGP</div>
           </Link>
 
           <div className="mb-6">

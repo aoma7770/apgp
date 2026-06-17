@@ -8,23 +8,15 @@ import { Button } from "@/components/ui/button";
 const faqs = [
   {
     q: "What exactly is the Accommodation Provider Growth Program (APGP)?",
-    a: "The APGP is a structured partnership program by Ausnew Support Services that connects SDA and SIL accommodation providers with a consistent supply of placement-ready NDIS participants. It operates through two pathways — the Joint Venture Partnership and the Referral Partnership — both designed with zero financial risk to providers.",
+    a: "APGP is an independent business-to-business referral and marketing platform that connects SDA and SIL accommodation providers with placement-ready NDIS participants. APGP operates on a success-based model — providers pay only when a participant completes intake and moves into their accommodation.",
   },
   {
-    q: "Are you a real support provider, or just a referral agency?",
-    a: "Ausnew Support Services is a registered NDIS provider delivering Community Access supports, Supported Independent Living coordination, and accommodation placement services. We are not simply a referral agency — we deliver real supports to participants and partner with accommodation providers to ensure stable, long-term placements.",
+    q: "Is APGP a referral agency or a support provider?",
+    a: "APGP is an independent referral and placement facilitation platform. APGP does not provide NDIS supports, care services, or accommodation directly to participants. All fees payable under the APGP are commercial business-to-business fees and are not charged to, deducted from, or claimed against a participant's NDIS plan.",
   },
   {
-    q: "When does a referral fee apply, and when does it not?",
-    a: "Under the Joint Venture Partnership, no placement fee applies because Ausnew is delivering ongoing Community Access supports to the participant — the arrangement is a shared service delivery model. Under the Referral Partnership, a success-based placement fee applies only when a participant completes intake and moves into your accommodation.",
-  },
-  {
-    q: "What is the JV Partnership, and why would a provider choose it?",
-    a: "The Joint Venture Partnership is designed for situations where Ausnew can deliver ongoing Community Access supports to the participant. Providers choose this pathway because there is no placement fee, the intake process is fully managed, and the shared support model strengthens participant stability and retention.",
-  },
-  {
-    q: "What types of supports can Ausnew provide?",
-    a: "Ausnew Support Services delivers Community Access supports, social and community participation, and support coordination. In the context of APGP, Ausnew focuses on Community Access supports delivered to participants living in partner providers' SDA and SIL properties.",
+    q: "When does the placement fee apply?",
+    a: "A success-based placement fee applies only when a participant completes intake and moves into your accommodation. The fee is calculated as a percentage of the participant's annual NDIS funding allocation, subject to a minimum and maximum cap. A tailored quote is issued for each placement.",
   },
 
   {
@@ -37,11 +29,11 @@ const faqs = [
   },
   {
     q: "How does APGP ensure transparency and ethical collaboration?",
-    a: "All partnership arrangements under APGP are strictly business-to-business. Fees relate solely to commercial services provided by Ausnew to accommodation providers — marketing, intake coordination, participant matching, vacancy support, and portfolio management. These arrangements do not involve participant billing and are entirely separate from NDIS funding processes.",
+    a: "All partnership arrangements under APGP are strictly business-to-business. Fees relate solely to commercial referral services provided by APGP to accommodation providers — marketing, intake coordination, participant matching, vacancy support, and portfolio management. These arrangements do not involve participant billing and are entirely separate from NDIS funding processes.",
   },
   {
-    q: "Why partner with Ausnew instead of managing vacancies alone?",
-    a: "Managing vacancies independently requires significant investment in marketing, lead generation, qualification, and intake coordination. Ausnew brings an established pipeline of pre-qualified participants, professional matching capabilities, and a proven intake process — delivered on a success-based model that means you only pay when a participant moves in.",
+    q: "Why partner with APGP instead of managing vacancies alone?",
+    a: "Managing vacancies independently requires significant investment in marketing, lead generation, qualification, and intake coordination. APGP brings an established pipeline of pre-qualified participants, professional matching capabilities, and a proven intake process — delivered on a success-based model that means you only pay when a participant moves in.",
   },
 ];
 

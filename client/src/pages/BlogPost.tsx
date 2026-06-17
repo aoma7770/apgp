@@ -29,12 +29,12 @@ const SERVICES: Record<string, ServiceCTA> = {
     accentColor: "#2BBFCF",
   },
   communityAccess: {
-    label: "Community Access Supports",
-    tagline: "Engage, Connect, and Thrive",
-    description: "Ausnew Support Services delivers community access and social participation supports to NDIS participants. Our Joint Venture model means no placement fee for accommodation providers.",
-    servicePage: "/pathways",
-    formLabel: "Learn About JV Partnership",
-    accentColor: "#1B3A5C",
+    label: "APGP Provider Growth Program",
+    tagline: "Fill Your Vacancies. Pay Per Result.",
+    description: "APGP connects SDA and SIL accommodation providers with placement-ready NDIS participants. Register free and get access to the live participant enquiries feed.",
+    servicePage: "/done-for-you",
+    formLabel: "Register Free",
+    accentColor: "#2BBFCF",
   },
   dailyLife: {
     label: "Daily Living Supports",

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react";
+import { Menu, X, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FloatingRegisterButton from "@/components/FloatingRegisterButton";
 import LeadNotificationToast from "@/components/LeadNotificationToast";
@@ -10,14 +10,7 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About APGP", href: "/about" },
-  {
-    label: "Partnership Pathways",
-    href: "/pathways",
-    children: [
-      { label: "Joint Venture Partnership", href: "/pathways#jv" },
-      { label: "Referral Partnership", href: "/pathways#referral" },
-    ],
-  },
+  { label: "How It Works", href: "/pathways" },
   { label: "Done For You", href: "/done-for-you" },
   { label: "Participant Enquiries", href: "/participant-enquiries" },
   { label: "Blog", href: "/blog" },
@@ -36,7 +29,6 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [location] = useLocation();
 
   return (
@@ -65,48 +57,18 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
           {/* Desktop nav */}
           <nav className="hidden xl:flex items-center gap-1 flex-1 justify-center">
-            {navLinks.map((link) =>
-              link.children ? (
-                <div key={link.label} className="relative">
-                  <button
-                    className={cn(
-                      "flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                      location.startsWith(link.href) ? "text-teal bg-teal-light" : "text-gray-700 hover:text-navy hover:bg-gray-50"
-                    )}
-                    onClick={() => setOpenDropdown(openDropdown === link.label ? null : link.label)}
-                    onBlur={() => setTimeout(() => setOpenDropdown(null), 150)}
-                  >
-                    {link.label}
-                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", openDropdown === link.label ? "rotate-180" : "")} />
-                  </button>
-                  {openDropdown === link.label && (
-                    <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-2 min-w-48 z-50">
-                      {link.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:text-teal hover:bg-teal-light transition-colors"
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    location === link.href ? "text-teal bg-teal-light" : "text-gray-700 hover:text-navy hover:bg-gray-50"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              )
-            )}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  location === link.href ? "text-teal bg-teal-light" : "text-gray-700 hover:text-navy hover:bg-gray-50"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Desktop CTA buttons */}
@@ -136,35 +98,19 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         {/* Mobile menu */}
         {mobileOpen && (
           <div className="xl:hidden border-t border-gray-100 bg-white py-4 px-4 space-y-1">
-            {navLinks.map((link) =>
-              link.children ? (
-                <div key={link.label}>
-                  <p className="px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest">{link.label}</p>
-                  {link.children.map((child) => (
-                    <Link
-                      key={child.href}
-                      href={child.href}
-                      className="block px-5 py-2 text-sm text-gray-700 hover:text-teal transition-colors"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "block px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    location === link.href ? "text-teal bg-teal-light" : "text-gray-700 hover:text-navy hover:bg-gray-50"
-                  )}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              )
-            )}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "block px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  location === link.href ? "text-teal bg-teal-light" : "text-gray-700 hover:text-navy hover:bg-gray-50"
+                )}
+                onClick={() => setMobileOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
             <div className="pt-3 border-t border-gray-100 flex flex-col gap-2">
               <Link href="/provider/login" onClick={() => setMobileOpen(false)}>
                 <Button variant="outline" className="w-full border-navy text-navy">Provider Login</Button>
@@ -213,7 +159,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               <h4 className="font-bold text-white font-heading mb-4 text-sm uppercase tracking-widest">Program</h4>
               <ul className="space-y-2.5 text-sm text-gray-400">
                 <li><Link href="/about" className="hover:text-teal transition-colors">About APGP</Link></li>
-                <li><Link href="/pathways" className="hover:text-teal transition-colors">Partnership Pathways</Link></li>
+                <li><Link href="/pathways" className="hover:text-teal transition-colors">How It Works</Link></li>
                 <li><Link href="/done-for-you" className="hover:text-teal transition-colors">Done For You</Link></li>
                 <li><Link href="/pricing" className="hover:text-teal transition-colors">Pricing Structure</Link></li>
                 <li><Link href="/outcomes" className="hover:text-teal transition-colors">Program Outcomes</Link></li>

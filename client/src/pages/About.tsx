@@ -27,7 +27,7 @@ export default function About() {
           </Animate>
           <Animate variant="bottom" delay={0.2}>
             <p className="text-gray-300 text-lg leading-relaxed">
-              The Accommodation Provider Growth Program (APGP) is a structured partnership initiative by Ausnew Support Services, designed to solve one of the most persistent challenges in the NDIS accommodation sector — vacant properties and unpredictable referral flow.
+              The Accommodation Provider Growth Program (APGP) is an independent referral platform designed to solve one of the most persistent challenges in the NDIS accommodation sector — vacant properties and unpredictable referral flow.
             </p>
           </Animate>
         </div>
@@ -47,7 +47,7 @@ export default function About() {
                   Without a consistent pipeline of placement-ready participants, even the best-managed properties struggle to achieve stable occupancy — creating financial pressure that undermines the quality of support delivered to residents.
                 </p>
                 <p className="text-gray-600 leading-relaxed">
-                  APGP was designed specifically to address this. By partnering with Ausnew Support Services, providers gain access to a professionally managed intake system, participant matching, and ongoing vacancy support — all structured with zero financial risk.
+                  APGP was designed specifically to address this. By partnering with APGP, providers gain access to a professionally managed intake system, participant matching, and ongoing vacancy support — all structured with zero financial risk.
                 </p>
               </div>
             </Animate>
@@ -71,22 +71,17 @@ export default function About() {
         </div>
       </section>
 
-      {/* About Ausnew */}
+      {/* About APGP */}
       <section className="py-16 lg:py-24 bg-teal-light">
         <div className="container max-w-3xl text-center">
           <Animate variant="bottom">
-            <h2 className="text-3xl font-bold text-navy font-heading mb-6">About Ausnew Support Services</h2>
+            <h2 className="text-3xl font-bold text-navy font-heading mb-6">About APGP</h2>
             <p className="text-gray-700 text-lg leading-relaxed mb-6">
-              Ausnew Support Services is a registered NDIS provider delivering a range of disability support services across Australia, including Community Access, Supported Independent Living (SIL), and Specialist Disability Accommodation (SDA) placement coordination.
+              The Accommodation Provider Growth Program (APGP) is an independent business-to-business referral and marketing platform operating within the Australian NDIS ecosystem. APGP provides referral services connecting registered NDIS accommodation providers with participants seeking SDA, SIL, STA, MTA, or similar accommodation arrangements.
             </p>
             <p className="text-gray-700 leading-relaxed mb-8">
-              With years of experience in participant intake, support coordination, and accommodation matching, Ausnew has developed the APGP as a structured, scalable program that benefits both providers and participants. All partnership arrangements under APGP are strictly business-to-business and entirely separate from NDIS funding processes.
+              APGP operates exclusively as a referral and placement facilitation platform. All partnership arrangements under APGP are strictly business-to-business and entirely separate from NDIS funding processes. APGP does not provide NDIS supports, care services, or accommodation directly to participants.
             </p>
-            <a href="https://ausnewdisability.com" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="border-navy text-navy hover:bg-navy hover:text-white">
-                Visit Ausnew Support Services <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </a>
           </Animate>
         </div>
       </section>
@@ -99,8 +94,8 @@ export default function About() {
           </Animate>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Zero Financial Risk", desc: "Providers pay nothing until a participant successfully completes intake and moves into their accommodation. All upfront work — marketing, qualification, matching — is carried out by Ausnew.", variant: "left" as const },
-              { title: "Ethical Transparency", desc: "All partnership arrangements are business-to-business. Fees relate solely to commercial services provided by Ausnew. These arrangements do not involve participant billing and are entirely separate from NDIS funding.", variant: "bottom" as const },
+              { title: "Zero Financial Risk", desc: "Providers pay nothing until a participant successfully completes intake and moves into their accommodation. All upfront work — marketing, qualification, matching — is carried out by APGP.", variant: "left" as const },
+              { title: "Ethical Transparency", desc: "All partnership arrangements are business-to-business. Fees relate solely to commercial referral services provided by APGP. These arrangements do not involve participant billing and are entirely separate from NDIS funding.", variant: "bottom" as const },
               { title: "Quality Matching", desc: "Every participant referred through APGP is professionally screened, intake-ready, and matched to properties based on support needs, location, and property features — ensuring stable, long-term placements.", variant: "right" as const },
             ].map((item, i) => (
               <Animate key={item.title} variant={item.variant} delay={i * 0.1}>

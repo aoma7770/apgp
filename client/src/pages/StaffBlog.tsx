@@ -20,7 +20,7 @@ const emptyForm = {
   content: "",
   coverImage: "",
   category: "",
-  author: "Ausnew APGP Team",
+  author: "APGP Team",
   published: false,
 };
 
@@ -91,7 +91,7 @@ export default function StaffBlog() {
       content: post.content,
       coverImage: post.coverImage ?? "",
       category: post.category ?? "",
-      author: post.author ?? "Ausnew APGP Team",
+      author: post.author ?? "APGP Team",
       published: post.published,
     });
     setEditId(post.id);

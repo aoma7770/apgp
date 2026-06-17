@@ -21,7 +21,7 @@ function RegisterButton({ label = "Register Now — Free", size = "lg", classNam
 
 const stats = [
   { value: "$0", label: "Upfront cost to start" },
-  { value: "2", label: "Partnership pathways" },
+  { value: "1", label: "Partnership pathway" },
   { value: "100%", label: "Results-based fees" },
   { value: "End-to-end", label: "Intake management" },
 ];
@@ -36,21 +36,7 @@ const whatApgpEnables = [
 
 const pathwayCards = [
   {
-    badge: "Pathway 1",
-    title: "Joint Venture Partnership",
-    subtitle: "Shared Supports Model",
-    features: [
-      "Fully managed intake process",
-      "Participant matched to your property",
-      "Community access supports by Ausnew",
-      "No placement fee",
-      "Collaborative long-term support model",
-    ],
-    href: "/pathways",
-    highlight: false,
-  },
-  {
-    badge: "Pathway 2",
+    badge: "How It Works",
     title: "Referral Partnership",
     subtitle: "Success-Based Placement Fee — Quoted Per Lead",
     features: [
@@ -136,7 +122,7 @@ export default function Home() {
           <Animate variant="bottom">
             <div className="text-center max-w-2xl mx-auto mb-10">
               <h2 className="text-3xl font-bold text-navy font-heading mb-3">What is the APGP?</h2>
-              <p className="text-gray-600">A structured program by Ausnew Support Services that connects SDA and SIL accommodation providers with a consistent, pre-qualified stream of participants.</p>
+              <p className="text-gray-600">An independent referral platform that connects SDA and SIL accommodation providers with a consistent, pre-qualified stream of NDIS participants.</p>
             </div>
           </Animate>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">

@@ -41,13 +41,13 @@ export default function ProviderLogin() {
           <APGPLogo variant="compact" height={40} />
           <div>
             <div className="font-bold text-white font-heading">APGP</div>
-            <div className="text-xs text-teal-300">by Ausnew Support Services</div>
+            <div className="text-xs text-teal-300">Accommodation Provider Growth Program</div>
           </div>
         </Link>
         <div>
           <h2 className="text-3xl font-bold font-heading mb-4">Provider Portal</h2>
           <p className="text-gray-300 text-sm leading-relaxed">
-            Sign in to manage your company profile, view and update your accommodation listings, and track your partnership status with Ausnew Support Services.
+              Sign in to manage your company profile, view and update your accommodation listings, and track your partnership status with APGP.
           </p>
         </div>
         <p className="text-xs text-gray-400">
@@ -63,7 +63,7 @@ export default function ProviderLogin() {
         <div className="w-full max-w-md">
           <Link href="/" className="flex items-center gap-3 mb-8 lg:hidden">
             <APGPLogo variant="compact" height={36} />
-            <div className="font-bold text-navy font-heading text-sm">APGP by Ausnew</div>
+            <div className="font-bold text-navy font-heading text-sm">APGP</div>
           </Link>
 
           <h1 className="text-2xl font-bold text-navy font-heading mb-2">Provider Sign In</h1>
@@ -125,7 +125,7 @@ export default function ProviderLogin() {
 
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
             <p className="text-sm text-gray-500">
-              Internal Ausnew staff?{" "}
+              APGP admin team?{" "}
               <Link href="/staff/login" className="text-navy hover:underline font-medium">
                 Admin login
               </Link>

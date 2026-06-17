@@ -111,12 +111,12 @@ export default function RequestAccommodation() {
               Thank you — your accommodation request has been submitted anonymously to our network of registered NDIS accommodation providers.
             </p>
             <p className="text-gray-600 mb-8 leading-relaxed">
-              If a provider is interested in assisting with your request, the Ausnew team will be in touch to connect you. Your personal details have not been shared with any provider at this stage.
+              If a provider is interested in assisting with your request, the APGP team will be in touch to connect you. Your personal details have not been shared with any provider at this stage.
             </p>
             <div className="bg-teal-light rounded-2xl p-6 text-left mb-8">
               <h3 className="font-bold text-navy font-heading mb-3">What happens next?</h3>
               <ul className="space-y-2 text-sm text-gray-700">
-                {["Your request is visible to APGP-registered accommodation providers", "Providers can express interest in assisting with your request", "Ausnew reviews all expressions of interest before making contact", "You will be contacted by the Ausnew team — not directly by providers"].map((item) => (
+                {["Your request is visible to APGP-registered accommodation providers", "Providers can express interest in assisting with your request", "APGP reviews all expressions of interest before making contact", "You will be contacted by the APGP team — not directly by providers"].map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-teal shrink-0 mt-0.5" />
                     {item}
@@ -297,7 +297,7 @@ export default function RequestAccommodation() {
                   <div className="flex items-start gap-3">
                     <Heart className="w-4 h-4 text-teal shrink-0 mt-0.5" />
                     <p className="text-xs text-gray-600 leading-relaxed">
-                      By submitting, you confirm that no personal identifying information has been included in this request. Your request will be visible to APGP-registered accommodation providers. The Ausnew team will contact you if a suitable match is found.
+                      By submitting, you confirm that no personal identifying information has been included in this request. Your request will be visible to APGP-registered accommodation providers. The APGP team will contact you if a suitable match is found.
                     </p>
                   </div>
                 </div>

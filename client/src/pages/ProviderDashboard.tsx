@@ -336,7 +336,7 @@ export default function ProviderDashboard() {
                   <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm font-semibold text-amber-800">Complete your company profile</p>
-                    <p className="text-xs text-amber-700 mt-1">Add your organisation details, ABN, and regions serviced to be visible to the Ausnew team.</p>
+                    <p className="text-xs text-amber-700 mt-1">Add your organisation details, ABN, and regions serviced to be visible to the APGP team.</p>
                     <button onClick={initProfileForm} className="text-xs font-semibold text-amber-800 underline mt-2">Complete profile →</button>
                   </div>
                 </div>
@@ -405,7 +405,7 @@ export default function ProviderDashboard() {
                 <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
                   <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                   <h3 className="font-semibold text-navy mb-2">No listings yet</h3>
-                  <p className="text-gray-500 text-sm mb-6">Add your first SDA or SIL property to make it visible to the Ausnew team.</p>
+                  <p className="text-gray-500 text-sm mb-6">Add your first SDA or SIL property to make it visible to the APGP team.</p>
                   <Button onClick={() => setTab("add-listing")} className="bg-teal hover:bg-teal-600 text-white">
                     <Plus className="w-4 h-4 mr-2" /> Add Your First Property
                   </Button>
@@ -487,7 +487,7 @@ export default function ProviderDashboard() {
                       Live Feed
                     </span>
                   </div>
-                  <p className="text-gray-500 text-sm">Real-time NDIS accommodation enquiries from Ausnew's participant pipeline. These leads come directly from our CRM — no personal information is shown.</p>
+                  <p className="text-gray-500 text-sm">Real-time NDIS accommodation enquiries from our participant pipeline. These leads come directly from our CRM — no personal information is shown.</p>
                 </div>
               </div>
 
@@ -557,7 +557,7 @@ export default function ProviderDashboard() {
                 <Handshake className="w-5 h-5 text-teal-300 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-semibold text-white">How to action a lead</p>
-                  <p className="text-xs text-gray-300 mt-1 leading-relaxed">Browse the enquiries below. If you have a suitable property, click <strong className="text-teal-300">I'm Interested</strong>. You'll sign a Referral Agreement and Consent Form, then the Ausnew team will contact both parties to progress the placement. You only pay if the participant moves in.</p>
+                  <p className="text-xs text-gray-300 mt-1 leading-relaxed">Browse the enquiries below. If you have a suitable property, click <strong className="text-teal-300">I'm Interested</strong>. You'll sign a Referral Agreement and Consent Form, then the APGP team will contact both parties to progress the placement. You only pay if the participant moves in.</p>
                 </div>
               </div>
 
@@ -808,7 +808,7 @@ export default function ProviderDashboard() {
               <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6">
                 <h3 className="font-bold text-navy font-heading mb-4">Subscription Plan</h3>
                 <p className="text-lg font-semibold text-navy mb-2">Free Tier</p>
-                <p className="text-gray-500 text-sm mb-4">You are currently on the free tier. Contact Ausnew Support to upgrade to a paid plan for more features.</p>
+                <p className="text-gray-500 text-sm mb-4">You are currently on the free tier. Contact APGP to discuss your partnership options.</p>
                 <Button className="bg-teal hover:bg-teal-600 text-white">Contact Support</Button>
               </div>
 
@@ -931,7 +931,7 @@ export default function ProviderDashboard() {
           {tab === "listings" && (
             <div>
               <h1 className="text-2xl font-bold text-navy font-heading mb-2">My Property Listings</h1>
-              <p className="text-gray-500 text-sm mb-6">Manage your SDA and SIL property listings. These are visible to the Ausnew team for participant matching.</p>
+              <p className="text-gray-500 text-sm mb-6">Manage your SDA and SIL property listings. These are visible to the APGP team for participant matching.</p>
 
               <div className="flex justify-end mb-4">
                 <Button onClick={() => setTab("add-listing")} className="bg-teal hover:bg-teal-600 text-white">
@@ -943,7 +943,7 @@ export default function ProviderDashboard() {
                 <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
                   <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                   <h3 className="font-semibold text-navy mb-2">No listings yet</h3>
-                  <p className="text-gray-500 text-sm mb-6">Add your first SDA or SIL property to make it visible to the Ausnew team.</p>
+                  <p className="text-gray-500 text-sm mb-6">Add your first SDA or SIL property to make it visible to the APGP team.</p>
                   <Button onClick={() => setTab("add-listing")} className="bg-teal hover:bg-teal-600 text-white">
                     <Plus className="w-4 h-4 mr-2" /> Add Your First Property
                   </Button>
@@ -1191,7 +1191,7 @@ export default function ProviderDashboard() {
           leadSummary={interestLeadSummary}
           provider={provider}
           onSuccess={() => {
-            toast.success("Interest submitted. Ausnew team will be in touch.");
+              toast.success("Interest submitted. The APGP team will be in touch.");
             refetchLeads();
             setInterestLeadId(null);
           }}
