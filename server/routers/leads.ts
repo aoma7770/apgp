@@ -129,6 +129,7 @@ export const leadsRouter = router({
     supportNeeds: z.string().optional(),
     mondayLeadId: z.string().optional(),
     ndisRegistered: z.string().optional(),
+    ndisFundingType: z.string().optional(),
     careFor: z.string().optional(),
   })).mutation(async ({ input }) => {
     const db = await import('../db').then(m => m.getDb());
@@ -153,6 +154,7 @@ export const leadsRouter = router({
     careFor: z.string().default('Myself'),
     accommodationType: z.string().default('Not specified'),
     ndisRegistered: z.string().default('Not specified'),
+    ndisFundingType: z.string().optional(),
     requesterType: z.string().default('Not specified'),
     dwellingType: z.string().default('Not specified'),
     moveInTimeline: z.string().default('Not specified'),
@@ -168,6 +170,7 @@ export const leadsRouter = router({
       careFor: input.careFor,
       accommodationType: input.accommodationType,
       ndisRegistered: input.ndisRegistered,
+      ndisFundingType: input.ndisFundingType ?? null,
       requesterType: input.requesterType,
       dwellingType: input.dwellingType,
       moveInTimeline: input.moveInTimeline,

@@ -20,7 +20,7 @@ interface Notification {
   preferredState: string;
   postcode: string | null;
   moveInTimeline: string;
-  ndisRegistered: string;
+  ndisRegistered: string | null;
   createdAt: Date;
   shownAt: number; // timestamp when we displayed it
 }

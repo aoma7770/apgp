@@ -305,7 +305,7 @@ export default function StaffDashboard() {
                               {lead.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                             </button>
                             <button
-                              onClick={() => { setEditingLeadId(lead.id); setEditForm({ accommodationType: lead.accommodationType, dwellingType: lead.dwellingType, ndisRegistered: lead.ndisRegistered, moveInTimeline: lead.moveInTimeline, postcode: lead.postcode ?? '', mondayLeadId: lead.mondayLeadId ?? '' }); }}
+                              onClick={() => { setEditingLeadId(lead.id); setEditForm({ accommodationType: lead.accommodationType, dwellingType: lead.dwellingType, ndisRegistered: lead.ndisRegistered ?? '', ndisFundingType: (lead as { ndisFundingType?: string | null }).ndisFundingType ?? '', moveInTimeline: lead.moveInTimeline, postcode: lead.postcode ?? '', mondayLeadId: lead.mondayLeadId ?? '' }); }}
                               className="p-2 rounded-lg text-gray-400 hover:text-teal hover:bg-teal-light transition-colors"
                               title="Edit lead"
                             >

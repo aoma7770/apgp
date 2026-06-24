@@ -625,17 +625,23 @@ export default function ProviderDashboard() {
                               <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-xs text-gray-400 mb-1">NDIS Registered</p>
                                 <p className={`text-sm font-semibold flex items-center gap-1 ${
-                                  lead.ndisRegistered.toLowerCase().includes('yes') ? 'text-green-700' :
-                                  lead.ndisRegistered.toLowerCase().includes('no') ? 'text-red-600' : 'text-amber-600'
+                                  (lead.ndisRegistered ?? '').toLowerCase().includes('yes') ? 'text-green-700' :
+                                  (lead.ndisRegistered ?? '').toLowerCase().includes('no') ? 'text-red-600' : 'text-amber-600'
                                 }`}>
-                                  {lead.ndisRegistered.toLowerCase().includes('yes') ? '✅' :
-                                   lead.ndisRegistered.toLowerCase().includes('no') ? '❌' : '⏳'} {lead.ndisRegistered}
+                                  {(lead.ndisRegistered ?? '').toLowerCase().includes('yes') ? '\u2705' :
+                                   (lead.ndisRegistered ?? '').toLowerCase().includes('no') ? '\u274c' : '\u23f3'} {lead.ndisRegistered ?? 'Not specified'}
                                 </p>
                               </div>
                               <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-xs text-gray-400 mb-1">Accommodation type</p>
                                 <p className="text-sm font-semibold text-navy">{lead.accommodationType.split('(')[0].trim()}</p>
                               </div>
+                              {(lead as { ndisFundingType?: string | null }).ndisFundingType && (lead as { ndisFundingType?: string | null }).ndisFundingType !== 'Not specified' && (
+                                <div className="bg-gray-50 rounded-xl p-3">
+                                  <p className="text-xs text-gray-400 mb-1">NDIS Funding Type</p>
+                                  <p className="text-sm font-semibold text-navy">{(lead as { ndisFundingType?: string | null }).ndisFundingType}</p>
+                                </div>
+                              )}
                               {lead.dwellingType && lead.dwellingType !== 'Not specified' && (
                                 <div className="bg-gray-50 rounded-xl p-3">
                                   <p className="text-xs text-gray-400 mb-1">Dwelling type</p>

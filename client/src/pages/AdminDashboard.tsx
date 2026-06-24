@@ -494,6 +494,10 @@ export default function AdminDashboard() {
                             <input value={editForm.ndisRegistered ?? lead.ndisRegistered ?? ''} onChange={(e) => setEditForm({...editForm, ndisRegistered: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
                           </div>
                           <div>
+                            <label className="text-xs font-semibold text-gray-500 block mb-1">NDIS Funding Type</label>
+                            <input value={editForm.ndisFundingType ?? (lead as { ndisFundingType?: string | null }).ndisFundingType ?? ''} onChange={(e) => setEditForm({...editForm, ndisFundingType: e.target.value})} placeholder="e.g. Core, Capital, Capacity Building" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
+                          </div>
+                          <div>
                             <label className="text-xs font-semibold text-gray-500 block mb-1">Move-in Timeline</label>
                             <input value={editForm.moveInTimeline ?? lead.moveInTimeline ?? ''} onChange={(e) => setEditForm({...editForm, moveInTimeline: e.target.value})} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none bg-white" />
                           </div>

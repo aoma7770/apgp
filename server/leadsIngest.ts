@@ -101,6 +101,7 @@ export function registerLeadsIngestRoute(app: Express) {
         careFor: body.care_for || "Not specified",
         requesterType: body.requester_type || "Not specified",
         ndisRegistered: body.ndis_registered || "Not specified",
+        ndisFundingType: body.ndis_funding_type || body.funding_type || body.ndis_plan_type || undefined,
         accommodationType: body.accommodation_type || "Not specified",
         dwellingType: body.dwelling_type || "Not specified",
         sdaCategory: body.sda_category || undefined,

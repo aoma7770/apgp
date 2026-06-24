@@ -98,7 +98,8 @@ export const participantLeads = mysqlTable("participantLeads", {
   // Requester type — stored exactly as sent by Zapier
   requesterType: varchar("requesterType", { length: 255 }).notNull().default("Not specified"),
   // NDIS status — stored exactly as sent by Zapier
-  ndisRegistered: varchar("ndisRegistered", { length: 100 }).notNull().default("Not specified"),
+  ndisRegistered: varchar("ndisRegistered", { length: 255 }),
+  ndisFundingType: varchar("ndisFundingType", { length: 255 }),
   // Accommodation type requested — stored exactly as sent by Zapier
   accommodationType: varchar("accommodationType", { length: 255 }).notNull().default("Not specified"),
   // Dwelling type — stored exactly as sent by Zapier
