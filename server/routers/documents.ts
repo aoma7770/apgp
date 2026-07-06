@@ -21,6 +21,23 @@ const providerProcedure = publicProcedure.use(async ({ ctx, next }) => {
 });
 
 export const documentsRouter = router({
+  // Admin: list all signed agreements (admin copies, providerId = -1)
+  adminList: publicProcedure.use(async ({ ctx, next }) => {
+    const { getAdminFromCtx } = await import('./adminAuth');
+    const admin = await getAdminFromCtx(ctx);
+    if (!admin) throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+    return next({ ctx });
+  }).query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+    const { desc } = await import('drizzle-orm');
+    return db
+      .select()
+      .from(providerDocuments)
+      .where(eq(providerDocuments.providerId, -1))
+      .orderBy(desc(providerDocuments.uploadedAt));
+  }),
+
   // List all documents for the logged-in provider
   list: providerProcedure.query(async ({ ctx }) => {
     const db = await getDb();

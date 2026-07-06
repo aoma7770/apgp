@@ -45,7 +45,7 @@ const vacancyBadge: Record<string, string> = {
   Occupied: "bg-gray-100 text-gray-600",
 };
 
-type Tab = "overview" | "leads" | "search" | "admins";
+type Tab = "overview" | "leads" | "search" | "admins" | "agreements";
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
@@ -160,6 +160,7 @@ export default function AdminDashboard() {
   const allNavItems: Array<{ id: Tab; label: string; icon: React.ReactNode; superOnly?: boolean }> = [
     { id: "overview" as Tab, label: "Overview", icon: <Home className="w-4 h-4" /> },
     { id: "leads" as Tab, label: "Leads Management", icon: <Users className="w-4 h-4" /> },
+    { id: "agreements" as Tab, label: "Signed Agreements", icon: <ExternalLink className="w-4 h-4" /> },
     { id: "search" as Tab, label: "Property Search", icon: <Search className="w-4 h-4" /> },
     { id: "admins" as Tab, label: "Admin Users", icon: <Shield className="w-4 h-4" />, superOnly: true },
   ];
@@ -700,8 +701,46 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {/* Signed Agreements */}
+          {tab === "agreements" && (
+            <div>
+              <h1 className="text-2xl font-bold text-navy font-heading mb-2">Signed Agreements</h1>
+              <p className="text-gray-500 text-sm mb-6">All referral agreements signed by providers. Each file is named: ProviderName_LeadRef_Date.pdf</p>
+              <SignedAgreementsPanel />
+            </div>
+          )}
+
         </main>
       </div>
+    </div>
+  );
+}
+
+// ── Signed Agreements Panel ──────────────────────────────────────────────────
+function SignedAgreementsPanel() {
+  const { data: docs = [], isLoading } = trpc.documents.adminList.useQuery();
+
+  if (isLoading) return <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-teal border-t-transparent rounded-full animate-spin" /></div>;
+
+  if (docs.length === 0) return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+      <p className="text-gray-500">No signed agreements yet. They will appear here when providers sign referral agreements.</p>
+    </div>
+  );
+
+  return (
+    <div className="space-y-3">
+      {docs.map((doc: { id: number; fileName: string; fileUrl: string; category: string | null; uploadedAt: Date }) => (
+        <div key={doc.id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-navy truncate">{doc.fileName}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{new Date(doc.uploadedAt).toLocaleString('en-AU')} · {doc.category}</p>
+          </div>
+          <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-teal text-white text-sm font-semibold hover:bg-teal-600 transition-colors">
+            View PDF
+          </a>
+        </div>
+      ))}
     </div>
   );
 }

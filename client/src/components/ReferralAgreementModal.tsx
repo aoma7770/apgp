@@ -166,7 +166,7 @@ export default function ReferralAgreementModal({
     contactTitle: provider.contactTitle ?? "",
     phone: provider.phone ?? "",
     email: provider.email,
-    partnershipModel: "" as "Referral Partnership" | "Joint Venture Partnership" | "",
+    propertyLinks: ["" , "", ""],
     authorisedCheckbox: false,
     termsCheckbox: false,
   });
@@ -184,8 +184,7 @@ export default function ReferralAgreementModal({
   const abnDigits = form.abn.replace(/[\s-]/g, "");
   const canProceedFromDetails = form.organisationName.trim().length >= 2 &&
     abnDigits.length >= 9 && abnDigits.length <= 11 && /^\d+$/.test(abnDigits) &&
-    form.contactName.trim().length >= 2 &&
-    form.partnershipModel !== "";
+    form.contactName.trim().length >= 2;
 
   const canSubmit = canProceedFromDetails &&
     form.authorisedCheckbox &&
@@ -198,7 +197,7 @@ export default function ReferralAgreementModal({
       leadId,
       signatoryName: form.contactName,
       signatoryOrg: form.organisationName,
-      providerNotes: `Partnership Model: ${form.partnershipModel}. ABN: ${form.abn}. Phone: ${form.phone}. Email: ${form.email}.`,
+      providerNotes: `Referral Partnership. ABN: ${form.abn}. Phone: ${form.phone}. Email: ${form.email}. Property Links: ${form.propertyLinks.filter(l => l.trim()).join(', ') || 'None provided'}.`,
       referralAgreementSigned: true,
       consentSigned: true,
     });
@@ -236,7 +235,7 @@ export default function ReferralAgreementModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-navy text-white shrink-0">
           <div>
-            <h2 className="font-bold font-heading text-lg">APGP — Referral &amp; Joint Venture Agreement</h2>
+            <h2 className="font-bold font-heading text-lg">APGP Marketing — Referral Agreement</h2>
             <p className="text-xs text-teal-300 mt-0.5">
               {step === "details" ? "Step 1 of 3 — Your Details" : step === "agreement" ? "Step 2 of 3 — Read the Agreement" : "Step 3 of 3 — Sign &amp; Submit"}
             </p>
@@ -300,29 +299,32 @@ export default function ReferralAgreementModal({
               </div>
 
               <div>
-                <Label className="text-navy font-semibold text-sm mb-2 block">Partnership Model * <span className="text-gray-400 font-normal">(select one)</span></Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {(["Referral Partnership", "Joint Venture Partnership"] as const).map((model) => (
-                    <button
-                      key={model}
-                      type="button"
-                      onClick={() => setForm({ ...form, partnershipModel: model })}
-                      className={`p-4 rounded-xl border text-left transition-all ${form.partnershipModel === model ? "bg-teal text-white border-teal" : "bg-white border-gray-200 hover:border-teal"}`}
-                    >
-                      {form.partnershipModel === model && <CheckCircle2 className="w-4 h-4 inline mr-2" />}
-                      <span className="font-semibold text-sm">{model}</span>
-                      <p className={`text-xs mt-1 ${form.partnershipModel === model ? "text-white/80" : "text-gray-500"}`}>
-                        {model === "Referral Partnership" ? "Success-based placement fee — pay only when participant moves in" : "Shared supports model — no placement fee when Ausnew delivers community access"}
-                      </p>
-                    </button>
-                  ))}
-                </div>
+                <Label className="text-navy font-semibold text-sm mb-2 block">Property Links / Brochures <span className="text-gray-400 font-normal">(optional — one link per line)</span></Label>
+                <p className="text-xs text-gray-500 mb-2">Add links to your property listings, brochures, or virtual tours. Add as many as needed.</p>
+                {form.propertyLinks.map((link, idx) => (
+                  <div key={idx} className="flex gap-2 mb-2">
+                    <input
+                      value={link}
+                      onChange={(e) => {
+                        const updated = [...form.propertyLinks];
+                        updated[idx] = e.target.value;
+                        setForm({ ...form, propertyLinks: updated });
+                      }}
+                      placeholder={`Property link ${idx + 1} (e.g. https://...)`}
+                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-teal outline-none"
+                    />
+                    {form.propertyLinks.length > 1 && (
+                      <button type="button" onClick={() => setForm({ ...form, propertyLinks: form.propertyLinks.filter((_, i) => i !== idx) })} className="text-gray-400 hover:text-red-500 transition-colors px-2">×</button>
+                    )}
+                  </div>
+                ))}
+                <button type="button" onClick={() => setForm({ ...form, propertyLinks: [...form.propertyLinks, ""] })} className="text-xs text-teal font-semibold hover:underline mt-1">+ Add another link</button>
               </div>
 
               {!canProceedFromDetails && (
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-700">Please complete all required fields including ABN and select a partnership model before continuing.</p>
+                  <p className="text-xs text-amber-700">Please complete all required fields including ABN before continuing.</p>
                 </div>
               )}
             </div>
@@ -332,27 +334,36 @@ export default function ReferralAgreementModal({
           {step === "agreement" && (
             <div>
               <div className="bg-navy/5 rounded-xl p-4 mb-5 text-sm">
-                <p className="font-bold text-navy font-heading mb-1">APGP — Referral &amp; Joint Venture Agreement</p>
-                <p className="text-gray-500 text-xs">MOU - APGP · Version No: 01 · Version Date: 06/01/2026</p>
+                <p className="font-bold text-navy font-heading mb-1">APGP Marketing — Referral Agreement</p>
+                <p className="text-gray-500 text-xs">APGP Marketing (ACN 686-409-469) · Version No: 02 · Version Date: 06/07/2026</p>
               </div>
 
               <AgreementSection title="1. Parties" defaultOpen={true}>
                 <p>This Agreement is entered into between:</p>
-                <p><strong>Ausnew Support Services Pty Ltd</strong> ("Ausnew"), and</p>
+                <p><strong>APGP Marketing</strong> (ACN 686-409-469) ("APGP"), and</p>
                 <p><strong>{form.organisationName}</strong> (ABN: {form.abn}) ("Provider")</p>
                 <p>Contact: {form.contactName}{form.contactTitle ? `, ${form.contactTitle}` : ""} · {form.email} · {form.phone}</p>
-                <p className="mt-2 text-gray-600">The Provider wishes to participate in the Accommodation Provider Growth Program (APGP), under which Ausnew may introduce Participants to the Provider and, where applicable, collaborate under a referral and/or joint venture arrangement. This Agreement is intended to be legally binding.</p>
+                <p className="mt-2 text-gray-600">The Provider wishes to participate in the Accommodation Provider Growth Program (APGP), under which APGP Marketing may introduce Participants to the Provider under a referral arrangement. This Agreement is intended to be legally binding.</p>
               </AgreementSection>
 
-              <AgreementSection title="2. Partnership Model Election">
-                <p>The Provider has elected to participate under:</p>
-                <p className="font-bold text-navy">☑ {form.partnershipModel}</p>
-                <p className="text-gray-600 mt-1">The rights and obligations applicable to each partnership model are governed by the APGP Terms of Service (MOU).</p>
+              <AgreementSection title="2. Referral Partnership">
+                <p>The Provider has elected to participate under the <strong>Referral Partnership Model</strong>.</p>
+                <p className="text-gray-600 mt-1">APGP Marketing will source, qualify, and match NDIS participants to the Provider's available properties. A success-based placement fee is payable only upon confirmed move-in. The rights and obligations are governed by the APGP Terms of Service (MOU).</p>
+                {form.propertyLinks.filter(l => l.trim()).length > 0 && (
+                  <div className="mt-2">
+                    <p className="font-semibold text-navy text-xs mb-1">Property Links / Brochures submitted:</p>
+                    <ul className="list-disc pl-4 space-y-0.5">
+                      {form.propertyLinks.filter(l => l.trim()).map((link, i) => (
+                        <li key={i}><a href={link} target="_blank" rel="noopener noreferrer" className="text-teal text-xs hover:underline break-all">{link}</a></li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </AgreementSection>
 
               <AgreementSection title="3. Fees and Quote">
-                <p><strong>3.1 Quote:</strong> Prior to execution of this Agreement, Ausnew will issue the Provider with a written quote setting out the applicable commercial fees for participation in the APGP ("Quote").</p>
-                <p><strong>3.2 Fees:</strong> The Provider agrees to pay Ausnew the fees set out in the Quote issued by Ausnew. The Quote forms part of the commercial understanding between the parties and sets out the applicable fees, including (where applicable): Placement Fee; Vacancy Protection Plan (if elected); and any other agreed fees.</p>
+                <p><strong>3.1 Quote:</strong> Prior to execution of this Agreement, APGP Marketing will issue the Provider with a written quote setting out the applicable commercial fees for participation in the APGP ("Quote").</p>
+                <p><strong>3.2 Fees:</strong> The Provider agrees to pay APGP Marketing the fees set out in the Quote. The Quote forms part of the commercial understanding between the parties and sets out the applicable fees, including (where applicable): Placement Fee; Vacancy Protection Plan (if elected); and any other agreed fees.</p>
                 <p><strong>3.3 Binding Effect of Quote:</strong> By executing this Agreement, the Provider acknowledges that the Quote accurately reflects the agreed commercial terms and the Provider is bound to pay the fees set out in the Quote.</p>
                 <p><strong>3.4 Provider-Only Fees:</strong> All fees payable under this Agreement and any Quote are <strong>payable by the Accommodation Provider only</strong> and are <strong>not charged to Participants, their families, or their NDIS plans</strong>.</p>
               </AgreementSection>
@@ -381,8 +392,8 @@ export default function ReferralAgreementModal({
               <AgreementSection title="8. Execution">
                 <p>This Agreement may be executed electronically and in counterparts, each of which constitutes an original.</p>
                 <div className="mt-3 bg-gray-50 rounded-xl p-4 text-xs space-y-1">
-                  <p className="font-bold text-navy">For Ausnew Support Services Pty Ltd</p>
-                  <p>Signature: <span className="italic text-gray-400">(to be executed by Ausnew)</span></p>
+                  <p className="font-bold text-navy">For APGP Marketing (ACN 686-409-469)</p>
+                  <p>Signature: <span className="italic text-gray-400">(to be executed by APGP Marketing)</span></p>
                 </div>
                 <div className="mt-3 bg-teal-light rounded-xl p-4 text-xs space-y-1">
                   <p className="font-bold text-navy">For {form.organisationName}</p>
@@ -401,7 +412,7 @@ export default function ReferralAgreementModal({
               <div className="bg-navy/5 rounded-xl p-4">
                 <p className="text-sm font-semibold text-navy mb-1">Executing as: {form.organisationName}</p>
                 <p className="text-xs text-gray-500">ABN: {form.abn} · {form.contactName}{form.contactTitle ? `, ${form.contactTitle}` : ""}</p>
-                <p className="text-xs text-gray-500">Partnership Model: <strong className="text-navy">{form.partnershipModel}</strong></p>
+                <p className="text-xs text-gray-500">Model: <strong className="text-navy">Referral Partnership</strong></p>
                 <p className="text-xs text-gray-500">Date: {today}</p>
               </div>
 
@@ -422,7 +433,7 @@ export default function ReferralAgreementModal({
                     className="mt-0.5 w-4 h-4 accent-teal shrink-0"
                   />
                   <span className="text-sm text-gray-700">
-                    <strong className="text-navy">I am duly authorised</strong> by {form.organisationName} to sign this Referral &amp; Joint Venture Agreement on behalf of the organisation.
+                    <strong className="text-navy">I am duly authorised</strong> by {form.organisationName} to sign this Referral Agreement with APGP Marketing (ACN 686-409-469) on behalf of the organisation.
                   </span>
                 </label>
 

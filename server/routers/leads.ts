@@ -235,19 +235,35 @@ export const leadsRouter = router({
           const leadRef = lead?.mondayLeadId ?? `LEAD-${input.leadId}`;
           const leadSummary = lead ? `${lead.accommodationType} | ${lead.dwellingType} | ${lead.moveInTimeline} | Postcode: ${lead.postcode ?? lead.preferredState ?? 'N/A'}` : `Lead ID: ${input.leadId}`;
           
-          const fileName = `APGP_Referral_Agreement_${leadRef}_${today.replace(/\//g, '-')}.pdf`;
+          // Auto-name: ProviderName_LeadRef_Date.pdf
+          const orgSlug = (ctx.provider.organisationName ?? input.signatoryOrg).replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40);
+          const dateSlug = today.replace(/\//g, '-');
+          const fileName = `${orgSlug}_${leadRef}_${dateSlug}.pdf`;
           const fileKey = `agreements/${ctx.provider.id}/lead-${input.leadId}-${Date.now()}.pdf`;
+          const fileUrl = `/api/agreements/${ctx.provider.id}/${input.leadId}?ref=${leadRef}&signatory=${encodeURIComponent(input.signatoryName)}&org=${encodeURIComponent(input.signatoryOrg)}&date=${encodeURIComponent(today)}&lead=${encodeURIComponent(leadSummary)}`;
           
-          // Store the agreement as a downloadable record with full details
+          // Save to provider's Documents tab
           await db.insert(providerDocuments).values({
             providerId: ctx.provider.id,
             fileName,
             fileKey,
-            fileUrl: `/api/agreements/${ctx.provider.id}/${input.leadId}?ref=${leadRef}&signatory=${encodeURIComponent(input.signatoryName)}&org=${encodeURIComponent(input.signatoryOrg)}&date=${encodeURIComponent(today)}&lead=${encodeURIComponent(leadSummary)}`,
+            fileUrl,
             fileType: 'application/pdf',
             fileSize: 0,
             category: 'Referral Agreement',
           });
+
+          // Also save to admin_signed_agreements table (or reuse providerDocuments with providerId=0 as admin copy)
+          // We store a second copy with providerId=-1 as a sentinel for admin-visible agreements
+          await db.insert(providerDocuments).values({
+            providerId: -1, // sentinel: admin copy
+            fileName: `[ADMIN] ${fileName}`,
+            fileKey: `admin-copy/${fileKey}`,
+            fileUrl,
+            fileType: 'application/pdf',
+            fileSize: 0,
+            category: 'Referral Agreement',
+          }).catch(() => {}); // non-fatal if admin copy fails
         }
       } catch (e) {
         console.error('[expressInterest] Failed to save agreement document:', e);
