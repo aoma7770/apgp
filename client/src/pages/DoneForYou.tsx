@@ -66,7 +66,8 @@ const traditionalCosts = [
   { label: "Google / Meta Ads (monthly)", low: "$2,000", high: "$8,000+", note: "Ongoing spend with no guaranteed results" },
   { label: "Disability marketing agency retainer", low: "$3,000", high: "$10,000+", note: "Monthly fee regardless of placements" },
   { label: "In-house intake coordinator salary", low: "$65,000", high: "$85,000+", note: "Annual cost, plus super, leave, and training" },
-  { label: "Support coordinator referral fees", low: "$1,500", high: "$5,000+", note: "Per referral, often with no move-in guarantee" },
+  { label: "Business development manager salary", low: "$80,000", high: "$120,000+", note: "Annual cost, plus super, leave, and on-costs" },
+  { label: "Outsourced client acquisition", low: "$2,000", high: "$6,000+", note: "Monthly retainer, no guaranteed placements" },
   { label: "Housing Hub / Go-Nest listing fees", low: "$500", high: "$2,400+", note: "Annual subscription, visibility not guaranteed" },
   { label: "Time cost of unqualified enquiries", low: "10–20 hrs", high: "per vacancy", note: "Staff hours spent on enquiries that never convert" },
 ];

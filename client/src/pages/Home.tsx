@@ -21,7 +21,7 @@ function RegisterButton({ label = "Register Now — Free", size = "lg", classNam
 
 const stats = [
   { value: "$0", label: "Upfront cost to start" },
-  { value: "1", label: "Partnership pathway" },
+  { value: "188+", label: "Active participant enquiries" },
   { value: "100%", label: "Results-based fees" },
   { value: "End-to-end", label: "Intake management" },
 ];
@@ -61,7 +61,8 @@ const dfy_costs = [
   { label: "Google / Meta Ads", cost: "$2,000–$8,000/mo" },
   { label: "Marketing agency retainer", cost: "$3,000–$10,000/mo" },
   { label: "Intake coordinator salary", cost: "$65,000–$85,000/yr" },
-  { label: "Referral agency fees", cost: "$1,500–$5,000/placement" },
+  { label: "Business development manager salary", cost: "$80,000–$120,000/yr" },
+  { label: "Outsourced client acquisition", cost: "$2,000–$6,000/mo" },
   { label: "Listing platform subscriptions", cost: "$500–$2,400/yr" },
 ];
 
@@ -228,33 +229,45 @@ export default function Home() {
         <div className="container">
           <Animate variant="bottom">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-navy font-heading mb-4">Two Partnership Pathways — One Reliable Outcome</h2>
-              <p className="text-gray-600">A predictable stream of participants professionally screened, intake-ready, and matched to your properties.</p>
+              <h2 className="text-3xl lg:text-4xl font-bold text-navy font-heading mb-4">The Referral Partnership — How It Works</h2>
+              <p className="text-gray-600 text-lg">APGP sources, qualifies, and matches NDIS participants to your available properties. You pay only when a participant moves in.</p>
             </div>
           </Animate>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {pathwayCards.map((card, i) => (
-              <Animate key={card.title} variant={i === 0 ? "left" : "right"} delay={i * 0.1}>
-                <div className={`rounded-2xl p-8 border h-full flex flex-col ${card.highlight ? "bg-navy text-white border-navy" : "bg-white border-gray-100 shadow-sm"}`}>
-                  <div className={`text-xs font-bold uppercase tracking-widest mb-3 ${card.highlight ? "text-teal-300" : "text-teal"}`}>{card.badge}</div>
-                  <h3 className={`text-xl font-bold font-heading mb-1 ${card.highlight ? "text-white" : "text-navy"}`}>{card.title}</h3>
-                  <p className={`text-sm mb-5 ${card.highlight ? "text-gray-300" : "text-gray-500"}`}>{card.subtitle}</p>
-                  <ul className="space-y-2.5 flex-1 mb-6">
-                    {card.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm">
-                        <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${card.highlight ? "text-teal-300" : "text-teal"}`} />
-                        <span className={card.highlight ? "text-gray-200" : "text-gray-700"}>{f}</span>
-                      </li>
+          <div className="max-w-4xl mx-auto">
+            <Animate variant="bottom" delay={0.1}>
+              <div className="bg-navy text-white rounded-3xl p-8 lg:p-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                  <div>
+                    <div className="text-teal-300 text-xs font-bold uppercase tracking-widest mb-3">Referral Partnership</div>
+                    <h3 className="text-2xl lg:text-3xl font-bold font-heading mb-3">Success-Based Placement Fee — Quoted Per Lead</h3>
+                    <p className="text-teal-300 font-semibold mb-4">You pay only when a participant moves in.</p>
+                    <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                      APGP manages the entire pipeline from lead generation through to move-in. Your team stays focused on delivering great supports — we handle everything else.
+                    </p>
+                    <div className="flex gap-3 flex-wrap">
+                      <Link href="/pathways">
+                        <Button variant="outline" className="border-white/40 text-white hover:bg-white/10 bg-transparent">
+                          How It Works <ArrowRight className="w-4 h-4 ml-1" />
+                        </Button>
+                      </Link>
+                      <RegisterButton label="Register Free" size="default" />
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {pathwayCards[0].features.map((f) => (
+                      <div key={f} className="flex items-start gap-3 bg-white/10 rounded-xl px-4 py-3">
+                        <CheckCircle2 className="w-4 h-4 text-teal-300 shrink-0 mt-0.5" />
+                        <span className="text-gray-200 text-sm">{f}</span>
+                      </div>
                     ))}
-                  </ul>
-                  <Link href={card.href}>
-                    <Button variant={card.highlight ? "default" : "outline"} className={card.highlight ? "bg-teal hover:bg-teal-600 text-white w-full" : "border-navy text-navy hover:bg-navy hover:text-white w-full"}>
-                      Learn More <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </Link>
+                    <div className="flex items-start gap-3 bg-teal/20 border border-teal/30 rounded-xl px-4 py-3">
+                      <DollarSign className="w-4 h-4 text-teal-300 shrink-0 mt-0.5" />
+                      <span className="text-teal-200 text-sm font-semibold">A success-based fee per placement — quoted and tailored to your specific lead</span>
+                    </div>
+                  </div>
                 </div>
-              </Animate>
-            ))}
+              </div>
+            </Animate>
           </div>
         </div>
       </section>
