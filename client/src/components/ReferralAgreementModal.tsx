@@ -235,7 +235,7 @@ export default function ReferralAgreementModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-navy text-white shrink-0">
           <div>
-            <h2 className="font-bold font-heading text-lg">APGP Marketing — Referral Agreement</h2>
+            <h2 className="font-bold font-heading text-lg">Silara Marketing — Referral Agreement</h2>
             <p className="text-xs text-teal-300 mt-0.5">
               {step === "details" ? "Step 1 of 3 — Your Details" : step === "agreement" ? "Step 2 of 3 — Read the Agreement" : "Step 3 of 3 — Sign &amp; Submit"}
             </p>
@@ -334,21 +334,21 @@ export default function ReferralAgreementModal({
           {step === "agreement" && (
             <div>
               <div className="bg-navy/5 rounded-xl p-4 mb-5 text-sm">
-                <p className="font-bold text-navy font-heading mb-1">APGP Marketing — Referral Agreement</p>
-                <p className="text-gray-500 text-xs">APGP Marketing (ACN 686-409-469) · Version No: 02 · Version Date: 06/07/2026</p>
+                <p className="font-bold text-navy font-heading mb-1">Silara Marketing — Referral Agreement</p>
+                <p className="text-gray-500 text-xs">Silara Marketing (ACN 688042177) · Version No: 02 · Version Date: 06/07/2026</p>
               </div>
 
               <AgreementSection title="1. Parties" defaultOpen={true}>
                 <p>This Agreement is entered into between:</p>
-                <p><strong>APGP Marketing</strong> (ACN 686-409-469) ("APGP"), and</p>
+                <p><strong>Silara Marketing</strong> (ACN 688042177) ("APGP"), and</p>
                 <p><strong>{form.organisationName}</strong> (ABN: {form.abn}) ("Provider")</p>
                 <p>Contact: {form.contactName}{form.contactTitle ? `, ${form.contactTitle}` : ""} · {form.email} · {form.phone}</p>
-                <p className="mt-2 text-gray-600">The Provider wishes to participate in the Accommodation Provider Growth Program (APGP), under which APGP Marketing may introduce Participants to the Provider under a referral arrangement. This Agreement is intended to be legally binding.</p>
+                <p className="mt-2 text-gray-600">The Provider wishes to participate in the Accommodation Provider Growth Program (APGP), under which Silara Marketing may introduce Participants to the Provider under a referral arrangement. This Agreement is intended to be legally binding.</p>
               </AgreementSection>
 
               <AgreementSection title="2. Referral Partnership">
                 <p>The Provider has elected to participate under the <strong>Referral Partnership Model</strong>.</p>
-                <p className="text-gray-600 mt-1">APGP Marketing will source, qualify, and match NDIS participants to the Provider's available properties. A success-based placement fee is payable only upon confirmed move-in. The rights and obligations are governed by the APGP Terms of Service (MOU).</p>
+                <p className="text-gray-600 mt-1">Silara Marketing will source, qualify, and match NDIS participants to the Provider's available properties. A success-based placement fee is payable only upon confirmed move-in. The rights and obligations are governed by the APGP Terms of Service (MOU).</p>
                 {form.propertyLinks.filter(l => l.trim()).length > 0 && (
                   <div className="mt-2">
                     <p className="font-semibold text-navy text-xs mb-1">Property Links / Brochures submitted:</p>
@@ -362,8 +362,8 @@ export default function ReferralAgreementModal({
               </AgreementSection>
 
               <AgreementSection title="3. Fees and Quote">
-                <p><strong>3.1 Quote:</strong> Prior to execution of this Agreement, APGP Marketing will issue the Provider with a written quote setting out the applicable commercial fees for participation in the APGP ("Quote").</p>
-                <p><strong>3.2 Fees:</strong> The Provider agrees to pay APGP Marketing the fees set out in the Quote. The Quote forms part of the commercial understanding between the parties and sets out the applicable fees, including (where applicable): Placement Fee; Vacancy Protection Plan (if elected); and any other agreed fees.</p>
+                <p><strong>3.1 Quote:</strong> Prior to execution of this Agreement, Silara Marketing will issue the Provider with a written quote setting out the applicable commercial fees for participation in the APGP ("Quote").</p>
+                <p><strong>3.2 Fees:</strong> The Provider agrees to pay Silara Marketing the fees set out in the Quote. The Quote forms part of the commercial understanding between the parties and sets out the applicable fees, including (where applicable): Placement Fee; Vacancy Protection Plan (if elected); and any other agreed fees.</p>
                 <p><strong>3.3 Binding Effect of Quote:</strong> By executing this Agreement, the Provider acknowledges that the Quote accurately reflects the agreed commercial terms and the Provider is bound to pay the fees set out in the Quote.</p>
                 <p><strong>3.4 Provider-Only Fees:</strong> All fees payable under this Agreement and any Quote are <strong>payable by the Accommodation Provider only</strong> and are <strong>not charged to Participants, their families, or their NDIS plans</strong>.</p>
               </AgreementSection>
@@ -392,8 +392,8 @@ export default function ReferralAgreementModal({
               <AgreementSection title="8. Execution">
                 <p>This Agreement may be executed electronically and in counterparts, each of which constitutes an original.</p>
                 <div className="mt-3 bg-gray-50 rounded-xl p-4 text-xs space-y-1">
-                  <p className="font-bold text-navy">For APGP Marketing (ACN 686-409-469)</p>
-                  <p>Signature: <span className="italic text-gray-400">(to be executed by APGP Marketing)</span></p>
+                  <p className="font-bold text-navy">For Silara Marketing (ACN 688042177)</p>
+                  <p>Signature: <span className="italic text-gray-400">(to be executed by Silara Marketing)</span></p>
                 </div>
                 <div className="mt-3 bg-teal-light rounded-xl p-4 text-xs space-y-1">
                   <p className="font-bold text-navy">For {form.organisationName}</p>
@@ -433,7 +433,7 @@ export default function ReferralAgreementModal({
                     className="mt-0.5 w-4 h-4 accent-teal shrink-0"
                   />
                   <span className="text-sm text-gray-700">
-                    <strong className="text-navy">I am duly authorised</strong> by {form.organisationName} to sign this Referral Agreement with APGP Marketing (ACN 686-409-469) on behalf of the organisation.
+                    <strong className="text-navy">I am duly authorised</strong> by {form.organisationName} to sign this Referral Agreement with Silara Marketing (ACN 688042177) on behalf of the organisation.
                   </span>
                 </label>
 

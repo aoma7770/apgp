@@ -89,7 +89,7 @@ export default function Terms() {
             Memorandum of Understanding — Referral Partnership Model
           </p>
           <p className="text-gray-400 text-sm mt-3">
-            APGP Marketing (ACN 686-409-469) | apgpaccommodation.com.au
+            Silara Marketing (ACN 688042177) | apgpaccommodation.com.au
           </p>
         </div>
       </section>
@@ -110,7 +110,7 @@ export default function Terms() {
 
             <Clause number="1" title="Parties">
               <Sub title="1.1 Accommodation Provider Growth Program (APGP)">
-                <P>This Memorandum of Understanding ("MOU") is entered into by APGP Marketing (ACN 686-409-469) ("APGP"). APGP is an independent accommodation referral and marketing platform operating within the Australian NDIS ecosystem. APGP provides business-to-business referral services connecting registered NDIS accommodation providers with participants seeking SDA, SIL, STA, MTA, or similar accommodation arrangements. APGP operates exclusively as a referral and placement facilitation platform and does not provide NDIS supports, care services, or accommodation directly to participants.</P>
+                <P>This Memorandum of Understanding ("MOU") is entered into by Silara Marketing (ACN 688042177) ("APGP"). APGP is an independent accommodation referral and marketing platform operating within the Australian NDIS ecosystem. APGP provides business-to-business referral services connecting registered NDIS accommodation providers with participants seeking SDA, SIL, STA, MTA, or similar accommodation arrangements. APGP operates exclusively as a referral and placement facilitation platform and does not provide NDIS supports, care services, or accommodation directly to participants.</P>
               </Sub>
               <Sub title="1.2 Accommodation Provider">
                 <P>The other party to this MOU is the entity identified in the execution page of this document ("Accommodation Provider"). The Accommodation Provider is an organisation that owns, manages, leases, or otherwise operates disability accommodation — including but not limited to SDA, SIL, STA, MTA, or similar accommodation arrangements — and agrees to participate in the APGP in accordance with the terms of this MOU.</P>
@@ -127,7 +127,7 @@ export default function Terms() {
                   <table className="w-full text-xs">
                     <tbody className="divide-y divide-gray-100">
                       {[
-                        ["APGP", "APGP Marketing (ACN 686-409-469), being an independent referral and marketing platform for NDIS accommodation providers."],
+                        ["APGP", "Silara Marketing (ACN 688042177), being an independent referral and marketing platform for NDIS accommodation providers."],
                         ["Accommodation Provider", "The entity identified in clause 1.2 that participates in the APGP referral program."],
                         ["Business Day", "A day other than a Saturday, Sunday, or public holiday in New South Wales."],
                         ["Commencement Date", "The date on which this MOU is executed by both parties."],
@@ -514,7 +514,7 @@ export default function Terms() {
           </div>
 
           <p className="text-xs text-gray-400 text-center mt-6">
-            © 2026 APGP Marketing (ACN 686-409-469). All rights reserved.
+            © 2026 Silara Marketing (ACN 688042177). All rights reserved.
           </p>
         </div>
       </section>
