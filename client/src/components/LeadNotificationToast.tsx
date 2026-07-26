@@ -40,7 +40,7 @@ function shortAccomType(type: string): string {
   if (type.startsWith("SIL")) return "SIL Accommodation";
   if (type.startsWith("STA")) return "Short-Term Accommodation";
   if (type.startsWith("MTA")) return "Medium-Term Accommodation";
-  return "NDIS Accommodation";
+  return "Disability Accommodation";
 }
 
 function ToastCard({

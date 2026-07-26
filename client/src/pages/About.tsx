@@ -27,7 +27,7 @@ export default function About() {
           </Animate>
           <Animate variant="bottom" delay={0.2}>
             <p className="text-gray-300 text-lg leading-relaxed">
-              The Accommodation Provider Growth Program (APGP) is an independent referral platform designed to solve one of the most persistent challenges in the NDIS accommodation sector — vacant properties and unpredictable referral flow.
+              The Accommodation Provider Growth Program (APGP) is an independent referral platform designed to solve one of the most persistent challenges in the disability accommodation sector — vacant properties and unpredictable referral flow.
             </p>
           </Animate>
         </div>
@@ -77,7 +77,7 @@ export default function About() {
           <Animate variant="bottom">
             <h2 className="text-3xl font-bold text-navy font-heading mb-6">About APGP</h2>
             <p className="text-gray-700 text-lg leading-relaxed mb-6">
-              The Accommodation Provider Growth Program (APGP) is an independent business-to-business referral and marketing platform operating within the Australian NDIS ecosystem. APGP provides referral services connecting registered NDIS accommodation providers with participants seeking SDA, SIL, STA, MTA, or similar accommodation arrangements.
+              The Accommodation Provider Growth Program (APGP) is an independent business-to-business referral and marketing platform operating within the Australian NDIS ecosystem. APGP provides referral services connecting registered disability accommodation providers with participants seeking SDA, SIL, STA, MTA, or similar accommodation arrangements.
             </p>
             <p className="text-gray-700 leading-relaxed mb-8">
               APGP operates exclusively as a referral and placement facilitation platform. All partnership arrangements under APGP are strictly business-to-business and entirely separate from NDIS funding processes. APGP does not provide NDIS supports, care services, or accommodation directly to participants.

@@ -108,7 +108,7 @@ export default function RequestAccommodation() {
             </div>
             <h1 className="text-3xl font-bold text-navy font-heading mb-4">Request Submitted</h1>
             <p className="text-gray-600 mb-4 leading-relaxed">
-              Thank you — your accommodation request has been submitted anonymously to our network of registered NDIS accommodation providers.
+              Thank you — your accommodation request has been submitted anonymously to our network of registered disability accommodation providers.
             </p>
             <p className="text-gray-600 mb-8 leading-relaxed">
               If a provider is interested in assisting with your request, the APGP team will be in touch to connect you. Your personal details have not been shared with any provider at this stage.
@@ -142,11 +142,11 @@ export default function RequestAccommodation() {
             <div className="text-teal-300 text-sm font-semibold uppercase tracking-widest mb-4">For Participants &amp; Families</div>
           </Animate>
           <Animate variant="bottom" delay={0.1}>
-            <h1 className="text-3xl lg:text-4xl font-extrabold font-heading mb-4">Request NDIS Accommodation</h1>
+            <h1 className="text-3xl lg:text-4xl font-extrabold font-heading mb-4">Request Disability Accommodation</h1>
           </Animate>
           <Animate variant="bottom" delay={0.2}>
             <p className="text-gray-300 leading-relaxed">
-              Submit your accommodation request anonymously. Your request will be visible to our network of registered NDIS accommodation providers. No personal information is shared until you choose to proceed.
+              Submit your accommodation request anonymously. Your request will be visible to our network of registered disability accommodation providers. No personal information is shared until you choose to proceed.
             </p>
           </Animate>
         </div>

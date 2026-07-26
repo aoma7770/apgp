@@ -126,7 +126,7 @@ export default function ProviderRegister() {
 
         <div>
           <h2 className="text-3xl font-bold font-heading mb-6 leading-snug">
-            Join Australia's Leading NDIS Accommodation Growth Program
+            Join Australia's Leading Disability Accommodation Growth Program
           </h2>
           <ul className="space-y-4">
             {[

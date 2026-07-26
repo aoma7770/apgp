@@ -328,7 +328,7 @@ export default function Home() {
                 Participant Enquiries Are Coming In Now
               </h2>
               <p className="text-gray-600 text-lg">
-                Registered APGP providers get exclusive access to a live feed of NDIS accommodation enquiries from our participant pipeline. Create a free account to view and action real leads.
+                Registered APGP providers get exclusive access to a live feed of disability accommodation enquiries from our participant pipeline. Create a free account to view and action real leads.
               </p>
             </div>
           </Animate>

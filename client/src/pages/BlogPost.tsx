@@ -47,7 +47,7 @@ const SERVICES: Record<string, ServiceCTA> = {
   default: {
     label: "APGP Provider Growth Program",
     tagline: "Fill Your Vacancies. Pay Per Result.",
-    description: "APGP is Australia's leading NDIS accommodation provider growth program. We find participants, manage intake, and support move-in. You pay nothing until they walk through the door.",
+    description: "APGP is Australia's leading disability accommodation provider growth program. We find participants, manage intake, and support move-in. You pay nothing until they walk through the door.",
     servicePage: "/done-for-you",
     formLabel: "Register Free",
     accentColor: "#2BBFCF",

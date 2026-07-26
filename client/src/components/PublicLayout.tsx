@@ -140,7 +140,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                 <APGPLogo variant="white" height={44} />
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                Australia's leading NDIS accommodation provider growth program. Real occupancy. Real stability. Zero upfront cost.
+                Australia's leading disability accommodation provider growth program. Real occupancy. Real stability. Zero upfront cost.
               </p>
               <div className="space-y-2">
                 <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-2 text-xs text-gray-400 hover:text-teal-300 transition-colors">

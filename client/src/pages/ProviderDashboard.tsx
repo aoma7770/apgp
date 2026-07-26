@@ -487,7 +487,7 @@ export default function ProviderDashboard() {
                       Live Feed
                     </span>
                   </div>
-                  <p className="text-gray-500 text-sm">Real-time NDIS accommodation enquiries from our participant pipeline. These leads come directly from our CRM — no personal information is shown.</p>
+                  <p className="text-gray-500 text-sm">Real-time disability accommodation enquiries from our participant pipeline. These leads come directly from our CRM — no personal information is shown.</p>
                 </div>
               </div>
 

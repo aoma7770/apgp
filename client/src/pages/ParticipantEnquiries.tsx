@@ -114,7 +114,7 @@ export default function ParticipantEnquiries() {
           </Animate>
           <Animate variant="bottom" delay={0.2}>
             <p className="text-gray-300 text-lg leading-relaxed mb-8">
-              APGP-registered providers get exclusive access to a real-time feed of NDIS accommodation requests sourced directly from our participant pipeline. Every enquiry is anonymous, pre-qualified, and ready to action.
+              APGP-registered providers get exclusive access to a real-time feed of disability accommodation requests sourced directly from our participant pipeline. Every enquiry is anonymous, pre-qualified, and ready to action.
             </p>
           </Animate>
           <Animate variant="bottom" delay={0.3}>
