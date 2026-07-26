@@ -102,9 +102,14 @@ export default function ParticipantEnquiries() {
         </div>
         <div className="container max-w-3xl text-center relative z-10">
           <Animate variant="bottom" delay={0}>
-            <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-400/30 rounded-full px-4 py-1.5 text-sm text-green-300 font-semibold mb-6">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              Live Feed — Exclusive to Registered Providers
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+              <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-400/30 rounded-full px-4 py-1.5 text-sm text-green-300 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                Exclusive to APGP Registered Providers
+              </div>
+              <Link href="/provider/register" className="inline-flex items-center gap-1.5 text-sm text-teal-300 font-semibold hover:text-teal transition-colors underline underline-offset-2">
+                Register Free Now <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </Animate>
           <Animate variant="bottom" delay={0.1}>
