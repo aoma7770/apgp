@@ -100,7 +100,7 @@ export function registerAgreementRoute(app: Express) {
   </div>
 
   <div class="footer">
-    <p>Accommodation Provider Growth Program · provider@APGPaccommodation.com.au · (02) 9669 9302</p>
+    <p>Accommodation Provider Growth Program · support@apgpaccommodation.com.au · (02) 9669 9302</p>
     <p>Lead Reference: ${ref || `LEAD-${leadId}`} · Generated: ${new Date().toLocaleString('en-AU')}</p>
     <button class="print-btn" onclick="window.print()" style="margin-top:12px; padding:8px 20px; background:#0A2342; color:white; border:none; border-radius:4px; cursor:pointer; font-size:10pt;">Print / Save as PDF</button>
   </div>

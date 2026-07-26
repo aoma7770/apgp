@@ -36,8 +36,8 @@ export default function ProviderForgotPassword() {
           </p>
           <p className="text-xs text-gray-400 mb-6">
             The reset link expires in 1 hour. If you don't receive an email, contact us at{" "}
-            <a href="mailto:provider@APGPaccommodation.com.au" className="text-teal hover:underline">
-              provider@APGPaccommodation.com.au
+            <a href="mailto:support@apgpaccommodation.com.au" className="text-teal hover:underline">
+              support@apgpaccommodation.com.au
             </a>
           </p>
           <Link href="/provider/login">

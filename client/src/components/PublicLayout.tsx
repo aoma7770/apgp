@@ -19,7 +19,7 @@ const navLinks = [
   { label: "FAQ", href: "/faq" },
 ];
 
-const CONTACT_EMAIL = "provider@APGPaccommodation.com.au";
+const CONTACT_EMAIL = "support@apgpaccommodation.com.au";
 const CONTACT_PHONE = "(02) 9669 9302";
 const CONTACT_PHONE_HREF = "tel:+61296699302";
 
