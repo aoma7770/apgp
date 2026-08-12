@@ -1,84 +1,84 @@
 # APGP Website TODO
 
 ## Database & Schema
-- [ ] Extend schema: providers table (email, password, company details, ABN, regions, support types, monday_item_id)
-- [ ] Extend schema: accommodations table (provider_id, address, type, vacancy status, support needs, rooms)
-- [ ] Generate and apply migrations
+- [x] Extend schema: providers table (email, password, company details, ABN, regions, support types, monday_item_id)
+- [x] Extend schema: accommodations table (provider_id, address, type, vacancy status, support needs, rooms)
+- [x] Generate and apply migrations
 
 ## Global Branding & Layout
-- [ ] Set navy/teal colour palette in index.css (matching APGP landing page)
-- [ ] Build PublicLayout component (top nav + footer)
-- [ ] Build responsive navigation with mobile hamburger menu
+- [x] Set navy/teal colour palette in index.css (matching APGP landing page)
+- [x] Build PublicLayout component (top nav + footer)
+- [x] Build responsive navigation with mobile hamburger menu
 
 ## Public Pages
-- [ ] Home page (hero, what is APGP, stats, CTA)
-- [ ] About APGP page (program overview, Ausnew background)
-- [ ] Partnership Pathways page (JV + Referral details)
-- [ ] Pricing Structure page (pricing tables)
-- [ ] Program Outcomes page
-- [ ] FAQ page (accordion)
-- [ ] Register / Sign Up CTA page
+- [x] Home page (hero, what is APGP, stats, CTA)
+- [x] About APGP page (program overview, Ausnew background)
+- [x] How It Works page (single Referral Partnership details; all JV references removed)
+- [x] Pricing Structure page (pricing tables)
+- [x] Program Outcomes page
+- [x] FAQ page (accordion)
+- [x] Register / Sign Up page at /provider/register with site-wide CTAs
 
 ## Provider Auth & Portal
-- [ ] Provider sign-up (email + password, free account)
-- [ ] Provider login page
-- [ ] Provider dashboard layout
-- [ ] Company profile creation/edit form (org name, ABN, contact, regions, support types)
-- [ ] Accommodation listing: add new property
-- [ ] Accommodation listing: edit/delete property
-- [ ] Accommodation listing: list all provider's properties
+- [x] Provider sign-up (email + password, free account)
+- [x] Provider login page
+- [x] Provider dashboard layout
+- [x] Company profile creation/edit form (org name, ABN, contact, regions, support types)
+- [x] Accommodation listing: add new property
+- [x] Accommodation listing: edit/delete property
+- [x] Accommodation listing: list all provider's properties
 
 ## Staff / Admin Portal
-- [ ] Staff login page (separate from provider login)
-- [ ] Staff dashboard layout
-- [ ] Staff property search interface (filter by region, type, vacancy, support needs)
-- [ ] Role-based access control (staff/admin cannot see provider portal and vice versa)
-- [ ] Admin user management (promote users to staff role)
+- [x] Staff login page (separate from provider login)
+- [x] Staff dashboard layout
+- [x] Staff property search interface (filter by region, type, vacancy, support needs)
+- [x] Role-based access control (staff/admin cannot see provider portal and vice versa)
+- [x] Admin user management (super admin and admin roles)
 
 ## Admin Portal Overhaul
-- [ ] Rename Staff Login to Admin Login site-wide (nav, pages, routes)
-- [ ] Add lead management to admin dashboard: hide/unhide leads (toggle isActive), edit lead details, delete leads
-- [ ] Add tRPC admin procedures: leads.adminList, leads.toggleActive, leads.update, leads.delete
-- [ ] Remove active lead count from provider dashboard Live Enquiries header
-- [ ] Save signed referral agreement as a document in provider Documents tab on expressInterest submit
+- [x] Rename Staff Login to Admin Login site-wide (nav, pages, routes)
+- [x] Add lead management to admin dashboard: hide/unhide leads (toggle isActive), edit lead details, delete leads
+- [x] Add tRPC admin procedures: leads.adminList, leads.toggleActive, leads.update, leads.delete
+- [x] Remove active lead count from provider dashboard Live Enquiries header
+- [x] Save signed referral agreement as a document in provider Documents tab on expressInterest submit
 
 ## Provider Registration Overhaul
-- [ ] Expand /provider/register to multi-step form with all fields: org name, ABN (optional), contact name, role/position, phone, email, password, state, company type, current vacancies yes/no
-- [ ] Update provider tRPC register mutation to accept and store all new fields
-- [ ] Replace all JotformModal Register Free buttons site-wide with Link to /provider/register
-- [ ] Keep JotformModal component available for general enquiry use (not registration)
-- [ ] Send welcome notification to Ausnew team with full provider details on registration
+- [x] Expand /provider/register to multi-step form with all fields: org name, ABN (optional), contact name, role/position, phone, email, password, state, company type, current vacancies yes/no
+- [x] Update provider tRPC register mutation to accept and store all new fields
+- [x] Replace all JotformModal Register Free buttons site-wide with Link to /provider/register
+- [x] Keep JotformModal component available for general enquiry use (not registration)
+- [x] Send welcome notification to Ausnew team with full provider details on registration
 
 ## Abdi Feedback Round 3
 - [ ] Fix Jotform modal: ensure ALL register buttons use identical centred popup (same as floating button)
 - [ ] Update Jotform URL to new form with ABN field and vacancies question (once Abdi provides new URL)
 - [ ] Add registration confirmation/welcome email to provider on sign-up
-- [ ] Add Documents tab to provider dashboard (upload/view signed agreements)
-- [ ] Add Billing tab to provider dashboard (placeholder for future billing)
-- [ ] Update Done For You page: add participant enquiries as an alternative pathway in How It Works
-- [ ] Update copywriting: replace 'Ausnew CRM' with 'our CRM' / 'our pipeline' across all pages
+- [x] Add Documents tab to provider dashboard (upload/view signed agreements)
+- [x] Add Billing tab to provider dashboard (placeholder for future billing)
+- [x] Update Done For You page: add participant enquiries as an alternative pathway in How It Works
+- [x] Update copywriting: replace 'Ausnew CRM' with 'our CRM' / 'our pipeline' across all pages
 - [ ] Update Home page How It Works steps to mention participant enquiries feed as option 2
 
 ## Participant Leads Feed (Corrected Architecture)
-- [ ] Remove public /request-accommodation page and route
-- [ ] Add mondayLeadId field to participantLeads table (e.g. M12-123456)
-- [ ] Add Zapier webhook endpoint POST /api/leads/ingest (API-key protected) so Zapier can push Monday.com leads into the DB
-- [ ] Rename feed tab to "Live Participant Enquiries" in provider dashboard
-- [ ] Make feed look like a live real-time stream with new badge and timestamps
-- [ ] Add teaser/preview section on public home page showing blurred/locked lead cards to entice providers to register
-- [ ] Keep referral agreement + consent popup as-is
-- [ ] Keep notifyOwner on provider interest submission
+- [x] Remove public /request-accommodation page and route
+- [x] Add mondayLeadId field to participantLeads table (e.g. M12-123456)
+- [x] Add Zapier webhook endpoint POST /api/leads/ingest (API-key protected) so Zapier can push Monday.com leads into the DB
+- [x] Rename feed tab to "Live Participant Enquiries" in provider dashboard
+- [x] Make feed look like a live real-time stream with new badge and timestamps
+- [x] Add teaser/preview section on public home page showing blurred/locked lead cards to entice providers to register
+- [x] Keep referral agreement + consent popup as-is
+- [x] Keep notifyOwner on provider interest submission
 
 ## Blog Section
-- [ ] Add blog_posts table to schema (title, slug, excerpt, content, cover_image, category, published, author, created_at)
-- [ ] Apply migration
-- [ ] Add blog tRPC procedures: list (public), getBySlug (public), create/update/delete (admin only)
-- [ ] Build /blog listing page with post cards
-- [ ] Build /blog/:slug individual post page
-- [ ] Build admin blog management page at /staff/blog (create, edit, delete posts)
-- [ ] Add Blog nav link to PublicLayout
-- [ ] Seed 3 starter blog posts
-- [ ] Add Blog preview section to Home page
+- [x] Add blog_posts table to schema (title, slug, excerpt, content, cover_image, category, published, author, created_at)
+- [x] Apply migration
+- [x] Add blog tRPC procedures: list (public), getBySlug (public), create/update/delete (admin only)
+- [x] Build /blog listing page with post cards
+- [x] Build /blog/:slug individual post page
+- [x] Build admin blog management page at /staff/blog (create, edit, delete posts)
+- [x] Add Blog nav link to PublicLayout
+- [x] Seed 3 starter blog posts
+- [x] Add Blog preview section to Home page
 
 ## Updates from Abdi Feedback (Jun 3)
 - [x] Generate AI hero images for home page and key sections
@@ -104,20 +104,20 @@
 - [x] Add JotformModal to PublicLayout nav Register Free button
 
 ## Backend Procedures (tRPC)
-- [ ] provider.register (public)
-- [ ] provider.login (public)
-- [ ] provider.getProfile (protected)
-- [ ] provider.updateProfile (protected)
-- [ ] accommodation.create (protected, provider only)
-- [ ] accommodation.update (protected, provider only)
-- [ ] accommodation.delete (protected, provider only)
-- [ ] accommodation.listMine (protected, provider only)
-- [ ] accommodation.search (protected, staff/admin only)
+- [x] provider.register (public)
+- [x] provider.login (public)
+- [x] provider.getProfile (protected)
+- [x] provider.updateProfile (protected)
+- [x] accommodation.create (protected, provider only)
+- [x] accommodation.update (protected, provider only)
+- [x] accommodation.delete (protected, provider only)
+- [x] accommodation.listMine (protected, provider only)
+- [x] accommodation.search (protected, staff/admin only)
 
 ## Tests
-- [ ] Provider registration and login test
+- [x] Provider registration and login test
 - [ ] Accommodation CRUD test
-- [ ] Staff search access control test
+- [x] Staff search access control test
 - [ ] Monday.com sync mock test
 
 ## Registered Providers Admin Management
