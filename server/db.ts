@@ -1,4 +1,4 @@
-import { and, eq, like, or } from "drizzle-orm";
+import { and, desc, eq, like, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   Accommodation,
@@ -7,6 +7,7 @@ import {
   InsertUser,
   Provider,
   accommodations,
+  providerLoginEvents,
   providerSessions,
   providers,
   users,
@@ -87,6 +88,45 @@ export async function updateProvider(id: number, data: Partial<InsertProvider>):
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(providers).set(data).where(eq(providers.id, id));
+}
+
+export async function recordProviderLoginEvent(
+  providerId: number,
+  eventType: "registered" | "login" | "logout",
+  occurredAt = new Date(),
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(providerLoginEvents).values({ providerId, eventType, occurredAt });
+}
+
+export async function getRegisteredProvidersForAdmin() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const [providerRows, activityRows, propertyRows] = await Promise.all([
+    db.select().from(providers).orderBy(desc(providers.createdAt)),
+    db.select().from(providerLoginEvents).orderBy(desc(providerLoginEvents.occurredAt)),
+    db.select({ providerId: accommodations.providerId, id: accommodations.id }).from(accommodations),
+  ]);
+
+  const activityByProvider = new Map<number, typeof activityRows>();
+  for (const event of activityRows) {
+    const events = activityByProvider.get(event.providerId) ?? [];
+    events.push(event);
+    activityByProvider.set(event.providerId, events);
+  }
+
+  const propertyCountByProvider = new Map<number, number>();
+  for (const property of propertyRows) {
+    propertyCountByProvider.set(property.providerId, (propertyCountByProvider.get(property.providerId) ?? 0) + 1);
+  }
+
+  return providerRows.map(({ passwordHash: _, mondayItemId: __, ...provider }) => ({
+    ...provider,
+    propertyCount: propertyCountByProvider.get(provider.id) ?? 0,
+    activity: activityByProvider.get(provider.id) ?? [],
+  }));
 }
 
 // ─── Provider sessions ────────────────────────────────────────────────────────

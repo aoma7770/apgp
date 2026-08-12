@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import {
   Search, Building2, MapPin, Filter, LogOut, Home, Users, Shield,
   ChevronDown, X, Menu, ExternalLink, Eye, EyeOff, Edit2, Trash2,
-  Save, Plus, UserCheck, UserX, Key, Settings, CheckCircle2
+  Save, Plus, UserCheck, UserX, Key, Settings, CheckCircle2, Clock3
 } from "lucide-react";
 import APGPLogo from "@/components/APGPLogo";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,17 @@ const vacancyBadge: Record<string, string> = {
   Occupied: "bg-gray-100 text-gray-600",
 };
 
-type Tab = "overview" | "leads" | "search" | "admins" | "agreements";
+type Tab = "overview" | "leads" | "providers" | "search" | "admins" | "agreements";
+
+function formatPortalDate(value: Date | string | null | undefined) {
+  return value ? new Date(value).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" }) : "Not recorded";
+}
+
+const providerActivityLabels: Record<string, string> = {
+  registered: "Account registered",
+  login: "Signed in to the provider portal",
+  logout: "Signed out of the provider portal",
+};
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
@@ -120,6 +130,26 @@ export default function AdminDashboard() {
     onError: (e: { message: string }) => toast.error(e.message),
   });
 
+  // ── Registered providers state ─────────────────────────────────────────────
+  const { data: registeredProviders = [], isLoading: providersLoading } = trpc.provider.adminList.useQuery(undefined, {
+    enabled: tab === "providers",
+  });
+  const [providerSearch, setProviderSearch] = useState("");
+  const [expandedProviderId, setExpandedProviderId] = useState<number | null>(null);
+  const filteredProviders = useMemo(() => {
+    const query = providerSearch.trim().toLowerCase();
+    if (!query) return registeredProviders;
+    return registeredProviders.filter((provider) => [
+      provider.organisationName,
+      provider.contactName,
+      provider.email,
+      provider.phone,
+      provider.abn,
+      provider.companyType,
+      provider.regionsServiced,
+    ].some((value) => value?.toLowerCase().includes(query)));
+  }, [registeredProviders, providerSearch]);
+
   // ── Property search state ───────────────────────────────────────────────────
   const [filters, setFilters] = useState({ state: "", propertyType: "", vacancyStatus: "", suburb: "", supportNeeds: "" });
   const [activeFilters, setActiveFilters] = useState(filters);
@@ -160,6 +190,7 @@ export default function AdminDashboard() {
   const allNavItems: Array<{ id: Tab; label: string; icon: React.ReactNode; superOnly?: boolean }> = [
     { id: "overview" as Tab, label: "Overview", icon: <Home className="w-4 h-4" /> },
     { id: "leads" as Tab, label: "Leads Management", icon: <Users className="w-4 h-4" /> },
+    { id: "providers" as Tab, label: "Registered Providers", icon: <Building2 className="w-4 h-4" /> },
     { id: "agreements" as Tab, label: "Signed Agreements", icon: <ExternalLink className="w-4 h-4" /> },
     { id: "search" as Tab, label: "Property Search", icon: <Search className="w-4 h-4" /> },
     { id: "admins" as Tab, label: "Admin Users", icon: <Shield className="w-4 h-4" />, superOnly: true },
@@ -246,6 +277,13 @@ export default function AdminDashboard() {
                   </div>
                   <h3 className="text-lg font-bold text-navy font-heading mb-2">Property Search</h3>
                   <p className="text-gray-600 text-sm">Search all provider accommodation listings.</p>
+                </button>
+                <button onClick={() => setTab("providers")} className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition-shadow text-left group">
+                  <div className="w-14 h-14 rounded-2xl bg-teal-light flex items-center justify-center mb-5 group-hover:bg-teal transition-colors">
+                    <Building2 className="w-7 h-7 text-teal group-hover:text-white transition-colors" />
+                  </div>
+                  <h3 className="text-lg font-bold text-navy font-heading mb-2">Registered Providers</h3>
+                  <p className="text-gray-600 text-sm">Review provider account, company, contact and portal activity details.</p>
                 </button>
                 {isSuperAdmin && (
                   <button onClick={() => setTab("admins")} className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition-shadow text-left group">
@@ -528,6 +566,108 @@ export default function AdminDashboard() {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Registered Providers */}
+          {tab === "providers" && (
+            <div>
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-navy font-heading">Registered Providers</h1>
+                  <p className="text-gray-500 text-sm mt-1">Secure internal directory of provider account, company and portal login activity.</p>
+                </div>
+                <div className="bg-teal-light border border-teal/15 rounded-xl px-4 py-2.5">
+                  <p className="text-xs font-semibold text-teal-dark uppercase tracking-wide">Provider Accounts</p>
+                  <p className="text-xl font-bold text-navy">{registeredProviders.length}</p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm mb-5">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    value={providerSearch}
+                    onChange={(event) => setProviderSearch(event.target.value)}
+                    placeholder="Search by provider, contact, email, phone, ABN, service type or state..."
+                    className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-teal outline-none"
+                  />
+                  {providerSearch && <button onClick={() => setProviderSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy" aria-label="Clear provider search"><X className="w-4 h-4" /></button>}
+                </div>
+                <p className="text-xs text-gray-400 mt-3">{filteredProviders.length} of {registeredProviders.length} providers shown. New sign-ins and sign-outs are recorded as portal activity.</p>
+              </div>
+
+              {providersLoading ? (
+                <div className="flex justify-center py-16"><div className="w-8 h-8 border-4 border-teal border-t-transparent rounded-full animate-spin" /></div>
+              ) : filteredProviders.length === 0 ? (
+                <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+                  <Building2 className="w-10 h-10 mx-auto text-gray-300 mb-3" />
+                  <p className="font-semibold text-navy">No registered providers found.</p>
+                  <p className="text-sm text-gray-500 mt-1">Try another search or wait for a provider to create a free account.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredProviders.map((provider) => {
+                    const isExpanded = expandedProviderId === provider.id;
+                    return (
+                      <div key={provider.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <button onClick={() => setExpandedProviderId(isExpanded ? null : provider.id)} className="w-full text-left p-5 hover:bg-gray-50 transition-colors" aria-expanded={isExpanded}>
+                          <div className="flex items-center gap-4">
+                            <div className="w-11 h-11 rounded-xl bg-navy flex items-center justify-center shrink-0"><Building2 className="w-5 h-5 text-teal-300" /></div>
+                            <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center">
+                              <div className="min-w-0"><p className="text-xs text-gray-400 mb-0.5">Provider / Company</p><p className="font-semibold text-navy truncate">{provider.organisationName ?? "Organisation not provided"}</p><p className="text-xs text-gray-500 truncate">{provider.contactName ?? "Contact name not provided"}</p></div>
+                              <div className="min-w-0"><p className="text-xs text-gray-400 mb-0.5">Email</p><p className="text-sm text-gray-700 truncate">{provider.email}</p></div>
+                              <div><p className="text-xs text-gray-400 mb-0.5">Service Type</p><p className="text-sm text-gray-700">{provider.companyType ?? "Not specified"}</p></div>
+                              <div><p className="text-xs text-gray-400 mb-0.5">Last Login</p><p className="text-sm text-gray-700">{formatPortalDate(provider.lastLoginAt)}</p></div>
+                              <div className="flex items-center gap-2"><Badge className={provider.profileComplete ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-amber-100 text-amber-700 hover:bg-amber-100"}>{provider.profileComplete ? "Profile complete" : "Profile incomplete"}</Badge><span className="text-xs text-gray-500 whitespace-nowrap">{provider.propertyCount} {provider.propertyCount === 1 ? "property" : "properties"}</span></div>
+                            </div>
+                            <ChevronDown className={`w-5 h-5 text-gray-400 shrink-0 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                          </div>
+                        </button>
+
+                        {isExpanded && (
+                          <div className="border-t border-gray-100 bg-gray-50 p-5 lg:p-6 grid grid-cols-1 xl:grid-cols-3 gap-5">
+                            <section className="bg-white rounded-xl border border-gray-100 p-5">
+                              <h2 className="font-bold text-navy text-sm mb-4 flex items-center gap-2"><Building2 className="w-4 h-4 text-teal" />Company Details</h2>
+                              <dl className="space-y-3 text-sm">
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Organisation</dt><dd className="text-right font-medium text-navy">{provider.organisationName ?? "Not provided"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">ABN</dt><dd className="text-right font-medium text-navy">{provider.abn ?? "Not provided"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Provider Type</dt><dd className="text-right font-medium text-navy">{provider.companyType ?? "Not specified"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">States Serviced</dt><dd className="text-right font-medium text-navy">{provider.regionsServiced || "Not specified"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Support Types</dt><dd className="text-right font-medium text-navy">{provider.supportTypes || "Not specified"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Vacancies at Registration</dt><dd className="text-right font-medium text-navy">{provider.hasVacancies === null ? "Not recorded" : provider.hasVacancies ? "Yes" : "No"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Properties Listed</dt><dd className="text-right font-medium text-navy">{provider.propertyCount}</dd></div>
+                              </dl>
+                            </section>
+
+                            <section className="bg-white rounded-xl border border-gray-100 p-5">
+                              <h2 className="font-bold text-navy text-sm mb-4 flex items-center gap-2"><Users className="w-4 h-4 text-teal" />Primary Contact</h2>
+                              <dl className="space-y-3 text-sm">
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Name</dt><dd className="text-right font-medium text-navy">{provider.contactName ?? "Not provided"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Position</dt><dd className="text-right font-medium text-navy">{provider.contactTitle ?? "Not provided"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Email</dt><dd className="text-right font-medium text-navy break-all">{provider.email}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Phone</dt><dd className="text-right font-medium text-navy">{provider.phone ?? "Not provided"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Website</dt><dd className="text-right font-medium text-navy max-w-[60%] truncate">{provider.website ? <a className="text-teal hover:underline" href={provider.website} target="_blank" rel="noreferrer">{provider.website.replace(/^https?:\/\//, "")}</a> : "Not provided"}</dd></div>
+                                <div className="flex justify-between gap-4"><dt className="text-gray-500">Registered</dt><dd className="text-right font-medium text-navy">{formatPortalDate(provider.createdAt)}</dd></div>
+                              </dl>
+                            </section>
+
+                            <section className="bg-white rounded-xl border border-gray-100 p-5">
+                              <h2 className="font-bold text-navy text-sm mb-4 flex items-center gap-2"><Clock3 className="w-4 h-4 text-teal" />Portal Activity</h2>
+                              <div className="mb-4 bg-teal-light rounded-lg p-3"><p className="text-xs text-teal-dark font-semibold">Last successful sign-in</p><p className="text-sm font-bold text-navy mt-0.5">{formatPortalDate(provider.lastLoginAt)}</p></div>
+                              {provider.activity.length === 0 ? <p className="text-sm text-gray-500 py-3">No activity events have been recorded for this account yet.</p> : (
+                                <ol className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                                  {provider.activity.map((event) => <li key={event.id} className="flex gap-3 text-sm"><span className="mt-1.5 w-2 h-2 rounded-full bg-teal shrink-0" /><div><p className="font-medium text-navy">{providerActivityLabels[event.eventType] ?? event.eventType}</p><p className="text-xs text-gray-500 mt-0.5">{formatPortalDate(event.occurredAt)}</p></div></li>)}
+                                </ol>
+                              )}
+                            </section>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 

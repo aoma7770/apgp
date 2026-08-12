@@ -29,6 +29,20 @@
       "when": 1780739235179,
       "tag": "0003_loud_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1786547644399,
+      "tag": "0004_eager_lilith",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1786547726585,
+      "tag": "0005_nostalgic_medusa",
+      "breakpoints": true
     }
   ]
 }

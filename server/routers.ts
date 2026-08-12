@@ -14,6 +14,8 @@ import {
   getProviderByEmail,
   getProviderById,
   getProviderBySessionToken,
+  getRegisteredProvidersForAdmin,
+  recordProviderLoginEvent,
   searchAccommodations,
   updateAccommodation,
   updateProvider,
@@ -22,7 +24,7 @@ import { createMondayProviderItem, updateMondayProviderItem } from "./monday";
 import { blogRouter } from "./routers/blog";
 import { leadsRouter } from "./routers/leads";
 import { documentsRouter } from "./routers/documents";
-import { adminAuthRouter } from "./routers/adminAuth";
+import { adminAuthRouter, getAdminFromCtx } from "./routers/adminAuth";
 import { notifyOwner } from "./_core/notification";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
@@ -101,6 +103,7 @@ export const appRouter = router({
         if (existing) throw new TRPCError({ code: "CONFLICT", message: "An account with this email already exists" });
 
         const passwordHash = await bcrypt.hash(input.password, 12);
+        const registeredAt = new Date();
         const providerId = await createProvider({
           email: input.email,
           passwordHash,
@@ -111,13 +114,16 @@ export const appRouter = router({
           phone: input.phone ?? null,
           companyType: input.companyType ?? null,
           regionsServiced: input.regionsServiced ?? null,
+          hasVacancies: input.hasVacancies ?? null,
           profileComplete: !!(input.organisationName && input.contactName && input.phone),
+          lastLoginAt: registeredAt,
         });
 
         // Create session
         const token = nanoid(64);
         const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
         await createProviderSession(providerId, token, expiresAt);
+        await recordProviderLoginEvent(providerId, "registered", registeredAt);
 
         // Fire Zapier webhook to sync provider registration to Monday.com CRM (non-blocking)
         const zapierProviderWebhook = process.env.ZAPIER_PROVIDER_WEBHOOK_URL;
@@ -180,9 +186,12 @@ export const appRouter = router({
         const valid = await bcrypt.compare(input.password, provider.passwordHash);
         if (!valid) throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
 
+        const signedInAt = new Date();
         const token = nanoid(64);
         const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         await createProviderSession(provider.id, token, expiresAt);
+        await updateProvider(provider.id, { lastLoginAt: signedInAt });
+        await recordProviderLoginEvent(provider.id, "login", signedInAt);
 
         ctx.res.cookie(PROVIDER_COOKIE, token, {
           httpOnly: true,
@@ -197,12 +206,20 @@ export const appRouter = router({
 
     logout: providerProcedure.mutation(async ({ ctx }) => {
       const token = ctx.req.cookies?.[PROVIDER_COOKIE];
+      await recordProviderLoginEvent(ctx.provider.id, "logout");
       if (token) await deleteProviderSession(token);
       ctx.res.clearCookie(PROVIDER_COOKIE, { httpOnly: true, secure: true, sameSite: "none", path: "/" });
       return { success: true };
     }),
 
     me: providerProcedure.query(({ ctx }) => sanitizeProvider(ctx.provider)),
+
+    // Admin-only: provider account directory, including profile details and login events.
+    adminList: publicProcedure.query(async ({ ctx }) => {
+      const admin = await getAdminFromCtx(ctx);
+      if (!admin || !admin.isActive) throw new TRPCError({ code: "UNAUTHORIZED", message: "Admin login required" });
+      return getRegisteredProvidersForAdmin();
+    }),
 
     // Password reset request — sends notification to admin with provider email
     requestPasswordReset: publicProcedure

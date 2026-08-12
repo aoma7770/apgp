@@ -1,6 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
+import bcrypt from "bcryptjs";
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
+import { getAdminFromCtx } from "./routers/adminAuth";
 
 // ─── Mock DB helpers ──────────────────────────────────────────────────────────
 vi.mock("./db", () => ({
@@ -24,8 +26,10 @@ vi.mock("./db", () => ({
     createdAt: new Date(),
     updatedAt: new Date(),
   }),
-  createProviderSession: vi.fn(),
-  getProviderBySessionToken: vi.fn(),
+    createProviderSession: vi.fn(),
+    recordProviderLoginEvent: vi.fn(),
+    getProviderBySessionToken: vi.fn(),
+    getRegisteredProvidersForAdmin: vi.fn().mockResolvedValue([]),
   deleteProviderSession: vi.fn(),
   getAccommodationsByProvider: vi.fn().mockResolvedValue([]),
   createAccommodation: vi.fn().mockResolvedValue(42),
@@ -35,6 +39,11 @@ vi.mock("./db", () => ({
   searchAccommodations: vi.fn().mockResolvedValue([]),
   updateProvider: vi.fn(),
 }));
+
+vi.mock("./routers/adminAuth", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./routers/adminAuth")>();
+  return { ...actual, getAdminFromCtx: vi.fn() };
+});
 
 vi.mock("./monday", () => ({
   createMondayProviderItem: vi.fn().mockResolvedValue(null),
@@ -96,8 +105,9 @@ function makeProviderUserCtx(): TrpcContext {
 // ─── Tests ────────────────────────────────────────────────────────────────────
 describe("provider.register", () => {
   beforeEach(async () => {
-    const { getProviderByEmail } = await import("./db");
+    const { getProviderByEmail, recordProviderLoginEvent } = await import("./db");
     vi.mocked(getProviderByEmail).mockResolvedValue(undefined);
+    vi.mocked(recordProviderLoginEvent).mockClear();
   });
 
   it("creates a new provider and sets a session cookie", async () => {
@@ -117,6 +127,8 @@ describe("provider.register", () => {
       expect.any(String),
       expect.objectContaining({ httpOnly: true })
     );
+    const { recordProviderLoginEvent } = await import("./db");
+    expect(recordProviderLoginEvent).toHaveBeenCalledWith(1, "registered", expect.any(Date));
   });
 
   it("throws CONFLICT if email already exists", async () => {
@@ -133,6 +145,78 @@ describe("provider.register", () => {
     await expect(
       caller.provider.register({ email: "existing@provider.com", password: "pass1234" })
     ).rejects.toThrow("already exists");
+  });
+});
+
+describe("provider.adminList — provider directory access control", () => {
+  beforeEach(async () => {
+    const { getRegisteredProvidersForAdmin } = await import("./db");
+    vi.mocked(getRegisteredProvidersForAdmin).mockResolvedValue([]);
+    vi.mocked(getAdminFromCtx).mockResolvedValue(null);
+  });
+
+  it("blocks unauthenticated access to registered provider details", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(caller.provider.adminList()).rejects.toThrow("Admin login required");
+  });
+
+  it("allows an authenticated active admin to view the safe provider directory", async () => {
+    const { getRegisteredProvidersForAdmin } = await import("./db");
+    vi.mocked(getAdminFromCtx).mockResolvedValue({ id: 7, isActive: true, role: "admin" } as any);
+    vi.mocked(getRegisteredProvidersForAdmin).mockResolvedValue([
+      { id: 1, email: "provider@example.com", organisationName: "Safe Housing", propertyCount: 0, activity: [] },
+    ] as any);
+
+    const caller = appRouter.createCaller(makePublicCtx());
+    const result = await caller.provider.adminList();
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({ email: "provider@example.com", organisationName: "Safe Housing" });
+    expect(getRegisteredProvidersForAdmin).toHaveBeenCalledOnce();
+  });
+});
+
+describe("provider login activity tracking", () => {
+  const providerAccount = {
+    id: 21,
+    email: "active@provider.com",
+    passwordHash: "",
+    organisationName: "Active Provider Housing",
+  } as any;
+
+  beforeEach(async () => {
+    const { deleteProviderSession, getProviderByEmail, getProviderBySessionToken, recordProviderLoginEvent, updateProvider } = await import("./db");
+    providerAccount.passwordHash = await bcrypt.hash("securepass123", 8);
+    vi.mocked(getProviderByEmail).mockResolvedValue(providerAccount);
+    vi.mocked(getProviderBySessionToken).mockResolvedValue(providerAccount);
+    vi.mocked(recordProviderLoginEvent).mockClear();
+    vi.mocked(updateProvider).mockClear();
+    vi.mocked(deleteProviderSession).mockClear();
+  });
+
+  it("records a successful login and updates the last login timestamp", async () => {
+    const { recordProviderLoginEvent, updateProvider } = await import("./db");
+    const ctx = makePublicCtx();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.provider.login({ email: providerAccount.email, password: "securepass123" });
+
+    expect(result.success).toBe(true);
+    expect(updateProvider).toHaveBeenCalledWith(providerAccount.id, { lastLoginAt: expect.any(Date) });
+    expect(recordProviderLoginEvent).toHaveBeenCalledWith(providerAccount.id, "login", expect.any(Date));
+  });
+
+  it("records a provider sign-out event", async () => {
+    const { deleteProviderSession, recordProviderLoginEvent } = await import("./db");
+    const ctx = makePublicCtx();
+    (ctx.req.cookies as Record<string, string>).apgp_provider_session = "active-provider-token";
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.provider.logout();
+
+    expect(result.success).toBe(true);
+    expect(recordProviderLoginEvent).toHaveBeenCalledWith(providerAccount.id, "logout");
+    expect(deleteProviderSession).toHaveBeenCalledWith("active-provider-token");
   });
 });
 

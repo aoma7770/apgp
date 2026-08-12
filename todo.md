@@ -119,3 +119,11 @@
 - [ ] Accommodation CRUD test
 - [ ] Staff search access control test
 - [ ] Monday.com sync mock test
+
+## Registered Providers Admin Management
+- [x] Add secure admin-only provider directory with full registration and company details
+- [x] Track provider login activity (last login and login history)
+- [x] Build Registered Providers tab with search, summary cards, and expandable activity details
+- [x] Add tests for provider directory access control and activity tracking
+- [x] Add successful authenticated-admin access test for the provider directory
+- [x] Add provider sign-in and sign-out activity tracking tests

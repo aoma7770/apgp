@@ -42,10 +42,14 @@ export const providers = mysqlTable("providers", {
   supportTypes: text("supportTypes"),
   // Company type for Monday.com mapping
   companyType: mysqlEnum("companyType", ["SDA", "SIL", "Both"]),
+  // Vacancy status captured during initial account registration
+  hasVacancies: boolean("hasVacancies"),
   // Profile completion flag
   profileComplete: boolean("profileComplete").default(false).notNull(),
   // Monday.com item ID for this provider (set after first sync)
   mondayItemId: varchar("mondayItemId", { length: 64 }),
+  // Most recent successful sign-in (kept for fast admin directory display)
+  lastLoginAt: timestamp("lastLoginAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -220,3 +224,13 @@ export const providerSessions = mysqlTable("providerSessions", {
 });
 
 export type ProviderSession = typeof providerSessions.$inferSelect;
+
+// ─── Provider account activity (admin audit history) ──────────────────────────
+export const providerLoginEvents = mysqlTable("providerLoginEvents", {
+  id: int("id").autoincrement().primaryKey(),
+  providerId: int("providerId").notNull(),
+  eventType: mysqlEnum("eventType", ["registered", "login", "logout"]).notNull(),
+  occurredAt: timestamp("occurredAt").defaultNow().notNull(),
+});
+
+export type ProviderLoginEvent = typeof providerLoginEvents.$inferSelect;
