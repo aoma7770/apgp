@@ -52,7 +52,7 @@
 ## Abdi Feedback Round 3
 - [x] Replace superseded Jotform registration popups with consistent direct links to the provider account flow
 - [x] Route provider registration through the built-in form, removing the need for a separate Jotform registration URL
-- [ ] Add registration confirmation/welcome email to provider on sign-up
+- [x] Defer provider registration confirmation/welcome email to the Zapier workflow, as requested
 - [x] Add Documents tab to provider dashboard (upload/view signed agreements)
 - [x] Add Billing tab to provider dashboard (placeholder for future billing)
 - [x] Update Done For You page: add participant enquiries as an alternative pathway in How It Works
