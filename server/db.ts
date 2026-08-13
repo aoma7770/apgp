@@ -122,7 +122,7 @@ export async function getRegisteredProvidersForAdmin() {
     propertyCountByProvider.set(property.providerId, (propertyCountByProvider.get(property.providerId) ?? 0) + 1);
   }
 
-  return providerRows.map(({ passwordHash: _, mondayItemId: __, ...provider }) => ({
+  return providerRows.map(({ passwordHash: _, ...provider }) => ({
     ...provider,
     propertyCount: propertyCountByProvider.get(provider.id) ?? 0,
     activity: activityByProvider.get(provider.id) ?? [],

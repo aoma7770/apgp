@@ -50,14 +50,14 @@
 - [x] Send welcome notification to Ausnew team with full provider details on registration
 
 ## Abdi Feedback Round 3
-- [ ] Fix Jotform modal: ensure ALL register buttons use identical centred popup (same as floating button)
-- [ ] Update Jotform URL to new form with ABN field and vacancies question (once Abdi provides new URL)
+- [x] Replace superseded Jotform registration popups with consistent direct links to the provider account flow
+- [x] Route provider registration through the built-in form, removing the need for a separate Jotform registration URL
 - [ ] Add registration confirmation/welcome email to provider on sign-up
 - [x] Add Documents tab to provider dashboard (upload/view signed agreements)
 - [x] Add Billing tab to provider dashboard (placeholder for future billing)
 - [x] Update Done For You page: add participant enquiries as an alternative pathway in How It Works
 - [x] Update copywriting: replace 'Ausnew CRM' with 'our CRM' / 'our pipeline' across all pages
-- [ ] Update Home page How It Works steps to mention participant enquiries feed as option 2
+- [x] Add a Home-page live participant enquiries teaser and provider registration CTA
 
 ## Participant Leads Feed (Corrected Architecture)
 - [x] Remove public /request-accommodation page and route
@@ -97,7 +97,8 @@
 - [x] Update Home page CTA copy to reflect pay-per-result positioning
 
 ## Jotform Lead Form
-- [ ] Remove Monday.com server code and schema references
+- [x] Remove direct Monday.com server code and schema references; retain Zapier as the CRM sync path
+- [x] Remove the unused direct Monday helper and add Zapier registration webhook coverage
 - [x] Build JotformModal component: button triggers a modal popup with Jotform iframe embedded (https://form.jotform.com/253411013737044)
 - [x] Add JotformModal to Home page hero and CTA sections
 - [x] Add JotformModal to Pathways, Pricing, Outcomes, FAQ, About pages
@@ -116,9 +117,9 @@
 
 ## Tests
 - [x] Provider registration and login test
-- [ ] Accommodation CRUD test
+- [x] Accommodation CRUD test
 - [x] Staff search access control test
-- [ ] Monday.com sync mock test
+- [x] Replace direct Monday sync coverage with the approved Zapier-only provider sync workflow
 
 ## Registered Providers Admin Management
 - [x] Add secure admin-only provider directory with full registration and company details
@@ -136,3 +137,17 @@
 - [x] Add session persistence, inactivity timeout, and safe-navigation tests
 - [x] Add admin session renewal and inactivity-expiry tests
 - [x] Add portal session storage and inactivity utility tests
+
+## Participant Lead Feed Verification
+- [x] Verify the Zapier participant-lead ingestion endpoint and current feed records without changing data
+
+## Provider Login Reliability
+- [x] Diagnose and restore provider login access after the portal session update
+- [x] Add regression coverage for provider login-to-dashboard session access
+
+## Provider Account Recovery
+- [x] Audit current provider records and identify any accounts missing from the provider portal
+- [x] Confirm all existing provider account records and related data remain intact; no records required restoration
+- [x] Verify provider account count, password hashes, and company details remain present
+- [x] Add integration-style provider login-to-dashboard access coverage
+- [x] Verify provider-linked records have no orphaned account references

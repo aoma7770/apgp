@@ -20,7 +20,8 @@ export async function getAdminFromRequest(req: { cookies?: Record<string, string
   const cookieToken = req.cookies?.[ADMIN_COOKIE];
   const authHeader = req.headers?.authorization;
   const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
-  const token = cookieToken || bearerToken;
+  // Prefer the freshly stored client token so an expired legacy cookie cannot block a new login.
+  const token = bearerToken || cookieToken;
   if (!token) return null;
 
   const db = await getDb();
@@ -111,7 +112,7 @@ export const adminAuthRouter = router({
   logout: adminProcedure.mutation(async ({ ctx }) => {
     const cookieToken = (ctx.req as { cookies?: Record<string, string> }).cookies?.[ADMIN_COOKIE];
     const authHeader = (ctx.req as { headers?: Record<string, string> }).headers?.authorization;
-    const token = cookieToken || (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null);
+    const token = (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null) || cookieToken;
     if (token) {
       const db = await getDb();
       if (db) await db.delete(adminSessions).where(eq(adminSessions.token, token));

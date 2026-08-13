@@ -40,14 +40,12 @@ export const providers = mysqlTable("providers", {
   regionsServiced: text("regionsServiced"),
   // Support types offered (comma-separated, e.g. "SDA,SIL")
   supportTypes: text("supportTypes"),
-  // Company type for Monday.com mapping
+  // Company type selected during provider registration
   companyType: mysqlEnum("companyType", ["SDA", "SIL", "Both"]),
   // Vacancy status captured during initial account registration
   hasVacancies: boolean("hasVacancies"),
   // Profile completion flag
   profileComplete: boolean("profileComplete").default(false).notNull(),
-  // Monday.com item ID for this provider (set after first sync)
-  mondayItemId: varchar("mondayItemId", { length: 64 }),
   // Most recent successful sign-in (kept for fast admin directory display)
   lastLoginAt: timestamp("lastLoginAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

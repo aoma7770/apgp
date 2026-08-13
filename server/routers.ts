@@ -21,7 +21,6 @@ import {
   updateAccommodation,
   updateProvider,
 } from "./db";
-import { createMondayProviderItem, updateMondayProviderItem } from "./monday";
 import { blogRouter } from "./routers/blog";
 import { leadsRouter } from "./routers/leads";
 import { documentsRouter } from "./routers/documents";
@@ -42,7 +41,8 @@ const providerProcedure = publicProcedure.use(async ({ ctx, next }) => {
   const cookieToken = ctx.req.cookies?.[PROVIDER_COOKIE];
   const authHeader = ctx.req.headers?.authorization;
   const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
-  const token = cookieToken || bearerToken;
+  // Prefer the freshly stored client token so an expired legacy cookie cannot block a new login.
+  const token = bearerToken || cookieToken;
   if (!token) throw new TRPCError({ code: "UNAUTHORIZED", message: "Provider login required" });
   const provider = await getProviderBySessionToken(token);
   if (!provider) throw new TRPCError({ code: "UNAUTHORIZED", message: "Session expired" });
@@ -155,16 +155,6 @@ export const appRouter = router({
           content: `A new provider has registered on the APGP platform.\n\nOrganisation: ${input.organisationName ?? 'Not provided'}\nABN: ${input.abn ?? 'Not provided'}\nContact: ${input.contactName ?? 'Not provided'} (${input.contactTitle ?? 'No title'})\nPhone: ${input.phone ?? 'Not provided'}\nEmail: ${input.email}\nCompany Type: ${input.companyType ?? 'Not specified'}\nStates: ${input.regionsServiced ?? 'Not specified'}\nHas Vacancies: ${input.hasVacancies ? 'Yes' : 'No'}\nRegistered: ${new Date().toLocaleString('en-AU')}`,
         }).catch(console.error);
 
-        // Sync to Monday.com (non-blocking)
-        createMondayProviderItem({
-          organisationName: input.organisationName ?? input.email,
-          email: input.email,
-        })
-          .then(async (mondayItemId) => {
-            if (mondayItemId) await updateProvider(providerId, { mondayItemId });
-          })
-          .catch((err) => console.error("[Monday] Registration sync failed:", err));
-
         // Set session cookie
         ctx.res.cookie(PROVIDER_COOKIE, token, {
           httpOnly: true,
@@ -209,7 +199,7 @@ export const appRouter = router({
       const cookieToken = ctx.req.cookies?.[PROVIDER_COOKIE];
       const authHeader = ctx.req.headers?.authorization;
       const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
-      const token = cookieToken || bearerToken;
+      const token = bearerToken || cookieToken;
       await recordProviderLoginEvent(ctx.provider.id, "logout");
       if (token) await deleteProviderSession(token);
       ctx.res.clearCookie(PROVIDER_COOKIE, { httpOnly: true, secure: true, sameSite: "none", path: "/" });
@@ -261,34 +251,6 @@ export const appRouter = router({
       .mutation(async ({ input, ctx }) => {
         const provider = ctx.provider;
         await updateProvider(provider.id, { ...input, profileComplete: true });
-
-        // Sync to Monday.com
-        if (provider.mondayItemId) {
-          updateMondayProviderItem(provider.mondayItemId, {
-            organisationName: input.organisationName ?? provider.organisationName ?? provider.email,
-            contactName: input.contactName,
-            contactTitle: input.contactTitle,
-            phone: input.phone,
-            email: provider.email,
-            companyType: input.companyType,
-            regionsServiced: input.regionsServiced,
-          }).catch(console.error);
-        } else {
-          // Create Monday item if not yet synced
-          createMondayProviderItem({
-            organisationName: input.organisationName ?? provider.organisationName ?? provider.email,
-            contactName: input.contactName,
-            contactTitle: input.contactTitle,
-            phone: input.phone,
-            email: provider.email,
-            companyType: input.companyType,
-            regionsServiced: input.regionsServiced,
-          })
-            .then(async (mondayItemId) => {
-              if (mondayItemId) await updateProvider(provider.id, { mondayItemId });
-            })
-            .catch(console.error);
-        }
 
         const updated = await getProviderById(provider.id);
         return { success: true, provider: sanitizeProvider(updated!) };
@@ -426,6 +388,6 @@ export type AppRouter = typeof appRouter;
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function sanitizeProvider(p: import("../drizzle/schema").Provider) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { passwordHash, mondayItemId, ...safe } = p;
+  const { passwordHash, ...safe } = p;
   return safe;
 }
