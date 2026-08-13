@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { TOKEN_KEY } from "@/contexts/ProviderAuthContext";
+import { beginPortalSession } from "@/lib/portalSession";
 import { cn } from "@/lib/utils";
 import APGPLogo from "@/components/APGPLogo";
 
@@ -75,7 +75,7 @@ export default function ProviderRegister() {
   const register = trpc.provider.register.useMutation({
     onSuccess: (data) => {
       if (data.token) {
-        try { localStorage.setItem(TOKEN_KEY, data.token); } catch { /* ignore */ }
+        beginPortalSession("provider", data.token);
       }
       toast.success("Welcome to APGP! Your account has been created.");
       setLocation("/provider/dashboard");

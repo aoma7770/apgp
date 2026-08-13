@@ -8,7 +8,7 @@ import { getDb } from "../db";
 import { publicProcedure, router } from "../_core/trpc";
 
 const ADMIN_COOKIE = "apgp_admin_session";
-const COOKIE_MAX_AGE = 8 * 60 * 60; // 8 hours
+const PORTAL_SESSION_IDLE_SECONDS = 30 * 60;
 
 // ─── Middleware: require admin session ────────────────────────────────────────
 export async function getAdminFromCtx(ctx: { req: { cookies?: Record<string, string> | unknown; headers?: Record<string, string> | unknown } }) {
@@ -16,7 +16,7 @@ export async function getAdminFromCtx(ctx: { req: { cookies?: Record<string, str
   return getAdminFromRequest(req);
 }
 
-async function getAdminFromRequest(req: { cookies?: Record<string, string>; headers?: Record<string, string> }) {
+export async function getAdminFromRequest(req: { cookies?: Record<string, string>; headers?: Record<string, string> }) {
   const cookieToken = req.cookies?.[ADMIN_COOKIE];
   const authHeader = req.headers?.authorization;
   const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
@@ -34,7 +34,13 @@ async function getAdminFromRequest(req: { cookies?: Record<string, string>; head
     .where(and(eq(adminSessions.token, token), gt(adminSessions.expiresAt, now)))
     .limit(1);
 
-  return sessions[0]?.admin ?? null;
+  const admin = sessions[0]?.admin ?? null;
+  if (admin) {
+    await db.update(adminSessions)
+      .set({ expiresAt: new Date(Date.now() + PORTAL_SESSION_IDLE_SECONDS * 1000) })
+      .where(eq(adminSessions.token, token));
+  }
+  return admin;
 }
 
 const adminProcedure = publicProcedure.use(async ({ ctx, next }) => {
@@ -72,7 +78,7 @@ export const adminAuthRouter = router({
       if (!valid) throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid username or password" });
 
       const token = nanoid(64);
-      const expiresAt = new Date(Date.now() + COOKIE_MAX_AGE * 1000);
+      const expiresAt = new Date(Date.now() + PORTAL_SESSION_IDLE_SECONDS * 1000);
       await db.insert(adminSessions).values({ adminId: admin.id, token, expiresAt });
       await db.update(adminUsers).set({ lastSignedIn: new Date() }).where(eq(adminUsers.id, admin.id));
 
@@ -83,7 +89,6 @@ export const adminAuthRouter = router({
           secure: true,
           sameSite: "none",
           path: "/",
-          maxAge: COOKIE_MAX_AGE,
         });
 
       // Return token for localStorage fallback
@@ -98,6 +103,9 @@ export const adminAuthRouter = router({
     const { passwordHash: _, ...safeAdmin } = admin;
     return safeAdmin;
   }),
+
+  // Called only after genuine browser activity to renew the 30-minute inactivity window.
+  touchSession: adminProcedure.mutation(() => ({ success: true })),
 
   // Logout
   logout: adminProcedure.mutation(async ({ ctx }) => {

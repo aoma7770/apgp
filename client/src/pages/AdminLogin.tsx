@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-
-const ADMIN_TOKEN_KEY = "apgp_admin_token";
+import { beginPortalSession, clearPortalSession } from "@/lib/portalSession";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
@@ -30,14 +29,14 @@ export default function AdminLogin() {
       setLocation(isStaffUrl ? '/staff/dashboard' : '/admin/dashboard');
     } else if (!meLoading && !me) {
       // Clear any stale token
-      try { localStorage.removeItem('apgp_admin_token'); } catch { /* ignore */ }
+      clearPortalSession("admin");
     }
   }, [me, meLoading, setLocation]);
 
   const login = trpc.adminAuth.login.useMutation({
     onSuccess: (data) => {
       if (data.token) {
-        try { localStorage.setItem(ADMIN_TOKEN_KEY, data.token); } catch { /* ignore */ }
+        beginPortalSession("admin", data.token);
       }
       toast.success(`Welcome, ${data.admin.fullName ?? data.admin.username}`);
       setLocation("/admin/dashboard");
@@ -174,7 +173,7 @@ export default function AdminLogin() {
             </Link>
             <button
               type="button"
-              onClick={() => { try { localStorage.removeItem('apgp_admin_token'); } catch { /* ignore */ } window.location.reload(); }}
+              onClick={() => { clearPortalSession("admin"); window.location.reload(); }}
               className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
             >
               Clear session

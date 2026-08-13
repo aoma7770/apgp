@@ -29,6 +29,7 @@ vi.mock("./db", () => ({
     createProviderSession: vi.fn(),
     recordProviderLoginEvent: vi.fn(),
     getProviderBySessionToken: vi.fn(),
+    touchProviderSession: vi.fn(),
     getRegisteredProvidersForAdmin: vi.fn().mockResolvedValue([]),
   deleteProviderSession: vi.fn(),
   getAccommodationsByProvider: vi.fn().mockResolvedValue([]),
@@ -125,8 +126,9 @@ describe("provider.register", () => {
     expect(ctx.res.cookie).toHaveBeenCalledWith(
       "apgp_provider_session",
       expect.any(String),
-      expect.objectContaining({ httpOnly: true })
+      expect.objectContaining({ httpOnly: true, secure: true, sameSite: "none" })
     );
+    expect(vi.mocked(ctx.res.cookie).mock.calls[0]?.[2]).not.toHaveProperty("maxAge");
     const { recordProviderLoginEvent } = await import("./db");
     expect(recordProviderLoginEvent).toHaveBeenCalledWith(1, "registered", expect.any(Date));
   });
@@ -217,6 +219,17 @@ describe("provider login activity tracking", () => {
     expect(result.success).toBe(true);
     expect(recordProviderLoginEvent).toHaveBeenCalledWith(providerAccount.id, "logout");
     expect(deleteProviderSession).toHaveBeenCalledWith("active-provider-token");
+  });
+
+  it("renews an authenticated provider session after genuine portal activity", async () => {
+    const { touchProviderSession } = await import("./db");
+    const ctx = makePublicCtx();
+    (ctx.req.headers as Record<string, string>).authorization = "Bearer active-provider-token";
+    const caller = appRouter.createCaller(ctx);
+
+    await expect(caller.provider.touchSession()).resolves.toEqual({ success: true });
+
+    expect(touchProviderSession).toHaveBeenCalledWith("active-provider-token", expect.any(Date));
   });
 });
 

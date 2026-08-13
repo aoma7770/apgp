@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { beginPortalSession, clearPortalSession, getPortalToken, PROVIDER_TOKEN_KEY } from "@/lib/portalSession";
 
-const TOKEN_KEY = "apgp_provider_token";
+const TOKEN_KEY = PROVIDER_TOKEN_KEY;
 
 interface ProviderAuthContextType {
   token: string | null;
@@ -17,7 +18,7 @@ const ProviderAuthContext = createContext<ProviderAuthContextType>({
 export function ProviderAuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setTokenState] = useState<string | null>(() => {
     try {
-      return localStorage.getItem(TOKEN_KEY);
+      return getPortalToken("provider");
     } catch {
       return null;
     }
@@ -27,9 +28,9 @@ export function ProviderAuthProvider({ children }: { children: React.ReactNode }
     setTokenState(t);
     try {
       if (t) {
-        localStorage.setItem(TOKEN_KEY, t);
+        beginPortalSession("provider", t);
       } else {
-        localStorage.removeItem(TOKEN_KEY);
+        clearPortalSession("provider");
       }
     } catch {
       // localStorage may be unavailable in some environments

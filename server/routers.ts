@@ -17,6 +17,7 @@ import {
   getRegisteredProvidersForAdmin,
   recordProviderLoginEvent,
   searchAccommodations,
+  touchProviderSession,
   updateAccommodation,
   updateProvider,
 } from "./db";
@@ -32,6 +33,7 @@ import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 
 // ─── Provider session cookie name ─────────────────────────────────────────────
 const PROVIDER_COOKIE = "apgp_provider_session";
+const PORTAL_SESSION_IDLE_SECONDS = 30 * 60;
 
 // ─── Middleware: require provider session ─────────────────────────────────────
 // Reads token from cookie first, then falls back to Authorization: Bearer header
@@ -44,6 +46,7 @@ const providerProcedure = publicProcedure.use(async ({ ctx, next }) => {
   if (!token) throw new TRPCError({ code: "UNAUTHORIZED", message: "Provider login required" });
   const provider = await getProviderBySessionToken(token);
   if (!provider) throw new TRPCError({ code: "UNAUTHORIZED", message: "Session expired" });
+  await touchProviderSession(token, new Date(Date.now() + PORTAL_SESSION_IDLE_SECONDS * 1000));
   return next({ ctx: { ...ctx, provider } });
 });
 
@@ -121,7 +124,7 @@ export const appRouter = router({
 
         // Create session
         const token = nanoid(64);
-        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+        const expiresAt = new Date(Date.now() + PORTAL_SESSION_IDLE_SECONDS * 1000);
         await createProviderSession(providerId, token, expiresAt);
         await recordProviderLoginEvent(providerId, "registered", registeredAt);
 
@@ -168,7 +171,6 @@ export const appRouter = router({
           secure: true,
           sameSite: "none",
           path: "/",
-          maxAge: 30 * 24 * 60 * 60,
         });
 
         const provider = await getProviderById(providerId);
@@ -188,7 +190,7 @@ export const appRouter = router({
 
         const signedInAt = new Date();
         const token = nanoid(64);
-        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        const expiresAt = new Date(Date.now() + PORTAL_SESSION_IDLE_SECONDS * 1000);
         await createProviderSession(provider.id, token, expiresAt);
         await updateProvider(provider.id, { lastLoginAt: signedInAt });
         await recordProviderLoginEvent(provider.id, "login", signedInAt);
@@ -198,14 +200,16 @@ export const appRouter = router({
           secure: true,
           sameSite: "none",
           path: "/",
-          maxAge: 30 * 24 * 60 * 60,
         });
 
         return { success: true, token, provider: sanitizeProvider(provider) };
       }),
 
     logout: providerProcedure.mutation(async ({ ctx }) => {
-      const token = ctx.req.cookies?.[PROVIDER_COOKIE];
+      const cookieToken = ctx.req.cookies?.[PROVIDER_COOKIE];
+      const authHeader = ctx.req.headers?.authorization;
+      const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+      const token = cookieToken || bearerToken;
       await recordProviderLoginEvent(ctx.provider.id, "logout");
       if (token) await deleteProviderSession(token);
       ctx.res.clearCookie(PROVIDER_COOKIE, { httpOnly: true, secure: true, sameSite: "none", path: "/" });
@@ -213,6 +217,9 @@ export const appRouter = router({
     }),
 
     me: providerProcedure.query(({ ctx }) => sanitizeProvider(ctx.provider)),
+
+    // Called only after genuine browser activity to renew the 30-minute inactivity window.
+    touchSession: providerProcedure.mutation(() => ({ success: true })),
 
     // Admin-only: provider account directory, including profile details and login events.
     adminList: publicProcedure.query(async ({ ctx }) => {

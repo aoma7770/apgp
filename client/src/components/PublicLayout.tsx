@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Phone, Mail } from "lucide-react";
+import { Menu, X, Phone, Mail, Building2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FloatingRegisterButton from "@/components/FloatingRegisterButton";
 import LeadNotificationToast from "@/components/LeadNotificationToast";
 import APGPLogo from "@/components/APGPLogo";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc";
+import { getActivePortalRole } from "@/lib/portalSession";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -30,6 +32,22 @@ interface PublicLayoutProps {
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [location] = useLocation();
+  const activePortalRole = getActivePortalRole();
+  const { data: provider } = trpc.provider.me.useQuery(undefined, {
+    enabled: activePortalRole === "provider",
+    retry: false,
+    refetchOnWindowFocus: true,
+  });
+  const { data: admin } = trpc.adminAuth.me.useQuery(undefined, {
+    enabled: activePortalRole === "admin",
+    retry: false,
+    refetchOnWindowFocus: true,
+  });
+  const portalAccount = provider
+    ? { label: provider.organisationName || provider.contactName || provider.email, href: "/provider/dashboard", icon: <Building2 className="w-4 h-4" />, type: "Provider Portal" }
+    : admin
+      ? { label: admin.fullName || admin.username, href: "/admin/dashboard", icon: <Shield className="w-4 h-4" />, type: "Admin Portal" }
+      : null;
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -73,16 +91,25 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
           {/* Desktop CTA buttons */}
           <div className="hidden xl:flex items-center gap-3 shrink-0">
-            <Link href="/provider/login">
-              <Button variant="outline" size="sm" className="border-navy text-navy hover:bg-navy hover:text-white transition-colors">
-                Provider Login
-              </Button>
-            </Link>
-            <Link href="/provider/register">
+            {portalAccount ? (
+              <Link href={portalAccount.href} title={`Return to ${portalAccount.type}`}>
+                <Button variant="outline" size="sm" className="max-w-56 border-teal text-navy hover:bg-teal-light transition-colors">
+                  <span className="text-teal mr-1.5">{portalAccount.icon}</span>
+                  <span className="truncate">{portalAccount.label}</span>
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/provider/login">
+                <Button variant="outline" size="sm" className="border-navy text-navy hover:bg-navy hover:text-white transition-colors">
+                  Provider Login
+                </Button>
+              </Link>
+            )}
+            {!portalAccount && <Link href="/provider/register">
               <Button size="sm" className="bg-teal hover:bg-teal-600 text-white font-semibold">
                 Register Free
               </Button>
-            </Link>
+            </Link>}
           </div>
 
           {/* Mobile hamburger */}
@@ -112,12 +139,23 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               </Link>
             ))}
             <div className="pt-3 border-t border-gray-100 flex flex-col gap-2">
-              <Link href="/provider/login" onClick={() => setMobileOpen(false)}>
-                <Button variant="outline" className="w-full border-navy text-navy">Provider Login</Button>
-              </Link>
-              <Link href="/provider/register" onClick={() => setMobileOpen(false)}>
-                <Button className="w-full bg-teal hover:bg-teal-600 text-white font-semibold">Register Free</Button>
-              </Link>
+              {portalAccount ? (
+                <Link href={portalAccount.href} onClick={() => setMobileOpen(false)}>
+                  <Button variant="outline" className="w-full border-teal text-navy">
+                    <span className="text-teal mr-1.5">{portalAccount.icon}</span>
+                    Return to {portalAccount.type}
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/provider/login" onClick={() => setMobileOpen(false)}>
+                    <Button variant="outline" className="w-full border-navy text-navy">Provider Login</Button>
+                  </Link>
+                  <Link href="/provider/register" onClick={() => setMobileOpen(false)}>
+                    <Button className="w-full bg-teal hover:bg-teal-600 text-white font-semibold">Register Free</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}

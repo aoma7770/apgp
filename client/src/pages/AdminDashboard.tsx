@@ -13,8 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-
-const ADMIN_TOKEN_KEY = "apgp_admin_token";
+import { clearPortalSession, openPublicHomeWithoutLeavingPortal } from "@/lib/portalSession";
 
 // Postcode → state lookup (official Australia Post ranges)
 function postcodeToState(postcode: string | null | undefined): string | undefined {
@@ -66,7 +65,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!isLoading && !me) {
-      try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch { /* ignore */ }
+      clearPortalSession("admin");
       // Redirect to whichever login page the user came from
       const isStaffUrl = window.location.pathname.startsWith('/staff');
       window.location.href = isStaffUrl ? '/staff/login' : '/admin/login';
@@ -75,13 +74,13 @@ export default function AdminDashboard() {
 
   const logout = trpc.adminAuth.logout.useMutation({
     onSuccess: () => {
-      try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch { /* ignore */ }
+      clearPortalSession("admin");
       // Use hard navigation to avoid React state update on unmounted component (error #300)
       window.location.href = '/admin/login';
     },
     onError: () => {
       // Even if the server call fails, clear local token and redirect
-      try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch { /* ignore */ }
+      clearPortalSession("admin");
       window.location.href = '/admin/login';
     },
   });
@@ -202,13 +201,13 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-navy text-white flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:flex`}>
         <div className="p-6 border-b border-white/10">
-          <Link href="/" className="flex items-center gap-3">
+          <button type="button" onClick={openPublicHomeWithoutLeavingPortal} className="flex items-center gap-3 text-left" title="Open APGP website in a new tab">
             <APGPLogo variant="compact" height={36} />
             <div>
               <div className="font-bold text-white font-heading text-sm">APGP Admin</div>
               <div className="text-xs text-teal-300">Internal Portal</div>
             </div>
-          </Link>
+          </button>
         </div>
         <div className="p-4 border-b border-white/10">
           <div className="bg-white/10 rounded-xl p-3">
@@ -235,9 +234,9 @@ export default function AdminDashboard() {
           </Link>
         </nav>
         <div className="p-4 border-t border-white/10 space-y-2">
-          <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors w-full">
+          <button type="button" onClick={openPublicHomeWithoutLeavingPortal} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors w-full">
             <ExternalLink className="w-4 h-4" />Public Website
-          </Link>
+          </button>
           <button onClick={() => logout.mutate()} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
             <LogOut className="w-4 h-4" />Sign Out
           </button>

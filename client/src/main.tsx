@@ -7,7 +7,11 @@ import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
 import { ProviderAuthProvider, TOKEN_KEY } from "./contexts/ProviderAuthContext";
+import PortalSessionGuard from "./components/PortalSessionGuard";
+import { getActivePortalToken, migrateLegacyPortalToken } from "./lib/portalSession";
 import "./index.css";
+
+migrateLegacyPortalToken();
 
 const queryClient = new QueryClient();
 
@@ -41,12 +45,10 @@ const trpcClient = trpc.createClient({
       url: "/api/trpc",
       transformer: superjson,
       headers() {
-        // Send provider or admin session token as Bearer header (fallback when cookies are blocked)
+        // Send only the session selected in this browser tab to avoid cross-portal token conflicts.
         try {
-          const adminToken = localStorage.getItem('apgp_admin_token');
-          if (adminToken) return { Authorization: `Bearer ${adminToken}` };
-          const providerToken = localStorage.getItem(TOKEN_KEY);
-          if (providerToken) return { Authorization: `Bearer ${providerToken}` };
+          const portalToken = getActivePortalToken();
+          if (portalToken) return { Authorization: `Bearer ${portalToken}` };
         } catch {
           // localStorage unavailable
         }
@@ -66,6 +68,7 @@ createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
       <ProviderAuthProvider>
+        <PortalSessionGuard />
         <App />
       </ProviderAuthProvider>
     </QueryClientProvider>

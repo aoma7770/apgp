@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { clearPortalSession, openPublicHomeWithoutLeavingPortal } from "@/lib/portalSession";
 
 type Tab = "overview" | "profile" | "listings" | "add-listing" | "leads" | "documents" | "billing";
 
@@ -109,7 +110,7 @@ export default function ProviderDashboard() {
 
   const logout = trpc.provider.logout.useMutation({
     onSuccess: () => {
-      try { localStorage.removeItem("apgp_provider_token"); } catch { /* ignore */ }
+      clearPortalSession("provider");
       toast.success("Signed out");
       setLocation("/provider/login");
     },
@@ -260,13 +261,13 @@ export default function ProviderDashboard() {
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-navy text-white flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:flex`}>
         <div className="p-6 border-b border-white/10">
-          <Link href="/" className="flex items-center gap-3">
+          <button type="button" onClick={openPublicHomeWithoutLeavingPortal} className="flex items-center gap-3 text-left" title="Open APGP website in a new tab">
             <APGPLogo variant="compact" height={36} />
             <div>
               <div className="font-bold text-white font-heading text-sm">APGP Portal</div>
               <div className="text-xs text-teal-300">Provider Dashboard</div>
             </div>
-          </Link>
+          </button>
         </div>
 
         <div className="p-4 border-b border-white/10">

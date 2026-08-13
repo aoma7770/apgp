@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { TOKEN_KEY } from "@/contexts/ProviderAuthContext";
+import { beginPortalSession } from "@/lib/portalSession";
 
 export default function ProviderLogin() {
   const [, setLocation] = useLocation();
@@ -18,7 +18,7 @@ export default function ProviderLogin() {
     onSuccess: (data) => {
       // Store token in localStorage so it's sent as Bearer header on subsequent requests
       if (data.token) {
-        try { localStorage.setItem(TOKEN_KEY, data.token); } catch { /* ignore */ }
+        beginPortalSession("provider", data.token);
       }
       toast.success("Welcome back!");
       setLocation("/provider/dashboard");

@@ -149,6 +149,12 @@ export async function getProviderBySessionToken(token: string): Promise<Provider
   return result[0]?.provider;
 }
 
+export async function touchProviderSession(token: string, expiresAt: Date): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(providerSessions).set({ expiresAt }).where(eq(providerSessions.token, token));
+}
+
 export async function deleteProviderSession(token: string): Promise<void> {
   const db = await getDb();
   if (!db) return;

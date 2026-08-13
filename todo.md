@@ -127,3 +127,12 @@
 - [x] Add tests for provider directory access control and activity tracking
 - [x] Add successful authenticated-admin access test for the provider directory
 - [x] Add provider sign-in and sign-out activity tracking tests
+
+## Portal Session and Navigation
+- [x] Keep provider and admin portal sessions active while navigating away and returning
+- [x] Expire portal sessions after 30 minutes of inactivity, unless the user signs out first
+- [x] Show signed-in provider or admin identity in the public header with a portal return link
+- [x] Make the public homepage logo/navigation preserve an active portal session in a separate tab
+- [x] Add session persistence, inactivity timeout, and safe-navigation tests
+- [x] Add admin session renewal and inactivity-expiry tests
+- [x] Add portal session storage and inactivity utility tests
