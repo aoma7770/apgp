@@ -15,6 +15,10 @@ function tokenKeyFor(role: PortalRole) {
   return role === "admin" ? ADMIN_TOKEN_KEY : PROVIDER_TOKEN_KEY;
 }
 
+export function getPortalDashboardPath(role: PortalRole) {
+  return role === "admin" ? "/admin/dashboard" : "/provider/dashboard";
+}
+
 export function beginPortalSession(role: PortalRole, token: string) {
   const storage = browserStorage();
   if (!storage) return;

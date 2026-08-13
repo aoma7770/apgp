@@ -201,23 +201,23 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-navy text-white flex flex-col transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:flex`}>
         <div className="p-6 border-b border-white/10">
-          <button type="button" onClick={openPublicHomeWithoutLeavingPortal} className="flex items-center gap-3 text-left" title="Open APGP website in a new tab">
-            <APGPLogo variant="compact" height={36} />
+          <button type="button" onClick={openPublicHomeWithoutLeavingPortal} className="group -m-2 flex cursor-pointer items-center gap-3 rounded-xl p-2 text-left transition-all duration-200 hover:bg-white/10 hover:shadow-lg hover:shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300" title="Open APGP website in a new tab">
+            <span className="transition-transform duration-200 group-hover:scale-105"><APGPLogo variant="compact" height={36} /></span>
             <div>
-              <div className="font-bold text-white font-heading text-sm">APGP Admin</div>
-              <div className="text-xs text-teal-300">Internal Portal</div>
+              <div className="font-bold text-white font-heading text-sm transition-colors group-hover:text-teal-200">APGP Admin</div>
+              <div className="text-xs text-teal-300 transition-colors group-hover:text-white">Internal Portal</div>
             </div>
           </button>
         </div>
         <div className="p-4 border-b border-white/10">
-          <div className="bg-white/10 rounded-xl p-3">
+          <button type="button" onClick={() => setLocation("/")} className="group w-full cursor-pointer rounded-xl bg-white/10 p-3 text-left transition-all duration-200 hover:bg-white/20 hover:shadow-md hover:shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300" title="Open the APGP homepage in this tab">
             <div className="flex items-center gap-2 mb-1">
               <Shield className="w-3.5 h-3.5 text-teal-300" />
               <p className="text-xs text-teal-300 font-semibold uppercase tracking-widest">{me.role.replace("_", " ")}</p>
             </div>
-            <p className="text-sm font-medium text-white truncate">{me.fullName ?? me.username}</p>
-            <p className="text-xs text-gray-400 truncate">{me.email}</p>
-          </div>
+            <p className="text-sm font-medium text-white truncate transition-colors group-hover:text-teal-100">{me.fullName ?? me.username}</p>
+            <p className="text-xs text-gray-400 truncate transition-colors group-hover:text-white/80">{me.email}</p>
+          </button>
         </div>
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => (

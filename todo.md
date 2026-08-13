@@ -151,3 +151,9 @@
 - [x] Verify provider account count, password hashes, and company details remain present
 - [x] Add integration-style provider login-to-dashboard access coverage
 - [x] Verify provider-linked records have no orphaned account references
+
+## Portal Interaction Affordances
+- [x] Add clear hover, pointer, and focus styling to portal logo actions
+- [x] Make signed-in provider and admin header identities visibly clickable with same-tab portal return
+- [x] Test portal navigation interaction behaviour
+- [x] Add navigation-target test coverage for signed-in provider and admin header actions

@@ -4,6 +4,7 @@ import {
   clearPortalSession,
   getActivePortalRole,
   getActivePortalToken,
+  getPortalDashboardPath,
   isPortalSessionInactive,
   openPublicHomeWithoutLeavingPortal,
   PORTAL_IDLE_TIMEOUT_MS,
@@ -60,5 +61,10 @@ describe("portal session storage", () => {
   it("opens the public homepage in a separate tab so the portal remains open", () => {
     openPublicHomeWithoutLeavingPortal();
     expect(open).toHaveBeenCalledWith("/", "_blank");
+  });
+
+  it("returns the correct same-tab destination for each signed-in header account action", () => {
+    expect(getPortalDashboardPath("provider")).toBe("/provider/dashboard");
+    expect(getPortalDashboardPath("admin")).toBe("/admin/dashboard");
   });
 });

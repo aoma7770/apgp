@@ -7,7 +7,7 @@ import LeadNotificationToast from "@/components/LeadNotificationToast";
 import APGPLogo from "@/components/APGPLogo";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
-import { getActivePortalRole } from "@/lib/portalSession";
+import { getActivePortalRole, getPortalDashboardPath } from "@/lib/portalSession";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -44,9 +44,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     refetchOnWindowFocus: true,
   });
   const portalAccount = provider
-    ? { label: provider.organisationName || provider.contactName || provider.email, href: "/provider/dashboard", icon: <Building2 className="w-4 h-4" />, type: "Provider Portal" }
+    ? { label: provider.organisationName || provider.contactName || provider.email, href: getPortalDashboardPath("provider"), icon: <Building2 className="w-4 h-4" />, type: "Provider Portal" }
     : admin
-      ? { label: admin.fullName || admin.username, href: "/admin/dashboard", icon: <Shield className="w-4 h-4" />, type: "Admin Portal" }
+      ? { label: admin.fullName || admin.username, href: getPortalDashboardPath("admin"), icon: <Shield className="w-4 h-4" />, type: "Admin Portal" }
       : null;
 
   return (
@@ -92,10 +92,10 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           {/* Desktop CTA buttons */}
           <div className="hidden xl:flex items-center gap-3 shrink-0">
             {portalAccount ? (
-              <Link href={portalAccount.href} title={`Return to ${portalAccount.type}`}>
-                <Button variant="outline" size="sm" className="max-w-56 border-teal text-navy hover:bg-teal-light transition-colors">
-                  <span className="text-teal mr-1.5">{portalAccount.icon}</span>
-                  <span className="truncate">{portalAccount.label}</span>
+              <Link href={portalAccount.href} title={`Return to ${portalAccount.type}`} className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2">
+                <Button variant="outline" size="sm" className="group max-w-56 cursor-pointer border-teal bg-teal-50/50 text-navy shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-teal hover:bg-teal-light hover:shadow-md">
+                  <span className="mr-1.5 text-teal transition-transform duration-200 group-hover:scale-110">{portalAccount.icon}</span>
+                  <span className="truncate underline-offset-4 group-hover:underline">{portalAccount.label}</span>
                 </Button>
               </Link>
             ) : (
@@ -141,9 +141,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             <div className="pt-3 border-t border-gray-100 flex flex-col gap-2">
               {portalAccount ? (
                 <Link href={portalAccount.href} onClick={() => setMobileOpen(false)}>
-                  <Button variant="outline" className="w-full border-teal text-navy">
+                  <Button variant="outline" className="group w-full cursor-pointer border-teal bg-teal-50/50 text-navy transition-all duration-200 hover:bg-teal-light hover:shadow-sm">
                     <span className="text-teal mr-1.5">{portalAccount.icon}</span>
-                    Return to {portalAccount.type}
+                    <span className="underline-offset-4 group-hover:underline">Return to {portalAccount.type}</span>
                   </Button>
                 </Link>
               ) : (
