@@ -197,7 +197,7 @@ export default function ReferralAgreementModal({
       leadId,
       signatoryName: form.contactName,
       signatoryOrg: form.organisationName,
-      providerNotes: `Referral Partnership. ABN: ${form.abn}. Phone: ${form.phone}. Email: ${form.email}. Property Links: ${form.propertyLinks.filter(l => l.trim()).join(', ') || 'None provided'}.`,
+      providerNotes: `Silara Marketing Referral Agreement v06. ABN: ${form.abn}. Phone: ${form.phone}. Email: ${form.email}. Property Links: ${form.propertyLinks.filter(l => l.trim()).join(', ') || 'None provided'}.`,
       referralAgreementSigned: true,
       consentSigned: true,
     });
@@ -335,20 +335,23 @@ export default function ReferralAgreementModal({
             <div>
               <div className="bg-navy/5 rounded-xl p-4 mb-5 text-sm">
                 <p className="font-bold text-navy font-heading mb-1">Silara Marketing — Referral Agreement</p>
-                <p className="text-gray-500 text-xs">Silara Marketing (ACN 688042177) · Version No: 02 · Version Date: 06/07/2026</p>
+                <p className="text-gray-500 text-xs">Silara Marketing (ACN 688042177) · Version No: 06</p>
               </div>
 
-              <AgreementSection title="1. Parties" defaultOpen={true}>
-                <p>This Agreement is entered into between:</p>
-                <p><strong>Silara Marketing</strong> (ACN 688042177) ("APGP"), and</p>
+              <AgreementSection title="1. Parties and Program" defaultOpen={true}>
+                <p>This Agreement is made between <strong>Silara Marketing</strong> (ACN 688 042 177) ("Silara Marketing") and the accommodation provider identified below (the "Provider"). The parties intend this Agreement to be legally binding.</p>
                 <p><strong>{form.organisationName}</strong> (ABN: {form.abn}) ("Provider")</p>
                 <p>Contact: {form.contactName}{form.contactTitle ? `, ${form.contactTitle}` : ""} · {form.email} · {form.phone}</p>
-                <p className="mt-2 text-gray-600">The Provider wishes to participate in the Accommodation Provider Growth Program (APGP), under which Silara Marketing may introduce Participants to the Provider under a referral arrangement. This Agreement is intended to be legally binding.</p>
+                <p className="mt-2 text-gray-600">Silara Marketing operates the Accommodation Provider Growth Program (APGP), under which it sources, qualifies and matches NDIS participants ("Participants") to accommodation held or managed by the Provider. The Provider may accept or decline any Participant at its absolute discretion. Silara Marketing acts on a best-efforts basis and gives no warranty as to Introductions, occupancy, or commercial outcomes.</p>
               </AgreementSection>
 
-              <AgreementSection title="2. Referral Partnership">
-                <p>The Provider has elected to participate under the <strong>Referral Partnership Model</strong>.</p>
-                <p className="text-gray-600 mt-1">Silara Marketing will source, qualify, and match NDIS participants to the Provider's available properties. A success-based placement fee is payable only upon confirmed move-in. The rights and obligations are governed by the APGP Terms of Service (MOU).</p>
+              <AgreementSection title="2. Referral Fee">
+                <div className="rounded-lg border border-teal/30 bg-teal-light p-3 text-xs">
+                  <div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1"><span>Referral Fee per Successful Referral (exclusive of GST)</span><strong>$3,000.00</strong><span>Goods and Services Tax (10%)</span><strong>$300.00</strong><span className="font-semibold text-navy">Total payable per Successful Referral (inclusive of GST)</span><strong className="text-navy">$3,300.00</strong></div>
+                </div>
+                <p>The Referral Fee is fixed. No quotation or other pricing document applies. It is payable only on a Successful Referral, and no amount is payable unless and until a Successful Referral occurs.</p>
+                <p>No upfront fee, deposit, joining fee, subscription, periodic charge, advertising cost or assessment fee is payable. Only one Referral Fee is payable per Participant, regardless of accommodation duration, properties presented, or subsequent transfer between properties held or managed by the Provider.</p>
+                <p>All amounts are payable by the Provider alone. No fee, charge, commission or cost is charged to, recovered from, or passed on to a Participant, their family, nominee, support coordinator, or NDIS plan.</p>
                 {form.propertyLinks.filter(l => l.trim()).length > 0 && (
                   <div className="mt-2">
                     <p className="font-semibold text-navy text-xs mb-1">Property Links / Brochures submitted:</p>
@@ -361,35 +364,45 @@ export default function ReferralAgreementModal({
                 )}
               </AgreementSection>
 
-              <AgreementSection title="3. Fees and Quote">
-                <p><strong>3.1 Quote:</strong> Prior to execution of this Agreement, Silara Marketing will issue the Provider with a written quote setting out the applicable commercial fees for participation in the APGP ("Quote").</p>
-                <p><strong>3.2 Fees:</strong> The Provider agrees to pay Silara Marketing the fees set out in the Quote. The Quote forms part of the commercial understanding between the parties and sets out the applicable fees, including (where applicable): Placement Fee; Vacancy Protection Plan (if elected); and any other agreed fees.</p>
-                <p><strong>3.3 Binding Effect of Quote:</strong> By executing this Agreement, the Provider acknowledges that the Quote accurately reflects the agreed commercial terms and the Provider is bound to pay the fees set out in the Quote.</p>
-                <p><strong>3.4 Provider-Only Fees:</strong> All fees payable under this Agreement and any Quote are <strong>payable by the Accommodation Provider only</strong> and are <strong>not charged to Participants, their families, or their NDIS plans</strong>.</p>
+              <AgreementSection title="3. Successful Referral">
+                <p>A <strong>Successful Referral</strong> occurs when both: (a) Silara Marketing provides the Provider with the Participant Evaluation Form or the Participant&apos;s identifying details (an "Introduction"); and (b) the Participant or authorised decision-maker executes a service agreement, residential tenancy agreement or occupancy agreement with the Provider or a Related Entity for accommodation held or managed by the Provider.</p>
+                <p>The Referral Fee is earned on the date of first execution of that agreement (the "Agreement Date"). Occupancy commencement is not required.</p>
+                <p>No Referral Fee is payable where the Participant withdraws, chooses another provider, does not obtain necessary funding or approval, is declined by the Provider, or does not execute an agreement described above. A "Related Entity" includes an entity controlling, controlled by, or under common control with the Provider, and any director, partner, trustee or associated business.</p>
               </AgreementSection>
 
-              <AgreementSection title="4. Incorporation of APGP Terms of Service (MOU)">
-                <p>This Agreement incorporates by reference the <strong>Accommodation Provider Growth Program – Terms of Service (MOU)</strong>, available at:</p>
+              <AgreementSection title="4. Invoicing and Payment">
+                <p>Silara Marketing will issue a valid tax invoice on or after the Agreement Date. The Provider must pay within <strong>fourteen (14) days</strong> of invoice date.</p>
+                <p>The Provider must notify Silara Marketing in writing within <strong>five (5) business days</strong> of execution of an agreement described in section 3, or a decision not to proceed, and confirm the execution date on request.</p>
+                <p>For an unpaid invoice, a one-time late payment fee equal to <strong>ten per cent (10%)</strong> of the total invoice amount may be charged after written notice. No interest is charged on overdue amounts.</p>
+              </AgreementSection>
+
+              <AgreementSection title="5. Referral Entitlement and Non-Circumvention">
+                <p>An Introduction is registered when made and remains in effect indefinitely. The Referral Fee remains payable on a Successful Referral, regardless of elapsed time, property, re-engagement through any third party, or provision by a Related Entity.</p>
+                <p>The Provider must not structure, defer, redirect or re-characterise a placement through a Related Entity or third party to avoid or reduce the Referral Fee. Participants remain free to select any provider, property or support arrangement at all times. This section survives termination.</p>
+              </AgreementSection>
+
+              <AgreementSection title="6. Participant Privacy and Confidentiality">
+                <p>Participant Information includes all information made available about a Participant, including contact, NDIS, funding, disability, health, support needs and the Participant Evaluation Form. The Provider may use it only to assess, respond to and, if the referral proceeds, accommodate and support that Participant.</p>
+                <p>The Provider must not market to, add to a marketing list, sell, share or trade Participant Information, and must securely destroy or permanently de-identify it within <strong>seven (7) days</strong> after a referral will not proceed. The Provider must notify Silara Marketing within <strong>24 hours</strong> of any unauthorised access, loss or disclosure.</p>
+              </AgreementSection>
+
+              <AgreementSection title="7. Compliance and Participant Safeguards">
+                <p>Participants retain full choice and control. APGP is a business-to-business arrangement between Silara Marketing and the Provider. Silara Marketing will obtain consent before disclosing Participant Information and disclose the commercial referral arrangement to the Participant.</p>
+                <p>Each party must comply with applicable law, including the National Disability Insurance Scheme Act 2013 (Cth), NDIS Code of Conduct, Privacy Act 1988 (Cth), Spam Act 2003 (Cth) and Australian Consumer Law.</p>
+              </AgreementSection>
+
+              <AgreementSection title="8. APGP Terms of Service (MOU)">
+                <p>This Agreement incorporates the APGP Terms of Service (MOU), available at:</p>
                 <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-teal hover:underline text-xs font-medium">View APGP Terms of Service (MOU) →</a>
-                <p className="mt-2">The Provider acknowledges that: it has read and understands the APGP Terms of Service (MOU); the APGP Terms of Service (MOU) forms part of this Agreement; and it agrees to be bound by the APGP Terms of Service (MOU), as amended from time to time.</p>
-                <p>In the event of any inconsistency, <strong>this Agreement prevails</strong> to the extent of the inconsistency.</p>
+                <p className="mt-2">The Provider acknowledges it has read and agrees to be bound by the APGP Terms of Service (MOU). If there is an inconsistency, <strong>this Agreement prevails</strong>, including for the Referral Fee in section 2.</p>
               </AgreementSection>
 
-              <AgreementSection title="5. Term and Termination">
-                <p>This Agreement commences on the date of execution and continues until terminated by either party on <strong>thirty (30) days' written notice</strong>, subject to accrued rights and obligations.</p>
-                <p>Termination does not affect: fees already incurred or payable; or obligations that survive termination under the APGP Terms of Service (MOU).</p>
+              <AgreementSection title="9. Term and Termination">
+                <p>This Agreement commences on execution and continues until either party gives <strong>thirty (30) days&apos; written notice</strong>. Termination does not affect fees already incurred or a Referral Fee that becomes payable for a Participant introduced before termination. Sections 2 to 7 survive termination.</p>
               </AgreementSection>
 
-              <AgreementSection title="6. Compliance and Participant Safeguards">
-                <p>The Provider acknowledges that: all Participants retain full choice and control; no fees are charged to Participants; and the APGP is a business-to-business commercial arrangement.</p>
-                <p>Each party must comply with all applicable laws, including the <strong>NDIS Act</strong>, <strong>NDIS Code of Conduct</strong>, and <strong>Australian Consumer Law</strong>.</p>
-              </AgreementSection>
-
-              <AgreementSection title="7. Governing Law">
-                <p>This Agreement is governed by the laws of <strong>New South Wales</strong>, and the parties submit to the non-exclusive jurisdiction of the courts of that State.</p>
-              </AgreementSection>
-
-              <AgreementSection title="8. Execution">
+              <AgreementSection title="10. Governing Law and Execution">
+                <p>This Agreement is governed by the laws of New South Wales and the parties submit to the non-exclusive jurisdiction of its courts.</p>
                 <p>This Agreement may be executed electronically and in counterparts, each of which constitutes an original.</p>
                 <div className="mt-3 bg-gray-50 rounded-xl p-4 text-xs space-y-1">
                   <p className="font-bold text-navy">For Silara Marketing (ACN 688042177)</p>
@@ -412,7 +425,7 @@ export default function ReferralAgreementModal({
               <div className="bg-navy/5 rounded-xl p-4">
                 <p className="text-sm font-semibold text-navy mb-1">Executing as: {form.organisationName}</p>
                 <p className="text-xs text-gray-500">ABN: {form.abn} · {form.contactName}{form.contactTitle ? `, ${form.contactTitle}` : ""}</p>
-                <p className="text-xs text-gray-500">Model: <strong className="text-navy">Referral Partnership</strong></p>
+                <p className="text-xs text-gray-500">Agreement: <strong className="text-navy">Silara Marketing Referral Agreement v06</strong></p>
                 <p className="text-xs text-gray-500">Date: {today}</p>
               </div>
 
@@ -447,7 +460,7 @@ export default function ReferralAgreementModal({
                   <span className="text-sm text-gray-700">
                     I have read and agree to the{" "}
                     <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-teal hover:underline font-medium">APGP Terms of Service (MOU)</a>{" "}
-                    and the terms of this Agreement, and I understand that this constitutes a legally binding commitment.
+                    and the terms of this Silara Marketing Referral Agreement v06, and I understand that this constitutes a legally binding commitment.
                   </span>
                 </label>
               </div>
@@ -500,7 +513,7 @@ export default function ReferralAgreementModal({
                 disabled={!canSubmit || expressInterest.isPending}
                 className="bg-teal hover:bg-teal-600 text-white disabled:opacity-50"
               >
-                {expressInterest.isPending ? "Submitting..." : "Sign &amp; Submit to Ausnew Team"}
+                {expressInterest.isPending ? "Submitting..." : "Sign & Submit Agreement"}
               </Button>
             )}
           </div>

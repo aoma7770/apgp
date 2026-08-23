@@ -157,3 +157,10 @@
 - [x] Make signed-in provider and admin header identities visibly clickable with same-tab portal return
 - [x] Test portal navigation interaction behaviour
 - [x] Add navigation-target test coverage for signed-in provider and admin header actions
+
+## Referral Agreement and Terms Alignment
+- [x] Review the user-supplied revised referral agreement against the provider signing flow
+- [x] Update the provider referral agreement to match the approved revised agreement, including agreement-specific fees
+- [x] Align the Terms of Service with the revised agreement without publishing agreement-specific fees
+- [x] Test the provider agreement signing flow and verify legal-content consistency
+- [x] Add integration-style signing submission coverage for the required agreement confirmations

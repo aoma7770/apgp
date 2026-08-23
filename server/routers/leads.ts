@@ -18,7 +18,7 @@ const providerProcedure = publicProcedure.use(async ({ ctx, next }) => {
   const cookieToken = ctx.req.cookies?.[PROVIDER_COOKIE];
   const authHeader = ctx.req.headers?.authorization;
   const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
-  const token = cookieToken || bearerToken;
+  const token = bearerToken || cookieToken;
   if (!token) throw new TRPCError({ code: "UNAUTHORIZED", message: "Provider login required" });
   const provider = await getProviderBySessionToken(token);
   if (!provider) throw new TRPCError({ code: "UNAUTHORIZED", message: "Session expired" });

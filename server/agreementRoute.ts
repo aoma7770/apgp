@@ -1,114 +1,40 @@
 import type { Express, Request, Response } from "express";
 
+const escapeHtml = (value: string) => value.replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character] ?? character));
+
 export function registerAgreementRoute(app: Express) {
-  // Serve a printable/downloadable referral agreement HTML page
   app.get("/api/agreements/:providerId/:leadId", (req: Request, res: Response) => {
     const { leadId } = req.params;
-    const { ref, signatory, org, date, lead } = req.query as Record<string, string>;
+    const query = req.query as Record<string, string>;
+    const decode = (value?: string) => escapeHtml(value ? decodeURIComponent(value) : "N/A");
+    const reference = escapeHtml(query.ref || `LEAD-${leadId}`);
+    const date = decode(query.date || new Date().toLocaleDateString("en-AU"));
+    const organisation = decode(query.org);
+    const signatory = decode(query.signatory);
+    const lead = decode(query.lead);
 
     const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>APGP Referral Agreement — ${ref || `Lead ${leadId}`}</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Georgia, 'Times New Roman', serif; font-size: 11pt; color: #1a1a1a; background: #fff; padding: 40px; max-width: 800px; margin: 0 auto; }
-    .header { text-align: center; border-bottom: 2px solid #0A2342; padding-bottom: 20px; margin-bottom: 30px; }
-    .logo { font-size: 28pt; font-weight: bold; color: #0A2342; letter-spacing: 4px; }
-    .logo-sub { font-size: 9pt; color: #B08D57; letter-spacing: 2px; margin-top: 4px; }
-    .doc-title { font-size: 16pt; font-weight: bold; color: #0A2342; margin-top: 16px; }
-    .doc-meta { font-size: 9pt; color: #666; margin-top: 6px; }
-    .lead-ref { background: #f0f8ff; border: 1px solid #0A2342; border-radius: 6px; padding: 12px 16px; margin: 20px 0; }
-    .lead-ref strong { color: #0A2342; }
-    h2 { font-size: 12pt; color: #0A2342; margin: 24px 0 8px; border-left: 3px solid #B08D57; padding-left: 10px; }
-    p { line-height: 1.7; margin-bottom: 10px; font-size: 10.5pt; }
-    .parties-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-    .parties-table td { padding: 6px 10px; border: 1px solid #ddd; font-size: 10pt; }
-    .parties-table td:first-child { background: #f5f5f5; font-weight: bold; width: 35%; color: #0A2342; }
-    .signature-block { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px; }
-    .sig-row { display: flex; gap: 40px; margin-top: 16px; }
-    .sig-col { flex: 1; }
-    .sig-line { border-bottom: 1px solid #333; height: 40px; margin-bottom: 6px; }
-    .sig-label { font-size: 9pt; color: #666; }
-    .sig-value { font-size: 10pt; font-weight: bold; color: #0A2342; margin-top: 4px; }
-    .signed-badge { background: #0A2342; color: white; padding: 4px 12px; border-radius: 4px; font-size: 9pt; display: inline-block; margin-top: 8px; }
-    .footer { margin-top: 40px; text-align: center; font-size: 8.5pt; color: #999; border-top: 1px solid #eee; padding-top: 16px; }
-    @media print {
-      body { padding: 20px; }
-      .print-btn { display: none; }
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div class="logo">APGP</div>
-    <div class="logo-sub">ACCOMMODATION PROVIDER GROWTH PROGRAM</div>
-    <div class="doc-title">Referral &amp; Joint Venture Agreement</div>
-    <div class="doc-meta">MOU — APGP · Version No: 01 · Version Date: 06/01/2026 · Executed Electronically</div>
-  </div>
-
-  <div class="lead-ref">
-    <strong>Lead Reference:</strong> ${ref || `LEAD-${leadId}`}<br/>
-    <strong>Enquiry Details:</strong> ${decodeURIComponent(lead || 'N/A')}<br/>
-    <strong>Date Signed:</strong> ${decodeURIComponent(date || new Date().toLocaleDateString('en-AU'))}
-  </div>
-
-  <h2>1. Parties</h2>
-  <table class="parties-table">
-    <tr><td>Ausnew Support Services Pty Ltd</td><td>ABN: 31 620 493 941 ("Ausnew")</td></tr>
-    <tr><td>Accommodation Provider</td><td>${decodeURIComponent(org || 'N/A')}</td></tr>
-    <tr><td>Authorised Signatory</td><td>${decodeURIComponent(signatory || 'N/A')}</td></tr>
-    <tr><td>Date of Execution</td><td>${decodeURIComponent(date || 'N/A')}</td></tr>
-  </table>
-
-  <h2>2. Partnership Model</h2>
-  <p>The Provider has elected to participate in the APGP under the partnership model confirmed at the time of signing. The rights and obligations applicable to each partnership model are governed by the APGP Terms of Service (MOU).</p>
-
-  <h2>3. Fees and Commercial Terms</h2>
-  <p>All fees payable under this Agreement are payable by the Accommodation Provider only and are not charged to Participants, their families, or their NDIS plans. Fees are set out in the Quote issued by Ausnew prior to execution.</p>
-
-  <h2>4. Incorporation of APGP Terms of Service (MOU)</h2>
-  <p>This Agreement incorporates by reference the Accommodation Provider Growth Program – Terms of Service (MOU), available at: <strong>https://www.apgpaccommodation.com.au/terms</strong></p>
-  <p>The Provider acknowledges that it has read and understands the APGP Terms of Service (MOU), and agrees to be bound by its terms.</p>
-
-  <h2>5. Term and Termination</h2>
-  <p>This Agreement commences on the date of execution and continues until terminated by either party on thirty (30) days' written notice, subject to accrued rights and obligations.</p>
-
-  <h2>6. Governing Law</h2>
-  <p>This Agreement is governed by the laws of New South Wales, and the parties submit to the non-exclusive jurisdiction of the courts of that State.</p>
-
-  <div class="signature-block">
-    <h2>7. Execution</h2>
-    <p>This Agreement has been executed electronically. Electronic execution is valid and binding in accordance with the Electronic Transactions Act 1999 (Cth).</p>
-    <div class="sig-row">
-      <div class="sig-col">
-        <div class="sig-line"></div>
-        <div class="sig-label">For Ausnew Support Services Pty Ltd</div>
-        <div class="sig-value">Ausnew Support Services</div>
-        <div class="sig-label">ABN: 31 620 493 941</div>
-      </div>
-      <div class="sig-col">
-        <div class="sig-line"></div>
-        <div class="sig-label">For the Accommodation Provider</div>
-        <div class="sig-value">${decodeURIComponent(signatory || 'N/A')}</div>
-        <div class="sig-label">${decodeURIComponent(org || 'N/A')}</div>
-        <div class="signed-badge">✓ Electronically Signed ${decodeURIComponent(date || '')}</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <p>Accommodation Provider Growth Program · support@apgpaccommodation.com.au · (02) 9669 9302</p>
-    <p>Lead Reference: ${ref || `LEAD-${leadId}`} · Generated: ${new Date().toLocaleString('en-AU')}</p>
-    <button class="print-btn" onclick="window.print()" style="margin-top:12px; padding:8px 20px; background:#0A2342; color:white; border:none; border-radius:4px; cursor:pointer; font-size:10pt;">Print / Save as PDF</button>
-  </div>
-</body>
-</html>`;
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Silara Marketing Referral Agreement v06 — ${reference}</title>
+<style>
+*{box-sizing:border-box} body{max-width:800px;margin:0 auto;padding:38px;font-family:Georgia,'Times New Roman',serif;color:#1a1a1a;font-size:10.5pt;line-height:1.55}.header{text-align:center;border-bottom:2px solid #0a1628;padding-bottom:18px}.brand{font-size:19pt;font-weight:700;color:#0a1628}.title{font-size:16pt;font-weight:700;margin:12px 0 4px;color:#0a1628}.meta{font-size:9pt;color:#666}.panel{margin:18px 0;padding:12px 14px;border:1px solid #b7ddd9;background:#f2fbfa;border-radius:5px}h2{font-size:12pt;color:#0a1628;border-left:3px solid #00b4a6;padding-left:9px;margin:23px 0 7px}p{margin:7px 0}.grid{width:100%;border-collapse:collapse;margin:10px 0}.grid td{padding:6px 8px;border:1px solid #ddd}.grid td:first-child{width:72%;background:#f6f6f6}.amount{text-align:right;font-weight:700}.signature{margin-top:28px;border-top:1px solid #ccc;padding-top:16px}.columns{display:flex;gap:34px}.column{flex:1}.line{height:35px;border-bottom:1px solid #333}.small{font-size:8.5pt;color:#666}.badge{display:inline-block;margin-top:7px;padding:4px 8px;border-radius:4px;background:#0a1628;color:#fff;font-size:8.5pt}@media print{body{padding:20px}.print{display:none}}</style></head><body>
+<header class="header"><div class="brand">SILARA MARKETING</div><div class="title">Referral Agreement</div><div class="meta">Version No: 06 · Executed Electronically</div></header>
+<div class="panel"><strong>Lead Reference:</strong> ${reference}<br/><strong>Enquiry Details:</strong> ${lead}<br/><strong>Date Signed:</strong> ${date}</div>
+<h2>1. Parties and Program</h2><p>This Agreement is made between Silara Marketing (ACN 688 042 177) ("Silara Marketing") and the accommodation provider identified below (the "Provider"). The parties intend this Agreement to be legally binding.</p><table class="grid"><tr><td>Silara Marketing</td><td>ACN 688 042 177</td></tr><tr><td>Provider</td><td>${organisation}</td></tr><tr><td>Authorised Signatory</td><td>${signatory}</td></tr><tr><td>Date of Execution</td><td>${date}</td></tr></table><p>Silara Marketing operates the Accommodation Provider Growth Program (APGP), under which it sources, qualifies and matches NDIS participants ("Participants") to accommodation held or managed by the Provider. The Provider may accept or decline any Introduction at its absolute discretion. Silara Marketing performs on a best-efforts basis and gives no warranty as to Introductions, occupancy or commercial outcome.</p>
+<h2>2. Referral Fee</h2><p>The Referral Fee is fixed. No quotation is issued and no other pricing document applies to this Agreement.</p><table class="grid"><tr><td>Referral Fee per Successful Referral (exclusive of GST)</td><td class="amount">$3,000.00</td></tr><tr><td>Goods and Services Tax (10%)</td><td class="amount">$300.00</td></tr><tr><td><strong>Total payable per Successful Referral (inclusive of GST)</strong></td><td class="amount">$3,300.00</td></tr></table><p>The Referral Fee becomes payable only upon a Successful Referral. No upfront fee, deposit, joining fee, subscription, periodic charge, advertising cost or assessment fee is payable. One Referral Fee only is payable per Participant, irrespective of accommodation duration, properties presented or any transfer between properties held or managed by the Provider. All amounts are payable by the Provider alone and must not be charged to, recovered from, or passed on to a Participant, their family, nominee, support coordinator or NDIS plan.</p>
+<h2>3. Successful Referral</h2><p>A "Successful Referral" occurs when: (a) Silara Marketing provides the Provider with the Participant Evaluation Form or identifying details (an "Introduction"); and (b) the Participant or authorised decision-maker executes a service agreement, residential tenancy agreement or occupancy agreement with the Provider or a Related Entity for accommodation held or managed by the Provider.</p><p>The Referral Fee is earned on the first execution date (the "Agreement Date"); commencement of occupancy is not required. No Referral Fee is payable where the Participant withdraws, selects another provider, does not obtain required funding or approval, is declined by the Provider, or does not execute the relevant agreement. "Related Entity" includes an entity controlling, controlled by or under common control with the Provider, including any director, partner, trustee or associated business.</p>
+<h2>4. Invoicing and Payment</h2><p>Silara Marketing will issue a valid tax invoice on or after the Agreement Date. The Provider must pay within fourteen (14) days of invoice date. The Provider must notify Silara Marketing in writing within five (5) business days of execution or a decision not to proceed and confirm the execution date on request. After written notice, a one-time late payment fee equal to ten per cent (10%) of the total invoice amount may apply. No interest is charged.</p>
+<h2>5. Duration of Referral Entitlement and Non-Circumvention</h2><p>An Introduction is registered when made and remains effective indefinitely. The Referral Fee is payable on a Successful Referral regardless of elapsed time, the property involved, re-engagement through a family member, support coordinator, plan manager or other third party, or accommodation by the Provider or a Related Entity. The Provider must not structure, defer, redirect or re-characterise a placement to avoid or reduce the Referral Fee. Participants remain free at all times to select any provider, property or support arrangement. This section survives termination.</p>
+<h2>6. Participant Privacy and Confidentiality</h2><p>Participant Information, including contact, NDIS, funding, disability, health, support needs and Participant Evaluation Form information, must be used solely to assess, respond to and, where the referral proceeds, accommodate and support the relevant Participant. The Provider must not market to Participants, add them to a marketing list, or sell, share, trade or disclose their details except as permitted by law or with express consent. If a referral does not proceed, the Provider must securely destroy or permanently de-identify Participant Information within seven (7) days and must notify Silara Marketing within twenty-four (24) hours of any unauthorised access, loss or disclosure.</p>
+<h2>7. Compliance and Participant Safeguards</h2><p>Participants retain full choice and control. No fee is charged to a Participant. APGP is a business-to-business commercial arrangement between Silara Marketing and the Provider. Silara Marketing will obtain consent before disclosure and disclose the commercial referral arrangement to the Participant. Each party must comply with applicable law, including the National Disability Insurance Scheme Act 2013 (Cth), NDIS Code of Conduct, Privacy Act 1988 (Cth), Spam Act 2003 (Cth) and Australian Consumer Law.</p>
+<h2>8. APGP Terms of Service (MOU)</h2><p>This Agreement incorporates the APGP Terms of Service (MOU), available at <strong>https://apgpaccommodation.com.au/terms</strong>. The Provider acknowledges it has read and agrees to be bound by those terms. If there is an inconsistency, this Agreement prevails, including in respect of the Referral Fee in section 2.</p>
+<h2>9. Term and Termination</h2><p>This Agreement commences on execution and continues until either party gives thirty (30) days&apos; written notice. Termination does not affect a fee already incurred or a Referral Fee subsequently payable for a Participant introduced before termination. Sections 2, 3, 4, 5, 6 and 7 survive termination.</p>
+<h2>10. Governing Law and Execution</h2><p>This Agreement is governed by the laws of New South Wales and the parties submit to the non-exclusive jurisdiction of its courts. It may be executed electronically and in counterparts, each constituting an original.</p>
+<div class="signature"><div class="columns"><div class="column"><div class="line"></div><p class="small">For Silara Marketing (ACN 688 042 177)<br/>To be executed by Silara Marketing</p></div><div class="column"><div class="line"></div><p class="small">For the Accommodation Provider</p><p><strong>${signatory}</strong><br/>${organisation}</p><span class="badge">Electronically Signed ${date}</span></div></div></div>
+<footer class="small" style="margin-top:30px;text-align:center;border-top:1px solid #eee;padding-top:12px">Silara Marketing (ACN 688 042 177) · support@apgpaccommodation.com.au · (02) 9669 9302<br/>Lead Reference: ${reference}<br/><button class="print" onclick="window.print()" style="margin-top:10px;padding:7px 15px;background:#0a1628;color:#fff;border:0;border-radius:4px;cursor:pointer">Print / Save as PDF</button></footer></body></html>`;
 
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Content-Disposition", `inline; filename="APGP_Agreement_${ref || leadId}.html"`);
+    res.setHeader("Content-Disposition", `inline; filename="Silara_Marketing_Referral_Agreement_v06_${reference}.html"`);
     res.send(html);
   });
 }
